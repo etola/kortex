@@ -15,6 +15,7 @@ licence := see licence.txt
 sources := \
 log_manager.cc \
 check.cc \
+filter.cc \
 mem_manager.cc \
 mem_unit.cc \
 image.cc \
@@ -25,6 +26,7 @@ image_io_pnm.cc \
 image_io_png.cc \
 image_io_jpg.cc \
 image_paint.cc \
+sse_extensions.cc \
 string.cc \
 fileio.cc \
 message.cc \
@@ -40,6 +42,7 @@ headers := \
 log_manager.h \
 check.h \
 defs.h \
+filter.h \
 types.h \
 mem_manager.h \
 mem_unit.h \
@@ -51,6 +54,7 @@ image_io_pnm.h \
 image_io_png.h \
 image_io_jpg.h \
 image_paint.h \
+sse_extensions.h \
 string.h \
 fileio.h \
 message.h \

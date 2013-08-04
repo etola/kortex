@@ -14,6 +14,7 @@
 #define KORTEX_MEM_MANAGER_H
 
 #include <kortex/types.h>
+#include <kortex/check.h>
 
 namespace kortex {
 
@@ -26,6 +27,20 @@ namespace kortex {
     void deallocate(  float*& ptr );
     void deallocate( double*& ptr );
     void deallocate(  uchar*& ptr );
+
+    enum MemoryMode { MM_16_UNALIGNED=0, MM_16_ALIGNED=1 };
+
+    template <typename T> inline
+    MemoryMode get_alignment(const T* kernel) {
+        if( is_16_byte_aligned(kernel) ) return MM_16_ALIGNED;
+        else                             return MM_16_UNALIGNED;
+    }
+
+    template <typename T> inline
+    MemoryMode get_alignment(const T* buffer, const T* kernel) {
+        return ( is_16_byte_aligned(buffer) && is_16_byte_aligned(kernel) ) ? MM_16_ALIGNED : MM_16_UNALIGNED;
+    }
+
 
 }
 
