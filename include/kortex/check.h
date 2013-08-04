@@ -110,6 +110,10 @@ namespace kortex {
         return ( x >= xmin && x < xmax ) ? true : false;
     }
 
+    inline bool is_a_number(const int&    v) { return ( isnan(v) ) ? false : true; }
+    inline bool is_a_number(const float&  v) { return ( isnan(v) ) ? false : true; }
+    inline bool is_a_number(const double& v) { return ( isnan(v) ) ? false : true; }
+
 }
 
 #endif

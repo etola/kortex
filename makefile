@@ -25,7 +25,9 @@ image_io_pnm.cc \
 image_io_png.cc \
 image_io_jpg.cc \
 string.cc \
-fileio.cc
+fileio.cc \
+message.cc \
+math.cc
 
 headers := \
 log_manager.h \
@@ -42,7 +44,9 @@ image_io_pnm.h \
 image_io_png.h \
 image_io_jpg.h \
 string.h \
-fileio.h
+fileio.h \
+message.h \
+math.h
 
 
 #
