@@ -135,6 +135,10 @@ namespace kortex {
         void  get_bicubic_fp (const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bicubic_fi (const float& x0, const float& y0, float& r, float& g, float& b) const;
 
+        //
+        float get_grad_x( const int& x0, const int &y0 ) const;
+        float get_grad_y( const int& x0, const int &y0 ) const;
+
 
         // 1-channel set
         void  set( const int& x0, const int& y0, const float& v );
@@ -176,6 +180,13 @@ namespace kortex {
         //
         void save( const string& file ) const;
         void load( const string& file );
+
+        //
+        //
+        //
+        bool is_maximum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const;
+        bool is_minimum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const;
+
 
         //
         // assrtions

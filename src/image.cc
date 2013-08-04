@@ -570,5 +570,52 @@ namespace kortex {
         return img;
     }
 
+    float Image::get_grad_x( const int& x0, const int &y0 ) const {
+        assert_type( IT_F_GRAY );
+        const float* row = get_row_f( y0 );
+        if     ( x0 >= m_w-1 ) return 2.0f * (row[m_w-1] - row[m_w-2]);
+        else if( x0 <= 0     ) return 2.0f * (row[    1] - row[    0]);
+        else                   return        (row[ x0+1] - row[ x0-1]);
+    }
+
+    float Image::get_grad_y( const int& x0, const int &y0 ) const {
+        assert_type( IT_F_GRAY );
+        passert_boundary( x0, 0, m_w );
+        const float* col = m_data_f + x0;
+        if     ( y0 >= m_h-1 ) return 2.0f * ( col[ (m_h-2)*m_w ] - col[ (m_h-1)*m_w ] );
+        else if( y0 <= 0     ) return 2.0f * ( col[           0 ] - col[         m_w ] );
+        else                   return        ( col[  (y0-1)*m_w ] - col[  (y0+1)*m_w ] );
+    }
+
+    bool Image::is_maximum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const {
+        assert_type( IT_F_GRAY );
+        assert_statement( wnd_rad > 0, "window should be nonnegative" );
+        for( int y=y0-wnd_rad; y<=y0+wnd_rad; y++ ) {
+            if( y<0 || y>=m_h ) continue;
+            const float* row = get_row_f(y);
+            for( int x=x0-wnd_rad; x<=x0+wnd_rad; x++ ) {
+                if( x<0 || x>=m_w ) continue;
+                if( row[x] > v0 ) return false;
+            }
+        }
+        return true;
+    }
+
+    bool Image::is_minimum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const {
+        assert_type( IT_F_GRAY );
+        assert_statement( wnd_rad > 0, "window should be nonnegative" );
+        for( int y=y0-wnd_rad; y<=y0+wnd_rad; y++ ) {
+            if( y<0 || y>=m_h ) continue;
+            const float* row = get_row_f(y);
+            for( int x=x0-wnd_rad; x<=x0+wnd_rad; x++ ) {
+                if( x<0 || x>=m_w ) continue;
+                if( row[x] < v0 ) return false;
+            }
+        }
+        return true;
+    }
+
+
+
 
 }

@@ -17,6 +17,8 @@
 
 namespace kortex {
 
+    template <typename T> int sign(T v) { return (T(0) < v) - (v<T(0)); }
+
     inline float  sq(const float&  v) { return v*v; }
     inline double sq(const double& v) { return v*v; }
     inline int    sq(const int&    v) { return v*v; }

@@ -52,6 +52,18 @@ namespace kortex {
     void image_threshold( Image* img, float th );
     void image_to_gradient(const float* im, int w, int h, float* dx, float* dy);
 
+    void image_resize_coarse( const Image* src, const int& nw, const int& nh, Image* dst );
+
+    void image_scale( const Image* im, const float& scale, const bool& run_parallel, Image* out );
+
+    void image_subtract    ( const Image* im0, const Image* im1, Image* out );
+    void image_subtract_par( const Image* im0, const Image* im1, Image* out );
+    inline void image_subtract( const Image* im0, const Image* im1, bool run_parallel, Image* out ) {
+        switch( run_parallel ) {
+        case true : image_subtract    ( im0, im1, out ); break;
+        case false: image_subtract_par( im0, im1, out ); break;
+        }
+    }
 
     template <typename T>
     float bilinear_interpolation(const T* img, const int& w, const int& h, const int& nc, const int& c,  const float& x, const float& y);

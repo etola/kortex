@@ -17,6 +17,7 @@
 #include <kortex/filter.h>
 #include <kortex/mem_manager.h>
 #include <kortex/math.h>
+#include <kortex/color.h>
 
 #include "image_processing.tcc"
 #include <limits>
@@ -305,6 +306,79 @@ namespace kortex {
         }
     }
 
+    void image_resize_coarse_rgb( const Image* src, const int& nw, const int& nh, Image* dst ) {
+        passert_pointer( src && dst );
+        passert_statement( nw > 0 && nh > 0, "invalid new image size" );
+        src->assert_type( IT_U_PRGB | IT_U_IRGB );
+
+        dst->create( nw, nh, src->type() );
+        dst->zero();
+
+        float ratioy = src->h() / (float)nh;
+        float ratiox = src->w() / (float)nw;
+
+        DataType dtype = image_precision( src->type() );
+
+        float r, g, b;
+        for( int y=0; y<nh; y++ ) {
+            float ny = y*ratioy;
+            for( int x=0; x<nw; x++ ) {
+                float nx = x*ratiox;
+                src->get_bilinear(nx, ny, r, g, b);
+                switch( dtype ) {
+                case TYPE_FLOAT: dst->set(x, y, r, g, b); break;
+                case TYPE_UCHAR: {
+                    uchar ur = cast_to_gray_range( r );
+                    uchar ug = cast_to_gray_range( g );
+                    uchar ub = cast_to_gray_range( b );
+                    dst->set(x, y, ur, ug, ub);
+                } break;
+                default: switch_fatality();
+                }
+            }
+        }
+    }
+
+    void image_resize_coarse_g( const Image* src, const int& nw, const int& nh, Image* dst ) {
+        passert_pointer( src && dst );
+        passert_statement( nw > 0 && nh > 0, "invalid new image size" );
+        src->assert_type( IT_U_GRAY | IT_F_GRAY );
+
+        dst->create( nw, nh, src->type() );
+        dst->zero();
+
+        float ratioy = src->h() / (float)nh;
+        float ratiox = src->w() / (float)nw;
+
+        DataType dtype = image_precision( src->type() );
+
+        for( int y=0; y<nh; y++ ) {
+            float ny = y*ratioy;
+            for( int x=0; x<nw; x++ ) {
+                float nx = x*ratiox;
+                float v = src->get_bilinear(nx, ny);
+                switch( dtype ) {
+                case TYPE_FLOAT: dst->set(x, y, v); break;
+                case TYPE_UCHAR: {
+                    uchar uv = cast_to_gray_range( v );
+                    dst->set(x, y, uv);
+                } break;
+                default: switch_fatality();
+                }
+            }
+        }
+    }
+
+    void image_resize_coarse( const Image* src, const int& nw, const int& nh, Image* dst ) {
+        passert_pointer( src && dst );
+        switch( src->ch() ) {
+        case 1: image_resize_coarse_g  ( src, nw, nh, dst ); break;
+        case 3: image_resize_coarse_rgb( src, nw, nh, dst ); break;
+        default: switch_fatality();
+        }
+    }
+
+
     void image_to_gradient(const float* im, int w, int h, float* dx, float* dy) {
         assert_pointer( im && dx && dy );
         passert_statement_g( is_positive_number(w), "[w %d] should be positive", w );
@@ -363,6 +437,76 @@ namespace kortex {
         dx[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-1)*w + w-1 ] - im[ (h-1)*w + w-2 ] );
         dy[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-2)*w + w-1 ] - im[ (h-1)*w + w-1 ] );
     }
+
+    void image_scale( const Image* im, const float& scale, const bool& run_parallel, Image* out ) {
+        passert_pointer( im && out );
+        im->passert_type( IT_F_GRAY );
+        int w = im->w();
+        int h = im->h();
+        passert_statement( out->w() == w && out->h() == h, "image dimension mismatch" );
+
+        switch( run_parallel ) {
+        case true:
+#pragma omp parallel for
+            for( int y=0; y<h; y++ ) {
+                const float* srow =  im->get_row_f(y);
+                float*       drow = out->get_row_f(y);
+                for( int x=0; x<w; x++ ) {
+                    drow[x] = srow[x] * scale;
+                }
+            }
+            break;
+        case false:
+            for( int y=0; y<h; y++ ) {
+                const float* srow =  im->get_row_f(y);
+                float*       drow = out->get_row_f(y);
+                for( int x=0; x<w; x++ ) {
+                    drow[x] = srow[x] * scale;
+                }
+            }
+            break;
+        }
+    }
+
+    void image_subtract( const Image* im0, const Image* im1, Image* out ) {
+        passert_pointer( im0 && im1 && out );
+        im0->passert_type( IT_F_GRAY );
+        int w = im0->w();
+        int h = im0->h();
+        passert_statement( (im1->w() == w) && (im1->h()==h), "dimension mismatch" );
+        passert_statement( im0->type() == im1->type(), "image type mismatch" );
+
+        out->create(w,h,im0->type());
+        for( int y=0; y<h; y++ ) {
+            const float*  row0 = im0->get_row_f(y);
+            const float*  row1 = im1->get_row_f(y);
+            float      * drow  = out->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                drow[x] = row0[x]-row1[x];
+            }
+        }
+    }
+
+    void image_subtract_par( const Image* im0, const Image* im1, Image* out ) {
+        passert_pointer( im0 && im1 && out );
+        im0->passert_type( IT_F_GRAY );
+        int w = im0->w();
+        int h = im0->h();
+        passert_statement( (im1->w() == w) && (im1->h()==h), "dimension mismatch" );
+        passert_statement( im0->type() == im1->type(), "image type mismatch" );
+
+        out->create(w,h,im0->type());
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            const float*  row0 = im0->get_row_f(y);
+            const float*  row1 = im1->get_row_f(y);
+            float      * drow  = out->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                drow[x] = row0[x]-row1[x];
+            }
+        }
+    }
+
 
 
 }
