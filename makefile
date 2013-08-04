@@ -27,6 +27,7 @@ image_io_jpg.cc \
 string.cc \
 fileio.cc \
 message.cc \
+color.cc \
 math.cc
 
 headers := \
@@ -46,6 +47,7 @@ image_io_jpg.h \
 string.h \
 fileio.h \
 message.h \
+color.h \
 math.h
 
 

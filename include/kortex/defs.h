@@ -18,6 +18,7 @@
 #define MAX_IMAGE_DIM        16384
 #define MAX_IMAGE_NO         16384
 #define MAX_ARR_SIZE         16384
+#define NRM_EPS              1e-16
 
 #define BYTE_ALIGNED_16 __attribute__ ((__aligned__ (16)))
 

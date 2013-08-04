@@ -22,6 +22,10 @@ namespace kortex {
 
     bool is_exact_match(const char* str1, const char* str2);
 
+    string num2str(const int&    v);
+    string num2str(const float&  m, const int& precision);
+    string num2str(const double& m, const int& precision);
+
 }
 
 #endif

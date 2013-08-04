@@ -30,6 +30,39 @@ namespace kortex {
         else                     return false;
     }
 
+    string num2str(const int& v) {
+        char buffer[256];
+        sprintf(buffer, "%d", v);
+        return string(buffer);
+    }
+
+    string num2str(const float& m, const int& precision) {
+        float  n      = fabs(m);
+        string retval = num2str(int(n));
+        retval += ".";
+        n -= int(n);
+        for( int d=0; d<precision; d++ ) {
+            n = 10*n;
+            retval += num2str(int(n));
+            n -= int(n);
+        }
+        if( m<0 ) retval="-"+retval;
+        return retval;
+    }
+
+    string num2str(const double& m, const int& precision) {
+        double n = fabs(m);
+        string retval = num2str(int(n));
+        retval += ".";
+        n -= int(n);
+        for( int d=0; d<precision; d++ ) {
+            n = 10*n;
+            retval += num2str(int(n));
+            n -= int(n);
+        }
+        if( m<0 ) retval="-"+retval;
+        return retval;
+    }
 
 
 

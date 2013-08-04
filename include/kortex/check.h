@@ -16,7 +16,9 @@
 #include <kortex/log_manager.h>
 #include <cmath> // isnan / isinf tests
 #include <string>
+#include <vector>
 using std::string;
+using std::vector;
 
 #define function_line_str kortex::format_function_message(__PRETTY_FUNCTION__, __LINE__).c_str()
 
@@ -110,9 +112,20 @@ namespace kortex {
         return ( x >= xmin && x < xmax ) ? true : false;
     }
 
+    inline bool is_inside( const vector<int>& arr, const int& v ) {
+        for( size_t i=0; i<arr.size(); i++ )
+            if( arr[i] == v ) return true;
+        return false;
+    }
+
     inline bool is_a_number(const int&    v) { return ( isnan(v) ) ? false : true; }
     inline bool is_a_number(const float&  v) { return ( isnan(v) ) ? false : true; }
     inline bool is_a_number(const double& v) { return ( isnan(v) ) ? false : true; }
+
+    inline bool is_positive_number( const int&    v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
+    inline bool is_positive_number( const float&  v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
+    inline bool is_positive_number( const double& v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
+
 
 }
 
