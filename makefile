@@ -42,6 +42,7 @@ rect2.cc
 
 headers := \
 log_manager.h \
+bit_operations.h \
 check.h \
 defs.h \
 filter.h \
