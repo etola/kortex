@@ -15,6 +15,43 @@
 
 namespace kortex {
 
+    class Image;
+
+    /// finds the [min,max] value range for the image region defined by
+    /// [xmin,ymin]->[xmax,ymax] ; NAN safe
+    bool image_min_max( const Image* img,
+                        const int& xmin, const int& ymin,
+                        const int& xmax, const int& ymax,
+                        float& min_v, float& max_v );
+
+    void        filter_hv( const Image* img, const float* kernel, const int& ksz, Image* out );
+    inline void filter_hv( Image* img, const float* kernel, const int& ksz ) {
+        filter_hv( img, kernel, ksz, img );
+    }
+    void filter_gaussian    ( const Image* img, const float& sigma, Image* out );
+    void filter_gaussian_par( const Image* img, const float& sigma, Image* out );
+    inline void filter_gaussian( Image* img, const float& sigma ) {
+        filter_gaussian( img, sigma, img );
+    }
+    inline void filter_gaussian_par( Image* img, const float& sigma ) {
+        filter_gaussian_par( img, sigma, img );
+    }
+    inline void filter_gaussian( const Image* img, const float& sigma, const bool& run_parallel, Image* out ) {
+        switch( run_parallel ) {
+        case true : filter_gaussian_par( img, sigma, out ); break;
+        case false: filter_gaussian    ( img, sigma, out ); break;
+        }
+    }
+
+    void combine_horizontally(const Image* im0, const Image* im1, Image* out);
+    void combine_vertically  (const Image* im0, const Image* im1, Image* out);
+
+    void flip_image_ver( Image* img );
+    void flip_image_hor( Image* img );
+
+    void image_threshold( Image* img, float th );
+    void image_to_gradient(const float* im, int w, int h, float* dx, float* dy);
+
 
     template <typename T>
     float bilinear_interpolation(const T* img, const int& w, const int& h, const int& nc, const int& c,  const float& x, const float& y);

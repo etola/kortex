@@ -90,6 +90,25 @@ namespace kortex {
         return nrm;
     }
 
+    void gaussian_1d(float* fltr, const int& fsz, const float& mean, const float& sigma) {
+        passert_pointer( fltr );
+        passert_pointer_size( fsz );
+        passert_statement( sigma > 0.0f, "sigma should be positive" );
+        int sz = (fsz-1)/2;
+        int counter=-1;
+        float sum = 0.0;
+        float v = 2*sigma*sigma;
+        for( int x=-sz; x<=sz; x++ ) {
+            counter++;
+            fltr[counter] = exp((-(x-mean)*(x-mean))/v);
+            sum += fltr[counter];
+        }
+        if( sum != 0 ) {
+            float isum = 1/sum;
+            for( int x=0; x<fsz; x++ )
+                fltr[x] *= isum;
+        }
+    }
 
 
 

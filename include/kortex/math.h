@@ -48,6 +48,8 @@ namespace kortex {
     void cross3(const double* a, const double* b, double* c );
     void cross3_normalized( const float* a, const float* b, float* c );
 
+    void gaussian_1d( float* fltr, const int& fsz, const float& mean, const float& sigma );
+
 }
 
 #endif
