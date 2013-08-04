@@ -31,6 +31,7 @@ message.cc \
 color.cc \
 minmax.cc \
 math.cc \
+progress_bar.cc \
 random.cc \
 indexed_types.cc \
 rect2.cc
@@ -56,6 +57,7 @@ message.h \
 color.h \
 minmax.h \
 math.h \
+progress_bar.h \
 random.h \
 indexed_types.h \
 rect2.h
