@@ -22,14 +22,15 @@ namespace kortex {
     inline int    sq(const int&    v) { return v*v; }
 
     double dot ( const double * a, const double* b, int asz );
+
     inline float  dot3( const float * a, const float * b ) {
-        return sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] );
+        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
     inline double dot3( const double* a, const double* b ) {
-        return sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] );
+        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
     inline double dot3( const float * a, const double* b ) {
-        return sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] );
+        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
 
     inline float  l2norm_sq3( const float * a ) { return dot3(a,a); }

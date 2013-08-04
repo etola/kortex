@@ -118,6 +118,13 @@ namespace kortex {
         return false;
     }
 
+    inline bool is_inside( const int* arr, const int& narr, const int& query ) {
+        assert_pointer( arr );
+        for( int i=0; i<narr; i++ )
+            if( arr[i] == query ) return true;
+        return false;
+    }
+
     inline bool is_a_number(const int&    v) { return ( isnan(v) ) ? false : true; }
     inline bool is_a_number(const float&  v) { return ( isnan(v) ) ? false : true; }
     inline bool is_a_number(const double& v) { return ( isnan(v) ) ? false : true; }
@@ -125,6 +132,10 @@ namespace kortex {
     inline bool is_positive_number( const int&    v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
     inline bool is_positive_number( const float&  v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
     inline bool is_positive_number( const double& v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
+
+    inline bool is_nonnegative_number( const int&    v ) { return ( is_a_number(v) && (v>=0) ) ? true : false; }
+    inline bool is_nonnegative_number( const float&  v ) { return ( is_a_number(v) && (v>=0) ) ? true : false; }
+    inline bool is_nonnegative_number( const double& v ) { return ( is_a_number(v) && (v>=0) ) ? true : false; }
 
 
 }

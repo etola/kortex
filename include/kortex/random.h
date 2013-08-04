@@ -1,0 +1,34 @@
+// ---------------------------------------------------------------------------
+//
+// This file is part of the <kortex> library suite
+//
+// Copyright (C) 2013 Engin Tola
+//
+// See licence.txt file for licence information.
+//
+// author: Engin Tola
+// e-mail: engintola@gmail.com
+//
+// ---------------------------------------------------------------------------
+#ifndef KORTEX_RANDOM_H
+#define KORTEX_RANDOM_H
+
+namespace kortex {
+
+    void initialize_random_seed();
+
+    // http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx
+    /// generates a seed to feed to srand. better than time(NULL)
+    unsigned int time_seed();
+
+    double  uniform_sample();
+
+    /// selects no_samples random in [minval maxval). returns false if samples cannot be selected
+    bool select_random_samples(const int& minval, const int& maxval, const int& no_samples, int *selected_samples);
+
+    void select_prosac_like_random_samples(const int& prosac_iter, const int& selection_limit, const int& no_samples_to_select, 
+                                           int* selected_samples);
+
+}
+
+#endif

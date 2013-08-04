@@ -24,11 +24,16 @@ image_io.cc \
 image_io_pnm.cc \
 image_io_png.cc \
 image_io_jpg.cc \
+image_paint.cc \
 string.cc \
 fileio.cc \
 message.cc \
 color.cc \
-math.cc
+minmax.cc \
+math.cc \
+random.cc \
+indexed_types.cc \
+rect2.cc
 
 headers := \
 log_manager.h \
@@ -44,11 +49,16 @@ image_io.h \
 image_io_pnm.h \
 image_io_png.h \
 image_io_jpg.h \
+image_paint.h \
 string.h \
 fileio.h \
 message.h \
 color.h \
-math.h
+minmax.h \
+math.h \
+random.h \
+indexed_types.h \
+rect2.h
 
 
 #
