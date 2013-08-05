@@ -4,10 +4,11 @@
 //
 // Copyright (C) 2013 Engin Tola
 //
-// See licence.txt file for licence information.
+// See LICENSE file for license information.
 //
 // author: Engin Tola
 // e-mail: engintola@gmail.com
+// web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
 #ifndef KORTEX_RANDOM_H
@@ -26,7 +27,7 @@ namespace kortex {
     /// selects no_samples random in [minval maxval). returns false if samples cannot be selected
     bool select_random_samples(const int& minval, const int& maxval, const int& no_samples, int *selected_samples);
 
-    void select_prosac_like_random_samples(const int& prosac_iter, const int& selection_limit, const int& no_samples_to_select, 
+    void select_prosac_like_random_samples(const int& prosac_iter, const int& selection_limit, const int& no_samples_to_select,
                                            int* selected_samples);
 
 }
