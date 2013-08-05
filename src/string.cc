@@ -64,6 +64,15 @@ namespace kortex {
         return retval;
     }
 
+    string trim_string(const string& str, const string& remove_str) {
+        const size_t begin_str = str.find_first_not_of(remove_str);
+        if (begin_str == std::string::npos) {
+            return "";
+        }
+        const size_t end_str = str.find_last_not_of(remove_str);
+        const size_t range   = end_str - begin_str + 1;
+        return str.substr(begin_str, range);
+    }
 
 
 }

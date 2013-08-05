@@ -27,6 +27,9 @@ namespace kortex {
     string num2str(const float&  m, const int& precision);
     string num2str(const double& m, const int& precision);
 
+    /// removes leading and trailing spaces (remove_str)
+    string trim_string(const string& str, const string& remove_str);
+
 }
 
 #endif
