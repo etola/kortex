@@ -66,6 +66,8 @@ namespace kortex {
         }
     }
 
+    void image_color_invert( Image* img );
+
     template <typename T>
     float bilinear_interpolation(const T* img, const int& w, const int& h, const int& nc, const int& c,  const float& x, const float& y);
 
