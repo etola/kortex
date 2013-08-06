@@ -487,7 +487,7 @@ namespace kortex {
         case IT_F_PRGB:
             for( int y=0; y<rh; y++ ) {
                 const float* sptr =  src->get_row_f(sy0+y) + sx0*m_ch;
-                float*       dptr = this->get_row_f(dy0)   + dx0*m_ch;
+                float*       dptr = this->get_row_f(dy0+y) + dx0*m_ch;
                 memcpy( dptr, sptr, sizeof(float)*rw*m_ch );
             }
             break;
@@ -495,7 +495,7 @@ namespace kortex {
         case IT_U_PRGB:
             for( int y=0; y<rh; y++ ) {
                 const uchar* sptr =  src->get_row_u(sy0+y) + sx0*m_ch;
-                uchar*       dptr = this->get_row_u(dy0)   + dx0*m_ch;
+                uchar*       dptr = this->get_row_u(dy0+y) + dx0*m_ch;
                 memcpy( dptr, sptr, sizeof(uchar)*rw*m_ch );
             }
             break;
@@ -503,7 +503,7 @@ namespace kortex {
             for( int c=0; c<3; c++ ) {
                 for( int y=0; y<rh; y++ ) {
                     const float* sptr =  src->get_row_fi(sy0+y, c) + sx0;
-                    float*       dptr = this->get_row_fi(dy0,   c) + dx0;
+                    float*       dptr = this->get_row_fi(dy0+y, c) + dx0;
                     memcpy( dptr, sptr, sizeof(float)*rw );
                 }
             }
@@ -512,7 +512,7 @@ namespace kortex {
             for( int c=0; c<3; c++ ) {
                 for( int y=0; y<rh; y++ ) {
                     const uchar* sptr =  src->get_row_ui(sy0+y, c) + sx0;
-                    uchar*       dptr = this->get_row_ui(dy0,   c) + dx0;
+                    uchar*       dptr = this->get_row_ui(dy0+y, c) + dx0;
                     memcpy( dptr, sptr, sizeof(uchar)*rw );
                 }
             }
