@@ -47,7 +47,7 @@ using std::vector;
 #define assert_pointer(statement)               { if( !(statement) ) { logman_fatal("passed null pointer"); } }
 #define assert_pointer_size(psz)                { if( isnan(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
 #define assert_boundary(val,minval,maxval)      { if( !(val>=minval && val<maxval ) ) logman_fatal("out of bounds"); }
-#define assert_number(num)                      { if( isnan(num) ) { logman_fatal("nan test failed"); } }
+#define assert_number(num)                      { if( isnan(num) || isinf(num) ) { logman_fatal("nan/inf test failed"); } }
 #define assert_noalias(obj1,obj2)               { if( &obj1 == &obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #define assert_noalias_p(obj1,obj2)             { if(  obj1 ==  obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #else

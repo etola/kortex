@@ -14,6 +14,7 @@
 #include <kortex/math.h>
 #include <kortex/check.h>
 #include <kortex/defs.h>
+#include <kortex/sse_extensions.h>
 
 #include <cstring>
 
@@ -89,6 +90,43 @@ namespace kortex {
             na[p] = inrm * arr[p];
         return nrm;
     }
+
+    void scale( float* arr, int asz, float v ) {
+        assert_pointer( arr );
+        assert_pointer_size( asz );
+        assert_number( v );
+#ifdef WITH_SSE
+        sse_scale( arr, asz, v );
+#else
+        for( int i=0; i<asz; i++ )
+            arr[i] *= v;
+#endif
+    }
+
+    float l2norm ( const float* a, int asz ) {
+#ifdef WITH_SSE
+        return sqrt( sse_sq_sum(a, asz) );
+#else
+        float nrm = 0.0f;
+        for( int k=0; k<asz; k++ ) {
+            nrm += *a * *a;
+            a++;
+        }
+        return sqrt(nrm);
+#endif
+    }
+
+    float  normalize_l2norm( float* arr, int asz ) {
+        float nrm = l2norm( arr, asz );
+        if( nrm < NRM_EPS ) {
+            memset( arr, 0, sizeof(*arr)*asz );
+            return nrm;
+        }
+        scale( arr, asz, 1.0f/nrm );
+        return nrm;
+    }
+
+
 
     void gaussian_1d(float* fltr, const int& fsz, const float& mean, const float& sigma) {
         passert_pointer( fltr );
