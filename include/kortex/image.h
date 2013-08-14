@@ -113,6 +113,10 @@ namespace kortex {
         // 1-channel get
         float getf( int x0, int y0 ) const;
         uchar getu( int x0, int y0 ) const;
+        float get ( int x0, int y0 ) const; // accesses the pixel val of
+                                            // whatever type. use for
+                                            // convenience - not efficient at
+                                            // all.
 
         float get_bilinear  (const float& x0, const float& y0) const;
         float get_bilinear_u(const float& x0, const float& y0) const;

@@ -88,6 +88,8 @@ namespace kortex {
 
     void Histogram::init_xtags( const Image* img, const HistogramType& ht ) {
 
+        img->assert_type( IT_F_GRAY | IT_U_GRAY );
+
         int h = img->h();
         int w = img->w();
 
@@ -108,9 +110,8 @@ namespace kortex {
             std::vector<float> pix_vals;
             pix_vals.reserve(h*w);
             for( int y=0; y<h; y++ ) {
-                const float* row = img->get_row_f(y);
                 for( int x=0; x<w; x++ ) {
-                    const float& v = row[x];
+                    float v = img->get(x,y);
                     if( is_a_number(v) )
                         pix_vals.push_back(v);
                 }
@@ -129,7 +130,7 @@ namespace kortex {
 
     void Histogram::build( const Image* img, const HistogramType& ht ) {
         passert_pointer( img );
-        passert_statement( img->type() == IT_F_GRAY, "invalid image type" );
+        img->passert_type( IT_F_GRAY | IT_U_GRAY );
         passert_statement( n_bins != 0, "initialize the histogram first" );
 
         reset();
@@ -137,14 +138,30 @@ namespace kortex {
 
         int h = img->h();
         int w = img->w();
-        for( int y=0; y<h; y++ ) {
-            const float* row = img->get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                const float& v = row[x];
-                if( !is_a_number(v) ) continue;
-                int bid = bin_id( v );
-                bins[bid]++;
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            for( int y=0; y<h; y++ ) {
+                const float* row = img->get_row_f(y);
+                for( int x=0; x<w; x++ ) {
+                    const float& v = row[x];
+                    if( !is_a_number(v) ) continue;
+                    int bid = bin_id( v );
+                    bins[bid]++;
+                }
             }
+            break;
+        case IT_U_GRAY:
+            for( int y=0; y<h; y++ ) {
+                const uchar* row = img->get_row_u(y);
+                for( int x=0; x<w; x++ ) {
+                    float v = static_cast<float>(row[x]);
+                    if( !is_a_number(v) ) continue;
+                    int bid = bin_id( v );
+                    bins[bid]++;
+                }
+            }
+            break;
+        default: switch_fatality();
         }
     }
 

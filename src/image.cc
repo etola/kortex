@@ -225,6 +225,15 @@ namespace kortex {
         return m_data_u[ y0*m_w+x0 ];
     }
 
+    float Image::get( int x0, int y0 ) const {
+        assert_type( IT_U_GRAY | IT_F_GRAY );
+        switch( m_type ) {
+        case IT_U_GRAY: return static_cast<float>(m_data_u[ y0*m_w+x0 ]); break;
+        case IT_F_GRAY: return m_data_f[ y0*m_w+x0 ]; break;
+        default       : switch_fatality();
+        }
+    }
+
     float Image::get_bilinear ( const float& x0, const float& y0 ) const {
         switch( m_type ) {
         case IT_U_GRAY: return get_bilinear_u(x0, y0); break;

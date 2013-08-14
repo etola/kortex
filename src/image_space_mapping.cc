@@ -21,7 +21,7 @@ namespace kortex {
 
     void image_map_linear(const Image* img, float& min_v, float& max_v, Image* out ) {
         passert_pointer( img && out );
-        img->passert_type( IT_F_GRAY );
+        img->passert_type( IT_U_GRAY | IT_F_GRAY );
 
         float scale = 1.0f;
         if( min_v == -1.0f && max_v == -1.0f ) {
@@ -39,56 +39,109 @@ namespace kortex {
         int w = img->w();
         out->create( w, h, IT_U_GRAY );
         out->zero();
-        for( int y=0; y<h; y++ ) {
-            const float* srow = img->get_row_f(y);
-            uchar      * orow = out->get_row_u(y);
-            for( int x=0; x<w; x++ ) {
-                const float& v = srow[x];
-                if( is_a_number(v) )
-                    orow[x] = cast_to_gray_range( (v-min_v)*scale );
+
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            for( int y=0; y<h; y++ ) {
+                const float* srow = img->get_row_f(y);
+                uchar      * orow = out->get_row_u(y);
+                for( int x=0; x<w; x++ ) {
+                    const float& v = srow[x];
+                    if( is_a_number(v) )
+                        orow[x] = cast_to_gray_range( (v-min_v)*scale );
+                }
             }
+            break;
+        case IT_U_GRAY:
+            for( int y=0; y<h; y++ ) {
+                const uchar* srow = img->get_row_u(y);
+                uchar      * orow = out->get_row_u(y);
+                for( int x=0; x<w; x++ ) {
+                    float v = static_cast<float>(srow[x]);
+                    if( is_a_number(v) )
+                        orow[x] = cast_to_gray_range( (v-min_v)*scale );
+                }
+            }
+            break;
+        default: switch_fatality();
         }
     }
 
     void image_power(const Image* img, const float& pscale, Image* out ) {
         passert_pointer( img && out );
-        img->passert_type( IT_F_GRAY );
+        img->passert_type( IT_F_GRAY | IT_U_GRAY );
 
         int h = img->h();
         int w = img->w();
         out->create( w, h, IT_F_GRAY );
         out->zero();
-        for( int y=0; y<h; y++ ) {
-            const float* srow = img->get_row_f(y);
-            float      * orow = out->get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                const float& v = srow[x];
-                if( is_a_number(v) )
-                    orow[x] = pow(v,pscale);
+
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            for( int y=0; y<h; y++ ) {
+                const float* srow = img->get_row_f(y);
+                float      * orow = out->get_row_f(y);
+                for( int x=0; x<w; x++ ) {
+                    const float& v = srow[x];
+                    if( is_a_number(v) )
+                        orow[x] = pow(v,pscale);
+                }
             }
+            break;
+        case IT_U_GRAY:
+            for( int y=0; y<h; y++ ) {
+                const uchar* srow = img->get_row_u(y);
+                float      * orow = out->get_row_f(y);
+                for( int x=0; x<w; x++ ) {
+                    float v = static_cast<float>(srow[x]);
+                    if( is_a_number(v) )
+                        orow[x] = pow(v,pscale);
+                }
+            }
+            break;
+        default : switch_fatality();
         }
     }
 
     void image_log(const Image* img, Image* out ) {
         passert_pointer( img && out );
-        img->passert_type( IT_F_GRAY );
+        img->passert_type( IT_F_GRAY | IT_U_GRAY );
 
         int h = img->h();
         int w = img->w();
         out->create( w, h, IT_F_GRAY );
         out->zero();
-        for( int y=0; y<h; y++ ) {
-            const float* srow = img->get_row_f(y);
-            float      * orow = out->get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                const float& v = srow[x];
-                if( is_a_number(v) ) orow[x] = log(v);
-                else                 orow[x] = v;
+
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            for( int y=0; y<h; y++ ) {
+                const float* srow = img->get_row_f(y);
+                float      * orow = out->get_row_f(y);
+                for( int x=0; x<w; x++ ) {
+                    const float& v = srow[x];
+                    if( is_a_number(v) ) orow[x] = log(v);
+                    else                 orow[x] = v;
+                }
             }
+            break;
+        case IT_U_GRAY:
+            for( int y=0; y<h; y++ ) {
+                const uchar* srow = img->get_row_u(y);
+                float      * orow = out->get_row_f(y);
+                for( int x=0; x<w; x++ ) {
+                    float v = static_cast<float>(srow[x]);
+                    if( is_a_number(v) ) orow[x] = log(v);
+                    else                 orow[x] = v;
+                }
+            }
+            break;
+        default : switch_fatality();
         }
     }
 
     void image_map( const Image* img, const ColorMap& cm, Image* out ) {
+
+        img->passert_type( IT_F_GRAY | IT_U_GRAY );
 
         Histogram hist(1000);
         float minv=0.0f, maxv=0.0f;
@@ -112,6 +165,7 @@ namespace kortex {
             image_map_linear(&tmp, minv, maxv, out );
             break;
         }
+
     }
 
 }

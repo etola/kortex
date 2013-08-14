@@ -34,7 +34,7 @@ namespace kortex {
                         const int& xmax, const int& ymax,
                         float& min_v, float& max_v ) {
         passert_pointer( img );
-        img->passert_type( IT_F_GRAY );
+        img->passert_type( IT_F_GRAY | IT_U_GRAY );
 
         int xs = std::max( std::min( xmin, xmax ), 0        );
         int xe = std::min( std::max( xmin, xmax ), img->w() );
@@ -43,16 +43,35 @@ namespace kortex {
 
         min_v =  std::numeric_limits<float>::max();
         max_v = -std::numeric_limits<float>::max();
-        for( int y=ys; y<ye; y++ ) {
-            const float* row = img->get_row_f(y);
-            for( int x=xs; x<xe; x++ ) {
-                const float& v = row[x];
-                if( is_a_number(v) ) {
-                    min_v = std::min(v,min_v);
-                    max_v = std::max(v,max_v);
+
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            for( int y=ys; y<ye; y++ ) {
+                const float* row = img->get_row_f(y);
+                for( int x=xs; x<xe; x++ ) {
+                    const float& v = row[x];
+                    if( is_a_number(v) ) {
+                        min_v = std::min(v,min_v);
+                        max_v = std::max(v,max_v);
+                    }
                 }
             }
+            break;
+        case IT_U_GRAY:
+            for( int y=ys; y<ye; y++ ) {
+                const uchar* row = img->get_row_u(y);
+                for( int x=xs; x<xe; x++ ) {
+                    float v = static_cast<float>(row[x]);
+                    if( is_a_number(v) ) {
+                        min_v = std::min(v,min_v);
+                        max_v = std::max(v,max_v);
+                    }
+                }
+            }
+            break;
+        default: switch_fatality();
         }
+
         if( (min_v ==  std::numeric_limits<float>::max())  ||
             (max_v == -std::numeric_limits<float>::max()) ) {
             return false;
