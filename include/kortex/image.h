@@ -95,6 +95,7 @@ namespace kortex {
 
         void zero();
         void set( const float& v );
+        void set( const uchar& v );
 
         //
         // get image channels
