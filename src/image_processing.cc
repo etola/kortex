@@ -328,7 +328,7 @@ namespace kortex {
     void image_resize_coarse_rgb( const Image* src, const int& nw, const int& nh, Image* dst ) {
         passert_pointer( src && dst );
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
-        src->assert_type( IT_U_PRGB | IT_U_IRGB );
+        src->assert_type( IT_U_PRGB | IT_U_IRGB | IT_F_IRGB | IT_F_PRGB );
 
         dst->create( nw, nh, src->type() );
         dst->zero();

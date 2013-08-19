@@ -142,6 +142,7 @@ namespace kortex {
     void image_map( const Image* img, const ColorMap& cm, Image* out ) {
 
         img->passert_type( IT_F_GRAY | IT_U_GRAY );
+        assert_statement( !img->is_empty(), "image is empty!" );
 
         Histogram hist(1000);
         float minv=0.0f, maxv=0.0f;

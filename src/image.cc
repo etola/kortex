@@ -502,9 +502,9 @@ namespace kortex {
                                  const int& dx0, const int& dy0) {
         assert_pointer( src );
         assert_noalias_p( this, src );
-        assert_statement( is_inside(dx0,dy0) && is_inside(dx0+rw-1,dy0+rh-1) , "out of bounds" );
+        passert_statement( is_inside(dx0,dy0) && is_inside(dx0+rw-1,dy0+rh-1) , "out of bounds" );
         assert_statement( src->is_inside(sx0,sy0), "out of bounds" );
-        assert_statement( type() == src->type(), "image types should be the same" );
+        passert_statement( type() == src->type(), "image types should be the same" );
 
         switch( m_type ) {
         case IT_F_GRAY:
