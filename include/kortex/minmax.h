@@ -14,10 +14,16 @@
 #ifndef KORTEX_MINMAX_H
 #define KORTEX_MINMAX_H
 
+#include <vector>
+using std::vector;
+
 namespace kortex {
 
     int min( const float* arr, const int& narr, float& min_val );
     int max( const float* arr, const int& narr, float& max_val );
+
+    int min( const vector<float>& arr, float& min_val );
+    int max( const vector<float>& arr, float& max_val );
 
 }
 

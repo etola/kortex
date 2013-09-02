@@ -42,5 +42,34 @@ namespace kortex {
         return min_ind;
     }
 
+    int min( const vector<float>& arr, float& min_val ) {
+        int narr = arr.size();
+        if( narr == 0 ) return -1;
+        int min_ind = 0;
+        min_val = arr[0];
+
+        for( int i=1; i<narr; i++ ) {
+            if( arr[i] >= min_val ) continue;
+            min_val = arr[i];
+            min_ind = i;
+        }
+        return min_ind;
+    }
+
+    int max( const vector<float>& arr, float& max_val ) {
+        int narr = arr.size();
+        if( narr == 0 ) return -1;
+        int max_ind = 0;
+        max_val = arr[0];
+        for( int i=1; i<narr; i++ ) {
+            if( arr[i] <= max_val ) continue;
+            max_val = arr[i];
+            max_ind = i;
+        }
+        return max_ind;
+    }
+
+
+
 }
 
