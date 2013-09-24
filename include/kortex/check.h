@@ -76,6 +76,7 @@ using std::vector;
 namespace kortex {
 
     string format_function_message(const string& str, const int& number);
+    void assert_array(const char* name, const float* arr, int asz);
 
     template <typename T> inline
     bool is_16_byte_aligned(const T* pnt) {
