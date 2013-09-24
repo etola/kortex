@@ -26,10 +26,11 @@
 namespace kortex {
 
     class LogManager {
-        enum Verbosity { Silent = 0, Cautious, Normal, Informative };
         typedef void(*FatalFnPtr)(const char* group, const char* msg, va_list prm);
 
     public:
+        enum Verbosity { Silent = 0, Cautious, Normal, Informative };
+
         LogManager( FILE* tinfo_stream, FILE* tlog_stream, FILE* twarn_stream, FILE* terr_stream );
         ~LogManager() { stop_recording(); }
 
