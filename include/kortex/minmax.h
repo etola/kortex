@@ -25,6 +25,7 @@ namespace kortex {
     int min( const vector<float>& arr, float& min_val );
     int max( const vector<float>& arr, float& max_val );
 
+    void find_2_minima( const float* cost, int np, int rad, int matches[2] );
 }
 
 #endif
