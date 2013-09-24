@@ -1,0 +1,90 @@
+
+0. use const as much as possible. everything and anything that can be should be.
+
+1. a "no in-out" parameter policy; meaning all parameters to a function are either
+input or output; never both. -> i.e:
+
+use             convert_type( const Image* inp, ImageType type, Image* out );
+instead of      convert_type( Image* inp_out, ImageType type );
+
+2. avoid templates as plague.
+
+3. write things as non-generic as possible, use generics only when it makes
+sense. -> don't kid yourself - 99% of the time it doesn't.
+
+4. as little as operator overloading as possible - do obvious ones if you'd
+like: ie. +, -, *constant - but not complicated ones \ % T*T
+
+5. warnings are errors -> do not commit any code that produces warnings when
+compiled.
+
+6. nothing (function, class) gets into the library unless it is used in three
+different applications.
+
+7. one job per function. no exceptions ( except main :) )
+
+8. code is the documentation - write beautifully.
+
+9. prefer readability over efficiency. if too low level an operation and needs
+to be efficient, explain thoroughly.
+
+10. assert/passert ALL inputs for ALL functions.
+
+11. all 2d related inputs use x, y order to access - Image::get_pixel(int x0, int y0);
+
+12. when declaring function parameters first declare inputs and then outputs...
+
+13. classes should be as thin as possible. do not add function after function,
+feature after feature... less is more...
+
+14. write unit tests for all low level ops/structs: i.e. matrix, image access/set/load/save...
+
+15. include bare-minimum #include's.
+
+16. no fancy C++ features - no polymorphisms, inheritances: it ends up as
+overcomplicated, unmaintainable tightly coupled code. think of your language as
+C+ :just a bit of c++ features but almost c... again, less is more...
+
+style:
+
+0. do not waste vertical space
+
+1. if(a) -> if( a )
+
+1.b: if one part of if-statement needs {} then put {} to the other part as well
+     i.e.
+     do not use
+
+         if( a ) {
+            b = 1;
+            c = 2;
+         } else
+            d = 3;
+     use
+         if( a ) {
+            b = 1;
+            c = 2;
+         } else {
+            d = 3;
+         }
+
+2. all class/struct words start with capital letters: i.e. class StarCluster
+
+3. all function and variable names are lowercase and use underscore to separate
+words. i.e. do not use extractStars() -> use extract_stars() instead.
+
+4. enumerations, definitions are all caps.
+
+5. use MemUnit and allocate/deallocate functions when playing with memory - do
+not use new/delete alloc/free directly.
+
+6. use logman_* instead of printf
+
+7. place debug code between {} to indicate that braced code could be removed w/o
+operational problems.
+
+8. write full names for floating point numbers. for example,
+     float v = 5; -> float v = 5.0f;
+
+9. never test equality for float/double numbers: test with less-than instead:
+     if( v == 0.05f ) --> if( fabs(v-0.05f) < 1e-6 ) // 1e-6: precision
