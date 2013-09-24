@@ -429,7 +429,7 @@ namespace kortex {
 
     /// sets a patch centered at (x,y) with half_width = hsz to v
     void Image::set( const int& x0, const int& y0, const int& hsz, const uchar& v ) {
-        assert_type( IT_F_GRAY );
+        assert_type( IT_U_GRAY );
         for(int y=y0-hsz; y<=y0+hsz; y++) {
             if( y<0 || y>=m_h ) continue;
             uchar* row_y = get_row_u(y);
