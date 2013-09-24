@@ -20,6 +20,9 @@ using std::string;
 namespace kortex {
 
     string get_file_extension( const string& file );
+    string get_file_name     ( const string& file );
+    string get_file_root     ( const string& file );
+    string get_folder_name   ( const string& file );
 
     bool is_exact_match(const char* str1, const char* str2);
 

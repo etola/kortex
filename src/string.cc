@@ -22,6 +22,26 @@ namespace kortex {
         return file.substr(found+1);
     }
 
+    string get_file_name( const string& file ) {
+        size_t found     = file.find_last_of("/\\");
+        string file_name = file.substr(found+1);
+        return file_name;
+    }
+
+    string get_file_root( const string& file ) {
+        string file_name = get_file_name(file);
+        size_t found     = file_name.find_last_of(".");
+        string file_root = file_name.substr(0,found);
+        return file_root;
+    }
+
+    string get_folder_name( const string& file ) {
+        size_t found = file.find_last_of("/\\");
+        string folder_name = "";
+        if( found == string::npos ) folder_name = ".";
+        else                        folder_name = file.substr(0,found);
+        return folder_name;
+    }
 
     bool is_exact_match(const char* str1, const char* str2) {
         assert_pointer( str1 );
