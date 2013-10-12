@@ -147,9 +147,9 @@ namespace kortex {
         int ksimdlen = asz/4*4;
         int i;
         for( i=0; i<ksimdlen; i+=4 ) {
-            xmm_a = _mm_load_ps(a + 4*i);
+            xmm_a = _mm_load_ps(a + i);
             xmm_c = _mm_mul_ps(xmm_a,xmm_b);
-            _mm_store_ps(a + 4*i, xmm_c);
+            _mm_store_ps(a + i, xmm_c);
         }
         for( ; i<asz; i++ )
             a[i] *= v;
@@ -164,9 +164,9 @@ namespace kortex {
         int ksimdlen = asz/4*4;
         int i;
         for( i=0; i<ksimdlen; i+=4 ) {
-            xmm_a = _mm_loadu_ps(a + 4*i);
+            xmm_a = _mm_loadu_ps(a + i);
             xmm_c = _mm_mul_ps(xmm_a,xmm_b);
-            _mm_storeu_ps(a + 4*i, xmm_c);
+            _mm_storeu_ps(a + i, xmm_c);
         }
         for( ; i<asz; i++ )
             a[i] *= v;
