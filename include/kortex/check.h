@@ -21,6 +21,16 @@
 using std::string;
 using std::vector;
 
+#ifdef isnan
+#undef isnan
+// using std::isnan;
+#endif
+
+#ifdef isinf
+#undef isinf
+// using std::isinf;
+#endif
+
 #define function_line_str kortex::format_function_message(__PRETTY_FUNCTION__, __LINE__).c_str()
 
 #define logman_info_(...)    kortex::log_man()->info   (function_line_str, __VA_ARGS__)
@@ -47,7 +57,7 @@ using std::vector;
 #define assert_pointer(statement)               { if( !(statement) ) { logman_fatal("passed null pointer"); } }
 #define assert_pointer_size(psz)                { if( isnan(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
 #define assert_boundary(val,minval,maxval)      { if( !(val>=minval && val<maxval ) ) logman_fatal("out of bounds"); }
-#define assert_number(num)                      { if( isnan(num) || isinf(num) ) { logman_fatal("nan/inf test failed"); } }
+#define assert_number(num)                      { if( std::isnan(num) || std::isinf(num) ) { logman_fatal("nan/inf test failed"); } }
 #define assert_noalias(obj1,obj2)               { if( &obj1 == &obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #define assert_noalias_p(obj1,obj2)             { if(  obj1 ==  obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #else
@@ -65,9 +75,9 @@ using std::vector;
 #define passert_statement( statement, msg )      { if( !(statement) ) { logman_fatal(msg); } }
 #define passert_statement_g(statement, msg, ...) { if( !(statement) ) { logman_fatal_g(msg, __VA_ARGS__); } }
 #define passert_pointer(statement)               { if( !(statement) ) { logman_fatal("passed null pointer"); } }
-#define passert_pointer_size(psz)                { if( isnan(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
+#define passert_pointer_size(psz)                { if( std::isnan(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
 #define passert_boundary(val,minval,maxval)      { if( !(val>=minval && val<maxval ) ) logman_fatal("out of bounds"); }
-#define passert_number(num)                      { if( isnan(num) || isinf(num) ) { logman_fatal("nan/inf test failed"); } }
+#define passert_number(num)                      { if( std::isnan(num) || std::isinf(num) ) { logman_fatal("nan/inf test failed"); } }
 #define passert_noalias(obj1,obj2)               { if( &obj1 == &obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #define passert_noalias_p(obj1,obj2)             { if(  obj1 ==  obj2 ) { logman_fatal("aliasing is not allowed"); } }
 
@@ -127,9 +137,9 @@ namespace kortex {
         return false;
     }
 
-    inline bool is_a_number(const int&    v) { return ( isnan(v) ) ? false : true; }
-    inline bool is_a_number(const float&  v) { return ( isnan(v) ) ? false : true; }
-    inline bool is_a_number(const double& v) { return ( isnan(v) ) ? false : true; }
+    inline bool is_a_number(const int&    v) { return ( std::isnan(v) ) ? false : true; }
+    inline bool is_a_number(const float&  v) { return ( std::isnan(v) ) ? false : true; }
+    inline bool is_a_number(const double& v) { return ( std::isnan(v) ) ? false : true; }
 
     inline bool is_positive_number( const int&    v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
     inline bool is_positive_number( const float&  v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
