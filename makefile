@@ -38,7 +38,12 @@ math.cc \
 progress_bar.cc \
 random.cc \
 indexed_types.cc \
-rect2.cc
+rect2.cc \
+linear_algebra.cc \
+matrix.cc \
+kmatrix.cc \
+rotation.cc \
+svd.cc
 
 headers := \
 log_manager.h \
@@ -69,7 +74,13 @@ math.h \
 progress_bar.h \
 random.h \
 indexed_types.h \
-rect2.h
+rect2.h \
+linear_algebra.h \
+matrix.h \
+kmatrix.h \
+rotation.h \
+lapack_externs.h \
+svd.h
 
 
 #
@@ -77,7 +88,7 @@ rect2.h
 #
 installdir := ${HOME}/usr/local/kortex/
 external_sources :=
-external_libraries := libjpeg libpng12
+external_libraries := libjpeg libpng12 blas
 libdir := lib
 srcdir := src
 includedir:= include
