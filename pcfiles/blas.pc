@@ -1,0 +1,15 @@
+# Package Information for pkg-config
+# Author: http://packages.debian.org/lenny/libblas-dev
+# Created: Friday, September 25, 2009 14:57:22 +0200
+# Licence: probably gpl but check http://packages.debian.org/lenny/libblas-dev
+
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: blas
+Description: Basic Linear Algebra Subroutines 3, static library
+Version: 1.2-2
+Libs: -L${libdir} -llapack -lblas
+Cflags: -I${includedir}
