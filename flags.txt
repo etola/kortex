@@ -1,0 +1,9 @@
+
+WITH_SSE : enables sse related extensions
+           allocate/deallocate routines are 16 byte aligned.
+
+WITH_LIBJPEG: enables jpeg file io support
+              (add libjpeg to external_libraries in makefile)
+
+WITH_LIBPNG: enables png file io support
+             (add libpng to external_libraries in makefile)
