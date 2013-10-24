@@ -33,6 +33,7 @@ namespace kortex {
     public:
         KMatrix();
         KMatrix( int h, int w );
+        KMatrix( const KMatrix& rhs );
 
         /// wraps around data - no change possible
         KMatrix( const double* data, int h, int w );

@@ -48,6 +48,11 @@ namespace kortex {
         nc = w;
     }
 
+    KMatrix::KMatrix( const KMatrix& rhs ) {
+        release();
+        copy( rhs );
+    }
+
     KMatrix::KMatrix( double* data, int h, int w ) {
         init_();
         m_data    = data;
