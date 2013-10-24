@@ -43,7 +43,8 @@ linear_algebra.cc \
 matrix.cc \
 kmatrix.cc \
 rotation.cc \
-svd.cc
+svd.cc \
+wmatrix.cc
 
 headers := \
 log_manager.h \
@@ -80,7 +81,8 @@ matrix.h \
 kmatrix.h \
 rotation.h \
 lapack_externs.h \
-svd.h
+svd.h \
+wmatrix.h
 
 
 #

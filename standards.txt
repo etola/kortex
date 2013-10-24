@@ -1,5 +1,7 @@
 
 0. use const as much as possible. everything and anything that can be should be.
+0.a. const_cast is FORBIDDEN!!!! (Medeni Rule);
+
 
 1. a "no in-out" parameter policy; meaning all parameters to a function are either
 input or output; never both. -> i.e:
