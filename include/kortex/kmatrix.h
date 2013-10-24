@@ -51,13 +51,27 @@ namespace kortex {
         void init( int h, int w );
 
         /// resizes the matrix dimensions. for wrapped matrices, before and
-        /// after size() should be the same - otherwise fatals out.
+        /// after size() should be the same - otherwise fatals out. see reshape.
         void resize( int h, int w );
+
+        /// reshapes the matrix -> h*w == nr*nc should stay the same. no memory
+        /// alloc/dealloc occurs. see resize.
+        void reshape( int h, int w );
 
         /// sets the matrix data - does not do any initializations for memory !
         /// if this is a fresh matrix - call init(h,w) before. data size 'dsz'
         /// should be equivalent to nr*nc
         void set( const double* data, int dsz );
+
+        void set_row( int rid, const double* rdata, int rdsz );
+        /// set the contents of the row with row_data[0:csz-1] starting from r0,c0
+        void set_row( int r0, int c0, const double* row_data, int csz );
+        void set_row( int r, const double* rdata, int rsz, double alpha );
+
+        void set_col( int cid, const double* cdata, int csz );
+        void set_col( int r0, int c0, const double* cdata, int csz );
+        void set_col( int c, const double* cdata, int csz, double alpha );
+
 
         ~KMatrix();
 
@@ -71,19 +85,23 @@ namespace kortex {
         double      * get_col( int cid );
 
         const double* get_const_pointer() const;
-
-        const double* get_pointer()      const;
         const double* get_row( int rid ) const;
         const double* get_col( int cid ) const;
 
-        // convenience access
-        double      * operator() ()       { return get_pointer(); }
-        const double* operator() () const { return get_pointer(); }
+        // convenient access
+        const double* operator() () const {
+            return get_const_pointer();
+        }
         const double& operator() (int y0, int x0) const {
             assert_boundary( y0, 0, nr );
             assert_boundary( x0, 0, nc );
-            return get_pointer()[ y0*nc+x0 ];
+            return get_const_pointer()[ y0*nc+x0 ];
         }
+        const double& operator[] (int k) const {
+            assert_boundary( k, 0, size() );
+            return get_const_pointer()[k];
+        }
+
         void set( int y0, int x0, double v ) {
             assert_statement( !is_const(), "cannot modify const matrix" );
             get_pointer()[ y0*nc+x0 ] = v;
@@ -149,98 +167,78 @@ namespace kortex {
     inline bool mat_inv( const KMatrix& A, KMatrix& iA ) {
         assert_statement( A.h() == A.w(), "matrix must be square - call pseudo_inv instead" );
         iA.resize( A.h(), A.w() );
-        return mat_inv( A.get_pointer(),   A.h(),  A.w(),
-                        iA.get_pointer(), iA.h(), iA.w() );
+        return mat_inv( A(), A.h(), A.w(), iA.get_pointer(), iA.h(), iA.w() );
     }
 
     inline void mat_mat( const KMatrix& A, const KMatrix& B, KMatrix& C ) {
         C.resize( A.h(), B.w() );
-        mat_mat( A.get_pointer(), A.h(), A.w(),
-                 B.get_pointer(), B.h(), B.w(),
-                 C.get_pointer(), C.size() );
+        mat_mat( A(), A.h(), A.w(), B(), B.h(), B.w(), C.get_pointer(), C.size() );
     }
 
     inline void mat_mat_trans( const KMatrix& A, const KMatrix& B, KMatrix& C ) {
         C.resize( A.h(), B.h() );
-        mat_mat_trans( A.get_pointer(), A.h(), A.w(),
-                       B.get_pointer(), B.h(), B.w(),
+        mat_mat_trans( A(), A.h(), A.w(), B(), B.h(), B.w(),
                        C.get_pointer(), C.size() );
     }
 
     inline void mat_trans_mat( const KMatrix& A, const KMatrix& B, KMatrix& C ) {
         C.resize( A.w(), B.w() );
-        mat_trans_mat( A.get_pointer(), A.h(), A.w(),
-                       B.get_pointer(), B.h(), B.w(),
+        mat_trans_mat( A(), A.h(), A.w(), B(), B.h(), B.w(),
                        C.get_pointer(), C.size() );
     }
 
     inline void mat_mat_mat_trans( const KMatrix& A, const KMatrix& B, const KMatrix& C,
                                    KMatrix& D ) {
         D.resize( A.h(), C.h() );
-        mat_mat_mat_trans( A.get_pointer(), A.h(), A.w(),
-                           B.get_pointer(), B.h(), B.w(),
-                           C.get_pointer(), C.h(), C.w(),
+        mat_mat_mat_trans( A(), A.h(), A.w(), B(), B.h(), B.w(), C(), C.h(), C.w(),
                            D.get_pointer(), D.size() );
     }
 
     inline void mat_mat_mat( const KMatrix& A, const KMatrix& B, const KMatrix& C,
                              KMatrix& D ) {
         D.resize( A.h(), C.w() );
-        mat_mat_mat( A.get_pointer(), A.h(), A.w(),
-                     B.get_pointer(), B.h(), B.w(),
-                     C.get_pointer(), C.h(), C.w(),
+        mat_mat_mat( A(), A.h(), A.w(), B(), B.h(), B.w(), C(), C.h(), C.w(),
                      D.get_pointer(), D.size() );
     }
 
     inline void mat_trans_mat_mat( const KMatrix& A, const KMatrix& B, const KMatrix& C,
                                    KMatrix& D ) {
         D.resize( A.w(), C.w() );
-        mat_trans_mat_mat( A.get_pointer(), A.h(), A.w(),
-                           B.get_pointer(), B.h(), B.w(),
-                           C.get_pointer(), C.h(), C.w(),
+        mat_trans_mat_mat( A(), A.h(), A.w(), B(), B.h(), B.w(), C(), C.h(), C.w(),
                            D.get_pointer(), D.size() );
     }
 
     inline void mat_mat_elem( const KMatrix& A, const KMatrix& B, KMatrix& C ) {
         C.resize( A.h(), A.w() );
-        mat_mat_elem( A.get_pointer(), A.h(), A.w(),
-                      B.get_pointer(), B.h(), B.w(),
-                      C.get_pointer(), C.h(), C.w() );
+        mat_mat_elem( A(), A.h(), A.w(), B(), B.h(), B.w(), C.get_pointer(), C.h(), C.w() );
     }
 
     inline void mat_minus_mat( const KMatrix& A, const KMatrix& B, KMatrix& C ) {
         C.resize( A.h(), A.w() );
-        mat_minus_mat( A.get_pointer(), A.h(), A.w(),
-                       B.get_pointer(), B.h(), B.w(),
-                       C.get_pointer(), C.h(), C.w() );
+        mat_minus_mat( A(), A.h(), A.w(), B(), B.h(), B.w(), C.get_pointer(), C.h(), C.w() );
     }
 
     inline void mat_plus_mat( const KMatrix& A, const KMatrix& B, KMatrix& C ) {
         C.resize( A.h(), A.w() );
-        mat_plus_mat( A.get_pointer(), A.h(), A.w(),
-                      B.get_pointer(), B.h(), B.w(),
-                      C.get_pointer(), C.h(), C.w() );
+        mat_plus_mat( A(), A.h(), A.w(), B(), B.h(), B.w(), C.get_pointer(), C.h(), C.w() );
     }
 
     inline void cross_matrix( const KMatrix& b, KMatrix& Bx ) {
         assert_statement( b.size() == 3, "invalid b matrix" );
         Bx.resize( 3, 3 );
-        mat_cross_form( b.get_pointer(), 3, Bx.get_pointer(), Bx.size() );
+        mat_cross_form( b(), 3, Bx.get_pointer(), Bx.size() );
     }
 
     inline void mat_ABAt( const KMatrix& A, const KMatrix& B,
                           KMatrix& C ) {
         C.resize( A.h(), A.h() );
-        mat_ABAt( A.get_pointer(), A.h(), A.w(),
-                  B.get_pointer(), B.h(), B.w(),
-                  C.get_pointer(), C.size() );
+        mat_ABAt( A(), A.h(), A.w(), B(), B.h(), B.w(), C.get_pointer(), C.size() );
     }
 
     inline bool mat_inv_3( const KMatrix& A, KMatrix& iA, double inversion_threshold ) {
         assert_statement( A.is_square() && A.h() == 3, "invalid matrix" );
         iA.resize( 3, 3 );
-        return mat_inv_3( A.get_pointer(), A.h(), iA.get_pointer(), A.h(),
-                          inversion_threshold );
+        return mat_inv_3( A(), A.h(), iA.get_pointer(), A.h(), inversion_threshold );
     }
 
     /// solves the Ax=b by computing the (brute)inverse of the A matrix for 3d
@@ -249,8 +247,7 @@ namespace kortex {
         assert_statement( A.is_square() && A.h() == 3, "invalid matrix size" );
         assert_statement( b.size() == 3, "invalid size" );
         x.resize(3,1);
-        return mat_solve_Ax_b_3( A.get_pointer(), A.h(), A.w(),
-                                 b.get_pointer(), b.size(),
+        return mat_solve_Ax_b_3( A(), A.h(), A.w(), b(), b.size(),
                                  x.get_pointer(), x.size() );
     }
 
@@ -279,8 +276,7 @@ namespace kortex {
 
     inline double mat_pseudo_inv( const KMatrix& A, KMatrix& iA ) {
         iA.resize( A.w(), A.h() );
-        return mat_pseudo_inv( A.get_pointer(), A.h(), A.w(),
-                               iA.get_pointer(), iA.h(), iA.w() );
+        return mat_pseudo_inv( A(), A.h(), A.w(), iA.get_pointer(), iA.h(), iA.w() );
     }
 
     void mat_row_add( const KMatrix& A, int arid, double alpha,
@@ -294,6 +290,8 @@ namespace kortex {
 
 
     void mat_col_copy( const KMatrix& src, int sc, double alpha, KMatrix& dst, int dc );
+
+    bool rq_givens_decomposition_3( const KMatrix& A, KMatrix& R, KMatrix& Q );
 
 }
 

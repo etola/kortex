@@ -65,7 +65,7 @@ namespace kortex {
     void KMatrix::copy( const KMatrix& rhs ) {
         passert_statement( !is_const(), "cannot copy onto const matrix" );
         resize( rhs.h(), rhs.w() );
-        memcpy( m_data, rhs.get_pointer(), sizeof(*m_data)*rhs.size() );
+        memcpy( m_data, rhs.get_const_pointer(), sizeof(*m_data)*rhs.size() );
     }
 
     void KMatrix::clone( const KMatrix& rhs ) {
@@ -91,6 +91,12 @@ namespace kortex {
         m_const   = false;
         nr        = h;
         nc        = w;
+    }
+
+    void KMatrix::reshape( int h, int w ) {
+        passert_statement( h*w == size(), "matrix size should not change" );
+        nr = h;
+        nc = w;
     }
 
     void KMatrix::resize( int h, int w ) {
@@ -123,6 +129,31 @@ namespace kortex {
         memcpy( m_data, data, sizeof(*m_data)*dsz );
     }
 
+    void KMatrix::set_row( int rid, const double* rdata, int rdsz ) {
+        assert_boundary( rid, 0, nr );
+        assert_pointer( rdata );
+        assert_statement( rdsz == nc, "rdsz should be same with matrix size" );
+        mat_set_row( get_pointer(), nr, nc, rid, rdata, rdsz );
+
+    }
+    void KMatrix::set_row( int r0, int c0, const double* row_data, int csz ) {
+        mat_set_row_from_point( get_pointer(), nr, nc, r0, c0, row_data, csz );
+    }
+    void KMatrix::set_row( int r, const double* rdata, int rsz, double alpha ) {
+        mat_set_row( get_pointer(), nr, nc, r, alpha, rdata, rsz );
+    }
+
+    void KMatrix::set_col( int cid, const double* cdata, int csz ) {
+        mat_set_col( get_pointer(), nr, nc, cid, cdata, csz );
+    }
+    void KMatrix::set_col( int r0, int c0, const double* cdata, int csz ) {
+        mat_set_col_from_point( get_pointer(), nr, nc, r0, c0, cdata, csz );
+    }
+    void KMatrix::set_col( int c, const double* cdata, int csz, double alpha ) {
+        mat_set_col( get_pointer(), nr, nc, c, alpha, cdata, csz );
+    }
+
+
     double* KMatrix::get_pointer() {
         passert_statement( !is_const(), "cannot return non-const pointer for const matrix" );
         assert_statement( size() != 0, "matrix has not been initialized" );
@@ -130,13 +161,6 @@ namespace kortex {
     }
 
     const double* KMatrix::get_const_pointer() const {
-        assert_statement( size() != 0, "matrix has not been initialized" );
-        switch( m_const ) {
-        case true : return m_ro_data;
-        case false: return m_data;
-        }
-    }
-    const double* KMatrix::get_pointer() const {
         assert_statement( size() != 0, "matrix has not been initialized" );
         switch( m_const ) {
         case true : return m_ro_data;
@@ -155,11 +179,11 @@ namespace kortex {
 
     const double* KMatrix::get_row( int rid ) const {
         assert_boundary( rid, 0, nr );
-        return get_pointer() + rid * nc;
+        return get_const_pointer() + rid * nc;
     }
     const double* KMatrix::get_col( int cid ) const {
         assert_boundary( cid, 0, nc );
-        return get_pointer() + cid;
+        return get_const_pointer() + cid;
     }
 
     /// copies  this[ dr:dr+srsz, dc:dc+srsz ] =  rhs[ sr:sr+srsz, sc:sc+scsz ]
@@ -208,12 +232,12 @@ namespace kortex {
     }
 
     double KMatrix::trace() const {
-        return mat_trace( get_pointer(), nr, nc );
+        return mat_trace( get_const_pointer(), nr, nc );
     }
 
     double KMatrix::det3() const {
         passert_statement( nr == nc && nr == 3, "invalid matrix size" );
-        return mat_det_3( get_pointer(), nr );
+        return mat_det_3( get_const_pointer(), nr );
     }
 
     void KMatrix::transpose() {
@@ -228,7 +252,7 @@ namespace kortex {
             }
         } else {
             KMatrix tmp( nc, nr );
-            mat_transpose( get_pointer(), nr, nc, tmp.get_pointer(), tmp.size() );
+            mat_transpose( get_const_pointer(), nr, nc, tmp.get_pointer(), tmp.size() );
             this->copy( tmp );
         }
 
@@ -259,15 +283,15 @@ namespace kortex {
 
     // frobenius norm
     double KMatrix::norm() const {
-        return mat_norm( get_pointer(), nr, nc );
+        return mat_norm( get_const_pointer(), nr, nc );
     }
 
     double KMatrix::norm_sq() const {
-        return mat_norm_sq( get_pointer(), nr, nc );
+        return mat_norm_sq( get_const_pointer(), nr, nc );
     }
 
     void KMatrix::print( const char* str ) const {
-        matrix_print( str, get_pointer(), nr, nc, false, true );
+        matrix_print( str, get_const_pointer(), nr, nc, false, true );
     }
 
     void KMatrix::save( const char* file ) const {
@@ -292,7 +316,7 @@ namespace kortex {
     void KMatrix::save_binary( ofstream& fout ) const {
         write_bparam( fout, nr );
         write_bparam( fout, nc );
-        write_bparam( fout, get_pointer(), size() );
+        write_bparam( fout, get_const_pointer(), size() );
     }
 
     void KMatrix::load_binary( ifstream& fin ) {
@@ -375,8 +399,8 @@ namespace kortex {
         assert_statement( ( A.h()==x.h() ) && ( A.h()==y.h() ), "invalid matrix dimensions" );
         c.init( A.h(), 1 );
         double      * cp = c.get_pointer();
-        const double* yp = y.get_pointer();
-        const double* xp = x.get_pointer();
+        const double* yp = y.get_const_pointer();
+        const double* xp = x.get_const_pointer();
         for( int r=0; r<A.h(); r++ ) {
             cp[r] = dot( A.get_row(r), xp, A.w() ) + yp[r];
         }
@@ -391,8 +415,8 @@ namespace kortex {
 
         c.resize( A.h(), 1 );
         double      * cp = c.get_pointer();
-        const double* yp = y.get_pointer();
-        const double* xp = x.get_pointer();
+        const double* yp = y.get_const_pointer();
+        const double* xp = x.get_const_pointer();
         for( int r=0; r<A.h(); r++ ) {
             cp[r] = alpha * dot( A.get_row(r), xp, A.w() ) + beta * yp[r];
         }
@@ -411,6 +435,67 @@ namespace kortex {
             dst_col[i*dst.w()] = alpha * src_col[i*src.w()];
         }
     }
+
+    /// A = R*Q:
+    /// R: upper triangular, Q: rotation matrix
+    bool rq_givens_decomposition_3( const KMatrix& A, KMatrix& R, KMatrix& Q ) {
+        assert_statement( A.is_square() && A.h() == 3, "invalid input A" );
+
+        // set A(2,1) <-- 0 by Qx
+        double r = sqrt( sq(A(2,1)) + sq( A(2,2) ) );
+        double c = -A(2,2)/r;
+        double s =  A(2,1)/r;
+
+        if( !is_a_number( s*c ) ) return false;
+
+        KMatrix Qx(3,3);
+        const double qx_data[] = { 1., 0., 0., 0., c, -s, 0., s, c };
+        Qx.set( qx_data, 9 );
+
+        KMatrix AQx;
+        mat_mat( A, Qx, AQx );
+
+        // set A(2,0) <-- 0
+        r = sqrt( sq(AQx(2,2)) + sq(AQx(2,0)) );
+        c = AQx(2,2)/r;
+        s = AQx(2,0)/r;
+        if( !is_a_number( s*c ) ) return false;
+
+        KMatrix Qy(3,3);
+        const double qy_data[] = { c, 0., s, 0., 1., 0., -s, 0., c };
+        Qy.set( qy_data, 9 );
+
+        KMatrix AQxQy;
+        mat_mat( AQx, Qy, AQxQy );
+
+        // set A(1,0) <-- 0
+        r = sqrt( sq(AQxQy(1,0)) + sq(AQxQy(1,1)) );
+        c = -AQxQy(1,1) / r;
+        s =  AQxQy(1,0) / r;
+        if( !is_a_number( s*c ) ) return false;
+
+        KMatrix Qz(3,3);
+        const double qz_data[] = { c, -s, 0., s, c, 0., 0., 0., 1. };
+        Qz.set( qz_data, 9 );
+
+        mat_mat( AQxQy, Qz, R );
+        mat_mat_mat( Qx, Qy, Qz, Q );
+
+        Q.transpose();
+
+        KMatrix Ar(3,3);
+        mat_mat(R,Q,Ar);
+
+        for(int i=0; i<9; i++) {
+            if( fabs(A[i]) < 1e-15 )
+                continue;
+            if( fabs( (A[i]-Ar[i])/A[i] ) > 1e-3 )
+                return false;
+        }
+
+        return true;
+    }
+
 
 
 
