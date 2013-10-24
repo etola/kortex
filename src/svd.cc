@@ -148,8 +148,8 @@ namespace kortex {
         passert_statement( m_compute_u && m_compute_vt, "U or Vt is not computed. cannot combine back.");
         passert_statement( ldia>=m_r, "pseudo_inverse memory not enough");
 
-        KMatrix Uw; Uw.wrap( m_U,  m_r, m_r ); Uw.transpose();
-        KMatrix Vw; Vw.wrap( m_Vt, m_c, m_c ); Vw.transpose();
+        KMatrix Uw( m_U,  m_r, m_r ); Uw.transpose();
+        KMatrix Vw( m_Vt, m_c, m_c ); Vw.transpose();
 
         int d = (m_r<m_c) ? m_r : m_c;
 
@@ -171,16 +171,16 @@ namespace kortex {
 
     void SVD::print() const {
         if( m_compute_u ) {
-            KMatrix Uw; Uw.wrap( m_U, m_r, m_r );
+            KMatrix Uw( (const double*)m_U, m_r, m_r );
             Uw.print( "U" );
         } else {
             printf("U is not computed\n");
         }
-        KMatrix Sw; Sw.wrap( m_Sd, m_d, 1 );
+        KMatrix Sw( (const double*)m_Sd, m_d, 1 );
         Sw.print("Sd");
 
         if( m_compute_vt ) {
-            KMatrix Vtw; Vtw.wrap( m_Vt, m_c, m_c );
+            KMatrix Vtw( (const double*)m_Vt, m_c, m_c );
             Vtw.print( "Vt" );
             // matrix_print("Vt", m_Vt, m_c, m_c, false, false);
         } else {

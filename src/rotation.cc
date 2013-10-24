@@ -85,9 +85,10 @@ namespace kortex {
     void rotation_matrix_around_z( const double& angle_in_degrees, KMatrix& R ) {
         R.init(3,3);
         double in_plane = angle_in_degrees * RADIANS;
-        R[0] = cos(in_plane);  R[1] = -sin(in_plane); R[2] = 0;
-        R[3] = sin(in_plane);  R[4] =  cos(in_plane); R[5] = 0;
-        R[6] = 0;              R[7] =  0;             R[8] = 1;
+        double* r = R.get_pointer();
+        r[0] = cos(in_plane);  r[1] = -sin(in_plane); r[2] = 0;
+        r[3] = sin(in_plane);  r[4] =  cos(in_plane); r[5] = 0;
+        r[6] = 0;              r[7] =  0;             r[8] = 1;
     }
 
 
@@ -98,16 +99,18 @@ namespace kortex {
 
         double c,s;
         c = cos(theta); s = sin(theta);
-        KMatrix Rx(3,3);
-        Rx.init33( 1, 0, 0, 0, c, -s, 0, s, c );
+
+        double rx [] = { 1, 0, 0, 0, c, -s, 0, s, c };
+        KMatrix Rx( (const double*)rx, 3, 3 );
 
         c = cos(phi); s = sin(phi);
-        KMatrix Ry(3,3);
-        Ry.init33( c, 0, s, 0, 1, 0, -s, 0, c );
+        double ry [] = { c, 0, s, 0, 1, 0, -s, 0, c };
+        KMatrix Ry( (const double*)ry, 3, 3 );
 
         c = cos(psi); s = sin(psi);
-        KMatrix Rz(3,3);
-        Rz.init33( c, -s, 0, s, c, 0, 0, 0, 1 );
+
+        double rz[] = { c, -s, 0, s, c, 0, 0, 0, 1 };
+        KMatrix Rz( (const double*)rz, 3,3 );
 
         mat_mat_mat( Rx, Ry, Rz, R );
     }
@@ -115,7 +118,7 @@ namespace kortex {
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     // Mike Day, Insomniac Games
     void rotation_to_euler( const KMatrix& R, double& theta, double& phi, double& psi ) {
-        assert_statement( R.w == 3 && R.h == 3, "matrix should be 3x3" );
+        assert_statement( R.w() == 3 && R.h() == 3, "matrix should be 3x3" );
         theta = atan2( R(1,2), R(2,2) );
         double c2 = sqrt( sq( R(0,0) ) + sq( R(0,1) ) );
         phi = atan2( -R(0,2), c2 );
