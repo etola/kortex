@@ -25,9 +25,11 @@ namespace kortex {
     class KMatrix;
     void rotation_matrix_around_z( const double& angle_in_degrees, KMatrix& R );
     void euler_to_rotation( double theta, double phi, double psi, KMatrix& R );
+    void euler_to_rotation( double theta, double phi, double psi, double * R );
 
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     void rotation_to_euler( const KMatrix& R, double& theta, double& phi, double& psi );
+    void rotation_to_euler( const  double* R, double& theta, double &phi, double& psi );
 
 
 

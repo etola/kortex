@@ -115,6 +115,11 @@ namespace kortex {
         mat_mat_mat( Rx, Ry, Rz, R );
     }
 
+    void euler_to_rotation( double theta, double phi, double psi, double* R ) {
+        KMatrix wR( R, 3, 3 );
+        euler_to_rotation( theta, phi, psi, wR );
+    }
+
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     // Mike Day, Insomniac Games
     void rotation_to_euler( const KMatrix& R, double& theta, double& phi, double& psi ) {
@@ -128,6 +133,11 @@ namespace kortex {
         theta *= -DEGREES;
         phi   *= -DEGREES;
         psi   *= -DEGREES;
+    }
+
+    void rotation_to_euler( const double* R, double& theta, double &phi, double& psi ) {
+        KMatrix wR(R,3,3);
+        rotation_to_euler( wR, theta, phi, psi );
     }
 
 }
