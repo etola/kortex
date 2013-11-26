@@ -139,21 +139,22 @@ namespace kortex {
         }
         check_file_stream_error( fout );
     }
-    void write_param( ofstream& fout, const float* arr, const int& narr ) {
-        fout << narr << " ";
+    void write_param( ofstream& fout, const string& param_name, const float* arr, const int& narr ) {
+        fout << param_name << " " << narr << " ";
         for( int i=0; i< narr; i++ )
             fout << arr[i] << " ";
+        fout << endl;
+        check_file_stream_error( fout );
+    }
+    void write_param( ofstream& fout, const string& param_name, const double* arr, const int& narr ) {
+        fout << param_name << " " << narr << " ";
+        for( int i=0; i< narr; i++ )
+            fout << std::setprecision(24)
+                 << arr[i] << " ";
+        fout << endl;
         check_file_stream_error( fout );
     }
 
-    void read_param( ifstream& fin, float* arr, const int& narr ) {
-        int asz;
-        fin >> asz;
-        passert_statement_g( asz == narr, "read param error [asz %d] [narr %d]", asz, narr );
-        for( int i=0; i<narr; i++ )
-            fin >> arr[i];
-        check_file_stream_error( fin );
-    }
 
     void read_string(ifstream& fin, string& param, const char* check_against) {
         fin >> param;
@@ -189,12 +190,28 @@ namespace kortex {
             logman_fatal_g("read param [%s] error: out-of-bounds read[%d] pmin[%d] pmax[%d]", param_name, param, param_min, param_max);
     }
 
+    void read_param( ifstream& fin, const char* param_name, float* arr, const int& n_arr ) {
+        passert_pointer( arr );
+        passert_pointer( param_name );
+        passert_pointer_size( n_arr );
+
+        int asz;
+        fin >> asz;
+        passert_statement_g( asz == n_arr, "read param error [asz %d] [narr %d]", asz, n_arr );
+        for( int i=0; i<n_arr; i++ )
+            fin >> arr[i];
+        check_file_stream_error( fin );
+    }
+
     void read_param(ifstream& fin, const char* param_name, double* arr, const int& n_arr) {
         passert_pointer( arr );
         passert_pointer( param_name );
         passert_pointer_size( n_arr );
         string stmp;
         read_string(fin, stmp, param_name);
+        int asz;
+        fin >> asz;
+        passert_statement_g( asz == n_arr, "read param error [asz %d] [n_arr %d]", asz, n_arr );
         for(int i=0; i<n_arr; i++) {
             fin >> arr[i];
         }
