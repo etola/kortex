@@ -58,12 +58,16 @@ namespace kortex {
     void write_param(ofstream& fout, const string& param_name, const vector<int>& arr );
     void write_param(ofstream& fout, const vector<int>& arr );
 
+    void write_param(ofstream& fout,                           const float * arr, const int& narr );
     void write_param(ofstream& fout, const string& param_name, const float * arr, const int& narr );
+    void write_param(ofstream& fout,                           const double* arr, const int& narr );
     void write_param(ofstream& fout, const string& param_name, const double* arr, const int& narr );
 
     void read_string(ifstream& fin, string& param, const char* check_against);
 
+    void read_param (ifstream& fin,                         float * arr, const int& n_arr );
     void read_param (ifstream& fin, const char* param_name, float * arr, const int& n_arr );
+    void read_param (ifstream& fin,                         double* arr, const int& n_arr );
     void read_param (ifstream& fin, const char* param_name, double* arr, const int& n_arr );
 
     void read_param (ifstream& fin, const char* param_name, string& param);
