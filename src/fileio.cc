@@ -158,6 +158,12 @@ namespace kortex {
             fout << arr[i] << " ";
         check_file_stream_error( fout );
     }
+    void write_param( ofstream& fout, const int* arr, const int& narr ) {
+        fout << narr << " ";
+        for( int i=0; i< narr; i++ )
+            fout << arr[i] << " ";
+        check_file_stream_error( fout );
+    }
 
     void write_param( ofstream& fout, const string& param_name, const double* arr, const int& narr ) {
         fout << param_name << " " << narr << " ";
@@ -219,6 +225,17 @@ namespace kortex {
         passert_pointer( param_name );
         passert_pointer_size( n_arr );
 
+        int asz;
+        fin >> asz;
+        passert_statement_g( asz == n_arr, "read param error [asz %d] [narr %d]", asz, n_arr );
+        for( int i=0; i<n_arr; i++ )
+            fin >> arr[i];
+        check_file_stream_error( fin );
+    }
+
+    void read_param( ifstream& fin, int* arr, const int& n_arr ) {
+        passert_pointer( arr );
+        passert_pointer_size( n_arr );
         int asz;
         fin >> asz;
         passert_statement_g( asz == n_arr, "read param error [asz %d] [narr %d]", asz, n_arr );
