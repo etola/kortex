@@ -140,5 +140,41 @@ namespace kortex {
         rotation_to_euler( wR, theta, phi, psi );
     }
 
+    void azel_to_cartesian( double az, double el, double n[3] ) {
+        az *= RADIANS;
+        el *= RADIANS;
+        n[0] = sin( el ) * cos( az );
+        n[1] = sin( el ) * sin( az );
+        n[2] = cos( el );
+    }
+
+    void cartesian_to_azel( const double n[3], double& az, double& el ) {
+        double r = sqrt( sq(n[0]) + sq(n[1]) + sq(n[2]) );
+        double n2 = n[2]/r;
+        if     ( n2 >  1.0 ) n2 =  1.0;
+        else if( n2 < -1.0 ) n2 = -1.0;
+        el = acos( n2 ) * DEGREES;
+        az = atan2( n[1], n[0] ) * DEGREES;
+    }
+
+    static const double  canonical_xd[] = { 1.0, 0.0, 0.0 };
+    static const double  canonical_yd[] = { 0.0, 1.0, 0.0 };
+    static const double  canonical_zd[] = { 0.0, 0.0, 1.0 };
+    void construct_local_coordinate_frame(const double* z_normal, double* new_u, double* new_v) {
+        assert_pointer( z_normal && new_u && new_v );
+        passert_statement( (z_normal != new_u) && (z_normal != new_v) && (new_u != new_v),
+                           "overlapping pointers not allowed" );
+        const double *tmp_n = canonical_xd;
+        if( fabs(dot3(z_normal, tmp_n)) > 0.8 ) {
+            tmp_n = canonical_yd;
+            cross3_normalized(tmp_n, z_normal, new_u);
+            cross3_normalized(z_normal, new_u, new_v);
+        } else {
+            cross3_normalized(z_normal, tmp_n, new_v);
+            cross3_normalized(new_v, z_normal, new_u);
+        }
+    }
+
+
 }
 

@@ -123,6 +123,10 @@ namespace kortex {
         mat_mat( A, 3, 3, B, 3, 3, C, 9 );
     }
 
+    inline void mat_mat_mat_3( const double A[9], const double B[9], const double C[9], double D[9] ) {
+        mat_mat( A, 3, 3, B, 3, 3, C, 3, 3, D, 9 );
+    }
+
 }
 
 #endif
