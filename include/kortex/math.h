@@ -36,6 +36,12 @@ namespace kortex {
         return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
 
+    inline bool is_unit_norm_3( const double a[3], double eps = 1e-8 ) {
+        if( fabs( dot3(a,a) - 1.0 ) < eps )
+            return true;
+        return false;
+    }
+
     inline float  l2norm_sq3( const float * a ) { return dot3(a,a); }
     inline double l2norm_sq3( const double* a ) { return dot3(a,a); }
 
