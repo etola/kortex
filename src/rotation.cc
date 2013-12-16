@@ -12,7 +12,7 @@
 // ---------------------------------------------------------------------------
 
 #include <kortex/rotation.h>
-#include <kortex/kmatrix.h>
+#include <kortex/matrix.h>
 #include <kortex/math.h>
 #include <kortex/defs.h>
 #include <kortex/check.h>
@@ -81,63 +81,43 @@ namespace kortex {
         quaternion_to_rotation ( q, R);
     }
 
-
-    void rotation_matrix_around_z( const double& angle_in_degrees, KMatrix& R ) {
-        R.init(3,3);
+    void rotation_matrix_around_z( const double& angle_in_degrees, double R[9] ) {
         double in_plane = angle_in_degrees * RADIANS;
-        double* r = R.get_pointer();
-        r[0] = cos(in_plane);  r[1] = -sin(in_plane); r[2] = 0;
-        r[3] = sin(in_plane);  r[4] =  cos(in_plane); r[5] = 0;
-        r[6] = 0;              r[7] =  0;             r[8] = 1;
+        R[0] = cos(in_plane);  R[1] = -sin(in_plane); R[2] = 0;
+        R[3] = sin(in_plane);  R[4] =  cos(in_plane); R[5] = 0;
+        R[6] = 0;              R[7] =  0;             R[8] = 1;
     }
 
-
-    void euler_to_rotation( double theta, double phi, double psi, KMatrix& R ) {
+    void euler_to_rotation( double theta, double phi, double psi, double R[9] ) {
         theta *= RADIANS;
         phi   *= RADIANS;
         psi   *= RADIANS;
 
         double c,s;
         c = cos(theta); s = sin(theta);
-
-        double rx [] = { 1, 0, 0, 0, c, -s, 0, s, c };
-        KMatrix Rx( (const double*)rx, 3, 3 );
+        double Rx [] = { 1, 0, 0, 0, c, -s, 0, s, c };
 
         c = cos(phi); s = sin(phi);
-        double ry [] = { c, 0, s, 0, 1, 0, -s, 0, c };
-        KMatrix Ry( (const double*)ry, 3, 3 );
+        double Ry [] = { c, 0, s, 0, 1, 0, -s, 0, c };
 
         c = cos(psi); s = sin(psi);
+        double Rz[] = { c, -s, 0, s, c, 0, 0, 0, 1 };
 
-        double rz[] = { c, -s, 0, s, c, 0, 0, 0, 1 };
-        KMatrix Rz( (const double*)rz, 3,3 );
-
-        mat_mat_mat( Rx, Ry, Rz, R );
-    }
-
-    void euler_to_rotation( double theta, double phi, double psi, double* R ) {
-        KMatrix wR( R, 3, 3 );
-        euler_to_rotation( theta, phi, psi, wR );
+        mat_mat_mat_3( Rx, Ry, Rz, R );
     }
 
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     // Mike Day, Insomniac Games
-    void rotation_to_euler( const KMatrix& R, double& theta, double& phi, double& psi ) {
-        assert_statement( R.w() == 3 && R.h() == 3, "matrix should be 3x3" );
-        theta = atan2( R(1,2), R(2,2) );
-        double c2 = sqrt( sq( R(0,0) ) + sq( R(0,1) ) );
-        phi = atan2( -R(0,2), c2 );
+    void rotation_to_euler( const double R[9], double& theta, double& phi, double& psi ) {
+        theta = atan2( R[5], R[8] );
+        double c2 = sqrt( sq( R[0] ) + sq( R[1] ) );
+        phi = atan2( -R[2], c2 );
         double s1 = sin( theta );
         double c1 = cos( theta );
-        psi = atan2( s1*R(2,0)-c1*R(1,0) , c1*R(1,1)-s1*R(2,1) );
+        psi = atan2( s1*R[6]-c1*R[3] , c1*R[4]-s1*R[7] );
         theta *= -DEGREES;
         phi   *= -DEGREES;
         psi   *= -DEGREES;
-    }
-
-    void rotation_to_euler( const double* R, double& theta, double &phi, double& psi ) {
-        KMatrix wR(R,3,3);
-        rotation_to_euler( wR, theta, phi, psi );
     }
 
     void azel_to_cartesian( double az, double el, double n[3] ) {
@@ -164,6 +144,8 @@ namespace kortex {
         assert_pointer( z_normal && new_u && new_v );
         passert_statement( (z_normal != new_u) && (z_normal != new_v) && (new_u != new_v),
                            "overlapping pointers not allowed" );
+        assert_statement( is_unit_norm_3(z_normal), "z should be unit normed" );
+
         const double *tmp_n = canonical_xd;
         if( fabs(dot3(z_normal, tmp_n)) > 0.8 ) {
             tmp_n = canonical_yd;
@@ -173,6 +155,9 @@ namespace kortex {
             cross3_normalized(z_normal, tmp_n, new_v);
             cross3_normalized(new_v, z_normal, new_u);
         }
+
+        assert_statement( is_unit_norm_3(new_u) && is_unit_norm_3(new_v),
+                          "output is not unit normed" );
     }
 
 

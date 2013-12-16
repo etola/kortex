@@ -22,13 +22,10 @@ namespace kortex {
     void quaternion_to_rotation  ( const double* q,  double* R );
     void  axisangle_to_rotation  ( const double* aa, double* R );
 
-    class KMatrix;
-    void rotation_matrix_around_z( const double& angle_in_degrees, KMatrix& R );
-    void euler_to_rotation( double theta, double phi, double psi, KMatrix& R );
+    void rotation_matrix_around_z( const double& angle_in_degrees, double R[9] );
     void euler_to_rotation( double theta, double phi, double psi, double * R );
 
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
-    void rotation_to_euler( const KMatrix& R, double& theta, double& phi, double& psi );
     void rotation_to_euler( const  double* R, double& theta, double &phi, double& psi );
 
     // azimuth and elevation is in DEGREES
