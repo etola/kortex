@@ -225,9 +225,12 @@ namespace kortex {
         passert_pointer( param_name );
         passert_pointer_size( n_arr );
 
+        string stmp;
+        read_string(fin, stmp, param_name);
+
         int asz;
         fin >> asz;
-        passert_statement_g( asz == n_arr, "read param error [asz %d] [narr %d]", asz, n_arr );
+        passert_statement_g( asz == n_arr, "read param error [%s] [asz %d] [narr %d]", param_name, asz, n_arr );
         for( int i=0; i<n_arr; i++ )
             fin >> arr[i];
         check_file_stream_error( fin );
@@ -262,7 +265,7 @@ namespace kortex {
         read_string(fin, stmp, param_name);
         int asz;
         fin >> asz;
-        passert_statement_g( asz == n_arr, "read param error [asz %d] [n_arr %d]", asz, n_arr );
+        passert_statement_g( asz == n_arr, "read param error [%s] [asz %d] [n_arr %d]", param_name, asz, n_arr );
         for(int i=0; i<n_arr; i++) {
             fin >> arr[i];
         }
