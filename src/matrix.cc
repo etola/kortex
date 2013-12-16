@@ -492,6 +492,22 @@ namespace kortex {
         deallocate(T);
     }
 
+    /// dst[ dr:dr+srsz, dc:dc+scsz ] = src[ sr:sr+srsz, sc:sc+scsz ]
+    void mat_copy( const double* src, int nrs, int ncs,
+                   int sr, int sc, int srsz, int scsz,
+                   double* dst, int nrd, int ncd,
+                   int dr, int dc ) {
+        assert_statement( sr+srsz <= nrs, "src size oob" );
+        assert_statement( sc+scsz <= ncs, "src size oob" );
+        assert_statement( dr+srsz <= nrd, "dst size oob" );
+        assert_statement( dc+scsz <= ncd, "dst size oob" );
+        for( int r=0; r<srsz; r++ ) {
+            const double* srow = src + (sr+r)*ncs;
+            double      * drow = dst + (dr+r)*ncd;
+            memcpy( drow+dc, srow+sc, sizeof(*drow)*scsz );
+        }
+    }
+
 //
 //
 //
@@ -509,5 +525,71 @@ namespace kortex {
         mat_mat( iA, 3, 3, b, bsz, 1, x, xsz );
         return true;
     }
+
+    /// decompose matrix A so that U is an upper triangular matrix and R is an
+    /// orthonormal matrix and A = U*R
+    bool rq_givens_decomposition_3( double A[9], double U[9], double R[9] ) {
+
+        // set A[7] = 0 by Rx
+        double r = sqrt( A[7]*A[7] + A[8]*A[8] );
+        double c = -A[8]/r;
+        double s =  A[7]/r;
+        if( !is_a_number(s*c) ) return false;
+        double Rx[] = { 1.0, 0.0, 0.0, 0.0, c, -s, 0.0, s, c };
+        double ARx[9];
+        mat_mat_3( A, Rx, ARx );
+
+        // set A[6] = 0 by Ry
+        r = sqrt( ARx[8]*ARx[8] + ARx[6]*ARx[6] );
+        c = -ARx[8]/r;
+        s =  ARx[6]/r;
+        if( !is_a_number(s*c) ) return false;
+        double Ry[] = { c, 0.0, s, 0.0, 1.0, 0.0, -s, 0.0, c };
+        double ARxRy[9];
+        mat_mat_3( ARx, Ry, ARxRy );
+
+        // set A[3] = 0 by Rz
+        r = sqrt( ARxRy[3]*ARxRy[3] + ARxRy[4]*ARxRy[4] );
+        c = -ARxRy[4]/r;
+        s =  ARxRy[3]/r;
+        if( !is_a_number(s*c) ) return false;
+        double Rz[] = { c, -s, 0.0, s, c, 0.0, 0.0, 0.0, 1.0 };
+        mat_mat_3( ARxRy, Rz, U );
+        mat_mat_mat_3( Rx, Ry, Rz, R );
+        mat_transpose_3( R );
+
+        // check decomposition
+        double Ar[9];
+        mat_mat_3( U, R, Ar );
+        for( int i=0; i<9; i++ ) {
+            if( fabs(A[i]) < 1e-15 ) continue;
+            if( fabs( (A[i]-Ar[i])/A[i] ) > 1e-3 )
+                return false;
+        }
+        return true;
+    }
+
+    int     mat_print_line( char* cstr, int csz, const double* A, int asz, const char* mat_name ) {
+        int cnt = 0;
+        cnt  = sprintf( cstr, "[%s ", mat_name );
+        for( int i=0; i<asz; i++ )
+            cnt += sprintf( cstr+cnt, "%f ", A[i] );
+        cnt += sprintf( cstr+cnt, "] ");
+        assert_statement( cnt <= csz, "string buffer overflowed" );
+        return cnt;
+    }
+
+    /// A[rid, :] *= alpha
+    void mat_scale_row_3( double* A, int rid, double alpha ) {
+        assert_pointer( A );
+        assert_boundary( rid, 0, 3 );
+        assert_number( alpha );
+        for( int i=0; i<3; i++ ) {
+            A[ 3*rid+i ] *= alpha;
+        }
+    }
+
+
+
 
 }
