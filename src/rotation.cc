@@ -123,9 +123,9 @@ namespace kortex {
     void azel_to_cartesian( double az, double el, double n[3] ) {
         az *= RADIANS;
         el *= RADIANS;
-        n[0] = sin( el ) * cos( az );
-        n[1] = sin( el ) * sin( az );
-        n[2] = cos( el );
+        n[0] = cos( el ) * cos( az );
+        n[1] = cos( el ) * sin( az );
+        n[2] = sin( el );
     }
 
     void cartesian_to_azel( const double n[3], double& az, double& el ) {
@@ -133,7 +133,7 @@ namespace kortex {
         double n2 = n[2]/r;
         if     ( n2 >  1.0 ) n2 =  1.0;
         else if( n2 < -1.0 ) n2 = -1.0;
-        el = acos( n2 ) * DEGREES;
+        el = asin( n2 ) * DEGREES;
         az = atan2( n[1], n[0] ) * DEGREES;
     }
 
