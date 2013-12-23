@@ -57,6 +57,7 @@ namespace kortex {
     public:
         Image();
         Image(int w, int h, ImageType type);
+        Image(const Image& img);
 
         void create( int w, int h, ImageType type );
 

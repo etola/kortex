@@ -40,6 +40,10 @@ namespace kortex {
         create( w, h, type );
     }
 
+    Image::Image( const Image& img ) {
+        this->copy( &img );
+    }
+
     void Image::create( int w, int h, ImageType type ) {
         passert_statement( w*h>0, "will not create null image" );
         size_t sz = req_mem( w, h, type );
