@@ -24,6 +24,8 @@ namespace kortex {
     inline double sq(const double& v) { return v*v; }
     inline int    sq(const int&    v) { return v*v; }
 
+    float  dot128( const float* a, const float* b );
+
     double dot ( const double * a, const double* b, int asz );
 
     inline float  dot3( const float * a, const float * b ) {
@@ -38,6 +40,12 @@ namespace kortex {
 
     inline bool is_unit_norm_3( const double a[3], double eps = 1e-8 ) {
         if( fabs( dot3(a,a) - 1.0 ) < eps )
+            return true;
+        return false;
+    }
+
+    inline bool is_unit_norm_128( const float a[128], float eps = 1e-8 ) {
+        if( fabs( dot128(a,a)-1.0f ) < eps )
             return true;
         return false;
     }

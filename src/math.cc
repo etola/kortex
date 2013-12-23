@@ -20,13 +20,23 @@
 
 namespace kortex {
 
+    float  dot128( const float* a, const float* b ) {
+        float s = 0.0f;
+#ifdef WITH_SSE
+        s = sse_dot_128(a,b);
+#else
+        for( int i=0; i<asz; i++ )
+            s += a[i]*b[i];
+#endif
+        return s;
+    }
+
     double dot( const double * a, const double* b, int asz ) {
         double s = 0.0;
         for( int i=0; i<asz; i++ )
             s += a[i]*b[i];
         return s;
     }
-
     void cross3(const float * a, const float * b, float * c ) {
         assert_pointer( a && b && c );
         assert_noalias_p( a, c );
