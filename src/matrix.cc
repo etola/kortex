@@ -589,6 +589,19 @@ namespace kortex {
         }
     }
 
+    bool mat_inv_mat_3( const double A[9], const double B[9], double C[9] ) {
+        assert_statement( B != C, "mem aliasing not allowed" );
+        double iA[9];
+        if( !mat_inv_3( A, 3, iA, 3, 0.0 ) ) return false;
+        mat_mat_3( iA, B, C );
+        return true;
+    }
+
+    bool mat_inv_mat_mat_3( const double A[9], const double B[9], const double C[9], double D[9] ) {
+        double BC[9];
+        mat_mat_3(B, C, BC);
+        return mat_inv_mat_3( A, BC, D );
+    }
 
 
 
