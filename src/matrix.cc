@@ -603,6 +603,20 @@ namespace kortex {
         return mat_inv_mat_3( A, BC, D );
     }
 
+    bool mat_is_upper_hessenberg( const double* A, int nra, int nca ) {
+        assert_pointer( A );
+        assert_pointer_size( nra*nca );
+        if( nra != nca ) return false;
+        for( int i=2; i<nra; i++ ) {
+            for( int j=0; j<i-1; j++ ) {
+                if( fabs(A[i*nra+j]) > MAT_EPS )
+                    return false;
+            }
+        }
+        return true;
+    }
+
+
 
 
 }

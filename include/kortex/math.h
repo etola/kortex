@@ -15,6 +15,8 @@
 #define KORTEX_MATH_H
 
 #include <cmath>
+#include <vector>
+using std::vector;
 
 namespace kortex {
 
@@ -70,6 +72,9 @@ namespace kortex {
     void cross3_normalized( const double* a, const double* b, double* c );
 
     void gaussian_1d( float* fltr, const int& fsz, const float& mean, const float& sigma );
+
+    // assuming p(x) = c0 + c1 x + c2 x^2 + ...
+    bool find_real_roots_of_polynomial( const vector<double>& coeffs, vector<double>& real_roots );
 
 }
 
