@@ -208,6 +208,7 @@ namespace kortex {
     /// A[rid, :] *= alpha
     void mat_scale_row_3( double* A, int rid, double alpha );
 
+    bool mat_is_upper_hessenberg( const double* A, int nra, int nca );
 
 }
 

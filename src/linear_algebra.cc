@@ -17,6 +17,7 @@
 #include <kortex/mem_manager.h>
 #include <kortex/mem_unit.h>
 #include <kortex/svd.h>
+#include <kortex/matrix.h>
 
 #include <cstring>
 
@@ -143,6 +144,36 @@ namespace kortex {
         dgelss_(&nr, &nc, &nrhs, A, &lda, B, &ldb,
                 sing_val, &rcond, &rank, work, &lwork, &info);
         return info;
+    }
+
+//
+    bool mat_eigenvalues_upper_hessenberg( const double* H, int nra, double* eigs_r, double* eigs_i, int n_eigs, MemUnit& mem ) {
+
+        assert_pointer( H );
+        assert_pointer_size( nra );
+        assert_pointer( eigs_r );
+        assert_pointer( eigs_i );
+        assert_statement_g( n_eigs >= nra, "eigenvalue array size insufficient [%f/%f]", n_eigs, nra );
+        assert_statement( mat_is_upper_hessenberg( H, nra, nra ), "matrix H should be upper hessenberg" );
+
+        mem.resize( sizeof(*H) * ( nra*nra + nra*11 ) );
+        double * A    = (double*)( mem.get_buffer() );
+        double * work = A + nra*nra;
+        int     lwork = nra*11;
+
+        mat_transpose( H, nra, nra, A, nra*nra );
+
+        char job   = 'E';
+        char compz = 'N';
+        int    ilo = 1;
+        int    ihi = nra;
+        double z = 0;
+        int   ldz = 1;
+
+        int info;
+        dhseqr_(&job, &compz, &nra, &ilo, &ihi, A, &nra, eigs_r, eigs_i, &z, &ldz, work, &lwork, &info );
+
+        return bool(info==0);
     }
 
 
