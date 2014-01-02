@@ -34,6 +34,7 @@ fileio.cc \
 message.cc \
 color.cc \
 minmax.cc \
+geometry.cc \
 math.cc \
 progress_bar.cc \
 random.cc \
@@ -70,6 +71,7 @@ fileio.h \
 message.h \
 color.h \
 minmax.h \
+geometry.h \
 math.h \
 progress_bar.h \
 random.h \
