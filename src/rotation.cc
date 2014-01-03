@@ -130,11 +130,15 @@ namespace kortex {
 
     void cartesian_to_azel( const double n[3], double& az, double& el ) {
         double r = sqrt( sq(n[0]) + sq(n[1]) + sq(n[2]) );
+        assert_statement( r > 1e-16, "normal magnitude approaches zero..." );
         double n2 = n[2]/r;
         if     ( n2 >  1.0 ) n2 =  1.0;
         else if( n2 < -1.0 ) n2 = -1.0;
         el = asin( n2 ) * DEGREES;
-        az = atan2( n[1], n[0] ) * DEGREES;
+        if( fabs(fabs(el)-90) > 1e-8 )
+            az = atan2( n[1], n[0] ) * DEGREES;
+        else
+            az = 0.0;
     }
 
     static const double  canonical_xd[] = { 1.0, 0.0, 0.0 };
