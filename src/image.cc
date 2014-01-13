@@ -254,12 +254,12 @@ namespace kortex {
     }
     float Image::get_bilinear_u( const float& x0, const float& y0 ) const {
         assert_type  ( IT_U_GRAY );
-        assert_statement_g(is_inside_margin(x0,y0,2), "[x %f] [y %f] oob", x0, y0);
+        assert_statement_g(is_inside(int(x0),int(y0)) && is_inside(int(x0)+1, int(y0)+1), "[x %f] [y %f] oob", x0, y0);
         return bilinear_interpolation( m_data_u, m_w, m_h, 1, 0, x0, y0 );
     }
     float Image::get_bilinear_f( const float& x0, const float& y0 ) const {
         assert_type  ( IT_F_GRAY );
-        assert_statement_g(is_inside_margin(x0,y0,2), "[x %f] [y %f] oob", x0, y0);
+        assert_statement_g(is_inside(int(x0),int(y0)) && is_inside(int(x0)+1, int(y0)+1), "[x %f] [y %f] oob", x0, y0);
         return bilinear_interpolation( m_data_f, m_w, m_h, 1, 0, x0, y0 );
     }
     float Image::get_bicubic_u( const float& x0, const float& y0 ) const {
