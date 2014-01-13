@@ -165,5 +165,37 @@ namespace kortex {
     }
 
 
+    void rotation_to_az_el_zeta( const double R[9], double& az, double& el, double& zeta ) {
+        double nz[3];
+        nz[0] = R[6];
+        nz[1] = R[7];
+        nz[2] = R[8];
+        normalize_l2norm3( nz );
+
+        cartesian_to_azel( nz, az, el );
+
+        double nx[3], ny[3];
+        construct_local_coordinate_frame( nz, nx, ny );
+        double Rtmp[9];
+        Rtmp[0] = nx[0]; Rtmp[1] = nx[1]; Rtmp[2] = nx[2];
+        Rtmp[3] = ny[0]; Rtmp[4] = ny[1]; Rtmp[5] = ny[2];
+        Rtmp[6] = nz[0]; Rtmp[7] = nz[1]; Rtmp[8] = nz[2];
+
+        double Rz[9];
+        mat_mat_trans( R, 3, 3, Rtmp, 3, 3, Rz, 9 );
+
+        double xd[] = { 1.0, 0.0, 0.0 };
+        double nx0[3];
+        // double nx1[3];
+        // mat_vec_3( Rtmp, xd, nx0 );
+        // mat_vec_3( R,    xd, nx1 );
+        // zeta = acos( dot3( nx0, nx1 ) ) * DEGREES;
+        mat_vec_3( Rz, xd, nx0 );
+
+        zeta  = acos( std::max( -1.0, std::min(nx0[0],1.0) ) ) * DEGREES;
+        zeta *= sign( nx0[1] );
+    }
+
+
 }
 

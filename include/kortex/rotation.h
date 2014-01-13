@@ -35,7 +35,7 @@ namespace kortex {
     void cartesian_to_azel( const double n[3], double& az, double& el );
 
     void construct_local_coordinate_frame(const double* z_normal, double* new_u, double* new_v);
-
+    void rotation_to_az_el_zeta( const double R[9], double& az, double& el, double& zeta );
 
 }
 
