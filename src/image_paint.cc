@@ -124,6 +124,23 @@ namespace kortex {
         }
     }
 
+    void draw_filled_square( Image* im, int x0, int y0, int w, ColorName color) {
+        assert_pointer( im );
+        im->assert_type( IT_U_PRGB | IT_U_IRGB );
+
+        uchar cr, cg, cb;
+        get_color(color, cr, cg, cb);
+        int hw = w/2;
+        for(int y=y0-hw; y<=y0+hw; y++) {
+            for(int x=x0-hw; x<=x0+hw; x++) {
+                if( !im->is_inside(x,y) )
+                    continue;
+                im->set(x, y, cr, cg, cb);
+            }
+        }
+    }
+
+
     void draw_shaded( Image* im, const Image* mask, float ss, ColorName color) {
         assert_pointer( im && mask );
         im->assert_type( IT_U_PRGB | IT_U_IRGB );
