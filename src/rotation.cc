@@ -196,6 +196,29 @@ namespace kortex {
         zeta *= sign( nx0[1] );
     }
 
+    void rotation_matrix_frame_error( const double* R_ref, const double* R_obs,
+                                      double& e_boresight, double& e_inplain ) {
+        assert_pointer( R_ref );
+        assert_pointer( R_obs );
+
+        double normal_z[3] = { 0.0, 0.0, 1.0 };
+        double normal_x[3] = { 1.0, 0.0, 0.0 };
+
+        double ref_bore[3], ref_x[3];
+        mat_trans_vec_3( R_ref, normal_z, ref_bore );
+        mat_trans_vec_3( R_ref, normal_x, ref_x );
+
+        double obs_bore[3], obs_x[3];
+        mat_trans_vec_3( R_obs, normal_z, obs_bore );
+        mat_trans_vec_3( R_obs, normal_x, obs_x );
+
+        double ebd = std::max( std::min( dot3( ref_bore, obs_bore ), 1.0 ), -1.0 );
+        double eid = std::max( std::min( dot3( ref_x,    obs_x    ), 1.0 ), -1.0 );
+
+        e_boresight = acos( ebd ) * DEGREES;
+        e_inplain   = acos( eid ) * DEGREES;
+    }
+
 
 }
 

@@ -37,6 +37,9 @@ namespace kortex {
     void construct_local_coordinate_frame(const double* z_normal, double* new_u, double* new_v);
     void rotation_to_az_el_zeta( const double R[9], double& az, double& el, double& zeta );
 
+    void rotation_matrix_frame_error( const double* R_ref, const double* R_obs,
+                                      double& e_boresight, double& e_inplain );
+
 }
 
 #endif
