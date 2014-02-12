@@ -122,6 +122,14 @@ namespace kortex {
         }
     }
 
+    string file_name( const string& str, int num1, int num2, const string& ext, int num_padding ) {
+        switch( num_padding ) {
+        case 4:  return string( str + pad_zeros4(num1) + "-" + pad_zeros4(num2) + "." + ext ); break;
+        case 8:
+        default: return string( str + pad_zeros8(num1) + "-" + pad_zeros8(num2) + "." + ext ); break;
+        }
+    }
+
 
 }
 

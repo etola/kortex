@@ -37,6 +37,7 @@ namespace kortex {
     string pad_zeros8( int num );
 
     string file_name( const string& str, int num, const string& ext, int num_padding=4 );
+    string file_name( const string& str, int num0, int num1, const string& ext, int num_padding=4 );
 
 }
 
