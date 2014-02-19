@@ -459,31 +459,33 @@ namespace kortex {
 
     void image_scale( const Image* im, const float& scale, const bool& run_parallel, Image* out ) {
         passert_pointer( im && out );
-        im->passert_type( IT_F_GRAY );
+        im->passert_type( IT_F_GRAY | IT_F_IRGB );
         int w = im->w();
         int h = im->h();
-        passert_statement( out->w() == w && out->h() == h, "image dimension mismatch" );
 
-        switch( run_parallel ) {
-        case true:
+        if( im != out )
+            out->create( w, h, im->type() );
+
+        for( int c=0; c<im->ch(); c++ ) {
+            switch( run_parallel ) {
+            case true:
 #pragma omp parallel for
-            for( int y=0; y<h; y++ ) {
-                const float* srow =  im->get_row_f(y);
-                float*       drow = out->get_row_f(y);
-                for( int x=0; x<w; x++ ) {
-                    drow[x] = srow[x] * scale;
+                for( int y=0; y<h; y++ ) {
+                    const float* srow =  im->get_row_fi(y,c);
+                    float*       drow = out->get_row_fi(y,c);
+                    for( int x=0; x<w; x++ )
+                        drow[x] = srow[x] * scale;
                 }
-            }
-            break;
-        case false:
-            for( int y=0; y<h; y++ ) {
-                const float* srow =  im->get_row_f(y);
-                float*       drow = out->get_row_f(y);
-                for( int x=0; x<w; x++ ) {
-                    drow[x] = srow[x] * scale;
+                break;
+            case false:
+                for( int y=0; y<h; y++ ) {
+                    const float* srow =  im->get_row_fi(y,c);
+                    float*       drow = out->get_row_fi(y,c);
+                    for( int x=0; x<w; x++ )
+                        drow[x] = srow[x] * scale;
                 }
+                break;
             }
-            break;
         }
     }
 

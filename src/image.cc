@@ -149,22 +149,22 @@ namespace kortex {
     // get image channels
     //
     uchar      * Image::get_channel_u( int cid ) {
-        assert_type( IT_U_GRAY | IT_U_PRGB | IT_U_IRGB );
+        assert_type( IT_U_GRAY | IT_U_IRGB );
         assert_boundary( cid, 0, m_ch );
         return m_data_u + cid*m_h*m_w;
     }
     const uchar* Image::get_channel_u( int cid ) const {
-        assert_type( IT_U_GRAY | IT_U_PRGB | IT_U_IRGB );
+        assert_type( IT_U_GRAY | IT_U_IRGB );
         assert_boundary( cid, 0, m_ch );
         return m_data_u + cid*m_h*m_w;
     }
     float      * Image::get_channel_f( int cid ) {
-        assert_type( IT_F_GRAY | IT_F_PRGB | IT_F_IRGB );
+        assert_type( IT_F_GRAY | IT_F_IRGB );
         assert_boundary( cid, 0, m_ch );
         return m_data_f + cid*m_h*m_w;
     }
     const float* Image::get_channel_f( int cid ) const {
-        assert_type( IT_F_GRAY | IT_F_PRGB | IT_F_IRGB );
+        assert_type( IT_F_GRAY | IT_F_IRGB );
         assert_boundary( cid, 0, m_ch );
         return m_data_f + cid*m_h*m_w;
     }
@@ -183,12 +183,12 @@ namespace kortex {
         return m_data_f + y0 * m_w * m_ch;
     }
     uchar* Image::get_row_ui( int y0, int cid ) { // cid'th channel y0'th row
-        assert_type( IT_U_IRGB );
+        assert_type( IT_U_IRGB | IT_U_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
         return m_data_u + (cid * m_h + y0) * m_w;
     }
     float* Image::get_row_fi( int y0, int cid ) { // cid'th channel y0'th row
-        assert_type( IT_F_IRGB );
+        assert_type( IT_F_IRGB | IT_F_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
         return m_data_f + (cid * m_h + y0) * m_w;
     }
@@ -204,12 +204,12 @@ namespace kortex {
         return m_data_f + y0 * m_w * m_ch;
     }
     const uchar* Image::get_row_ui( int y0, int cid ) const { // cid'th channel y0'th row
-        assert_type( IT_U_IRGB );
+        assert_type( IT_U_IRGB | IT_U_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
         return m_data_u + (cid * m_h + y0) * m_w;
     }
     const float* Image::get_row_fi( int y0, int cid ) const { // cid'th channel y0'th row
-        assert_type( IT_F_IRGB );
+        assert_type( IT_F_IRGB | IT_F_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
         return m_data_f + (cid * m_h + y0) * m_w;
     }
