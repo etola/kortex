@@ -20,32 +20,31 @@ namespace kortex {
         assert_pointer( img );
         passert_statement_g( x>=0 && x<=w-1 && y>=0 && y<=h-1, "[x %f][y %f] [w %d] [h %d]", x, y, w, h );
 
-        int mnx = (int)floor( x );
-        int mny = (int)floor( y );
-        int mxx = mnx+1;
-        int mxy = mny+1;
+        int   x0  = (int)floor( x );
+        int   y0  = (int)floor( y );
+        int   x1  = x0+1;
+        int   y1  = y0+1;
 
-        assert_statement( is_inside(mnx,0,w) && is_inside(mxx,0,w), "coords oob" );
-        assert_statement( is_inside(mny,0,h) && is_inside(mxy,0,h), "coords oob" );
+        float alfa = x0 - x;
+        float beta = y0 - y;
 
-        float alfa = mxx - x;
-        float beta = mxy - y;
+        if( alfa < 0.0001f ) {
+            alfa = 0.0f;
+            y1   = y0;
+        }
+        if( beta < 0.0001f ) {
+            beta = 0.0f;
+            x1   = x0;
+        }
+        assert_statement( is_inside(x0,0,w) && is_inside(x1,0,w), "coords oob" );
+        assert_statement( is_inside(y0,0,h) && is_inside(y1,0,h), "coords oob" );
 
-        if( alfa < 0.0001f ) alfa = 0.0f;
-        if( beta < 0.0001f ) beta = 0.0f;
-        if( alfa > 0.9999f ) alfa = 1.0f;
-        if( beta > 0.9999f ) beta = 1.0f;
+        const T* row0 = img + y0*w;
+        const T* row1 = img + y1*w;
 
-        int mnyw = mny * w * nc;
-        int mxyw = mxy * w * nc;
+        double ab = alfa * beta;
 
-        if( alfa < 0.0001 ) return float(beta * img[mnyw+mxx*nc+c] + (1-beta) * img[mxyw+mxx*nc+c]);
-        if( alfa > 0.9999 ) return float(beta * img[mnyw+mnx*nc+c] + (1-beta) * img[mxyw+mnx*nc+c]);
-        if( beta < 0.0001 ) return float(alfa * img[mxyw+mnx*nc+c] + (1-alfa) * img[mxyw+mxx*nc+c]);
-        if( beta > 0.9999 ) return float(alfa * img[mnyw+mnx*nc+c] + (1-alfa) * img[mnyw+mxx*nc+c]);
-
-        return float( beta*(alfa * img[mnyw+mnx*nc+c] + (1-alfa)*img[mnyw+mxx*nc+c] )
-                      +(1-beta)*(alfa * img[mxyw+mnx*nc+c] + (1-alfa)*img[mxyw+mxx*nc+c] ) );
+        return (alfa - ab) * row0[x1] + (1.0-beta)*(1.0-alfa) * row0[x0] + ab * row1[x1] + (beta-ab) * row1[x0];
     }
 
     /// assumes the position to compute interp is between n1 and n2 and t away from n1.
