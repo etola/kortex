@@ -373,8 +373,10 @@ namespace kortex {
 
         for( int y=0; y<nh; y++ ) {
             float ny = y*ratioy;
+            if( ny >= src->h()-1 ) ny = src->h()-1;
             for( int x=0; x<nw; x++ ) {
                 float nx = x*ratiox;
+                if( nx >= src->w()-1 ) nx = src->w()-1;
                 float v = src->get_bilinear(nx, ny);
                 switch( dtype ) {
                 case TYPE_FLOAT: dst->set(x, y, v); break;
