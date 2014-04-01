@@ -77,6 +77,12 @@ namespace kortex {
                          const double* C, int nrc, int ncc,
                          double      * D, int dsz );
 
+    bool mat_inv_mat_mat( const double* A, int nra, int nca,
+                          const double* B, int nrb, int ncb,
+                          const double* C, int nrc, int ncc,
+                          double* D, int dsz );
+
+
     void    mat_mat_mat_trans( const double* A, int nra, int nca,
                                const double* B, int nrb, int ncb,
                                const double* C, int nrc, int ncc,

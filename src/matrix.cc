@@ -541,8 +541,8 @@ namespace kortex {
 
         // set A[6] = 0 by Ry
         r = sqrt( ARx[8]*ARx[8] + ARx[6]*ARx[6] );
-        c = -ARx[8]/r;
-        s =  ARx[6]/r;
+        c = ARx[8]/r;
+        s = ARx[6]/r;
         if( !is_a_number(s*c) ) return false;
         double Ry[] = { c, 0.0, s, 0.0, 1.0, 0.0, -s, 0.0, c };
         double ARxRy[9];
@@ -594,6 +594,20 @@ namespace kortex {
         double iA[9];
         if( !mat_inv_3( A, 3, iA, 3, 0.0 ) ) return false;
         mat_mat_3( iA, B, C );
+        return true;
+    }
+
+    bool mat_inv_mat_mat( const double* A, int nra, int nca,
+                          const double* B, int nrb, int ncb,
+                          const double* C, int nrc, int ncc,
+                          double* D, int dsz ) {
+        assert_statement( nra==nca, "A must be square" );
+        passert_statement( nra <= 11, "insufficient inversion buffer" );
+
+        double iA[121];
+        if( !mat_inv(A, nra, nca, iA, nra, nca ) )
+            return false;
+        mat_mat_mat( iA, nra, nca, B, nrb, ncb, C, nrc, ncc, D, dsz );
         return true;
     }
 
