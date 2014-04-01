@@ -157,6 +157,10 @@ namespace kortex {
         void  set ( const int& x0, const int& y0, const float& r, const float& g, const float& b );
         void  set ( const int& x0, const int& y0, const uchar& r, const uchar& g, const uchar& b );
 
+        void  set ( const int& x0, const int& y0, const int& hsz, const uchar& r, const uchar& g, const uchar& b );
+        void  set ( const int& x0, const int& y0, const int& hsz, const float& r, const float& g, const float& b );
+
+
         /// copies the src region [ (sx0,sy0) -> (sx0+rw, sy0+rh) ] to the
         /// 'this' region starting from (dx0,dy0)
         void copy_from_region(const Image* src,

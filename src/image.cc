@@ -484,6 +484,30 @@ namespace kortex {
         }
     }
 
+    void Image::set( const int& x0, const int& y0, const int& hsz, const uchar& r, const uchar& g, const uchar& b ) {
+        assert_type( IT_F_PRGB | IT_F_IRGB );
+        assert_statement_g( is_inside(x0,y0), "[x %d] [y %d] out of bounds", x0, y0 );
+        for( int y=y0-hsz; y<=y0+hsz; y++ ) {
+            if( !kortex::is_inside(y,0,m_h) ) continue;
+            for( int x=x0-hsz; x<=x0+hsz; x++ ) {
+                if( !kortex::is_inside(x,0,m_w) ) continue;
+                this->set( x, y, r, g, b );
+            }
+        }
+    }
+
+    void Image::set( const int& x0, const int& y0, const int& hsz, const float& r, const float& g, const float& b ) {
+        assert_type( IT_F_PRGB | IT_F_IRGB );
+        assert_statement_g( is_inside(x0,y0), "[x %d] [y %d] out of bounds", x0, y0 );
+        for( int y=y0-hsz; y<=y0+hsz; y++ ) {
+            if( !kortex::is_inside(y,0,m_h) ) continue;
+            for( int x=x0-hsz; x<=x0+hsz; x++ ) {
+                if( !kortex::is_inside(x,0,m_w) ) continue;
+                this->set( x, y, r, g, b );
+            }
+        }
+    }
+
     //
     //
     //
