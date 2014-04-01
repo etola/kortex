@@ -40,13 +40,19 @@ namespace kortex {
         return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     }
 
-    inline bool is_unit_norm_3( const double a[3], double eps = 1e-8 ) {
+    inline bool is_unit_norm_3( const double a[3], double eps = 1e-5 ) {
         if( fabs( dot3(a,a) - 1.0 ) < eps )
             return true;
         return false;
     }
 
-    inline bool is_unit_norm_128( const float a[128], float eps = 1e-8 ) {
+    inline bool is_unit_norm_3( const float  a[3], float  eps = 1e-5 ) {
+        if( fabs( dot3(a,a) - 1.0 ) < eps )
+            return true;
+        return false;
+    }
+
+    inline bool is_unit_norm_128( const float a[128], float eps = 1e-5 ) {
         if( fabs( dot128(a,a)-1.0f ) < eps )
             return true;
         return false;
