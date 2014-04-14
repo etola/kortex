@@ -55,6 +55,7 @@ namespace kortex {
         float*      m_data_f;
         int  *      m_data_i;
         MemUnit     m_memory;
+        bool        m_wrapper;
 
     public:
         Image();
@@ -77,6 +78,7 @@ namespace kortex {
         ChannelType channel_type() const { return m_channel_type;          }
         DataType    precision()    const { return image_precision(m_type); }
         bool        is_empty()     const { return !(m_w*m_h);              }
+        bool        is_wrapper()   const { return m_wrapper;               }
         size_t      pixel_count()  const { return size_t(m_w)*size_t(m_h)*size_t(m_ch); }
 
         bool is_inside( int x, int y ) const {

@@ -30,13 +30,14 @@ namespace kortex {
         m_data_i       = NULL;
         m_data_u       = NULL;
         m_data_f       = NULL;
+        m_wrapper      = false;
     }
 
     Image::Image() {
         init_();
     }
 
-    Image::Image( int w, int h, ImageType type) {
+    Image::Image( int w, int h, ImageType type ) {
         init_();
         create( w, h, type );
     }
@@ -48,6 +49,10 @@ namespace kortex {
     void Image::create( int w, int h, ImageType type ) {
         passert_statement( w*h>0, "will not create null image" );
         size_t sz = req_mem( w, h, type );
+        if( m_wrapper ) {
+            passert_statement( (m_w==w) && (m_h==h) && (type==m_type), "cannot change the attributes of a wrapper image" );
+            return;
+        }
         m_memory.resize( sz );
         switch( image_precision(type) ) {
         case TYPE_UCHAR: m_data_u = (uchar*) m_memory.get_buffer(); break;
@@ -85,6 +90,7 @@ namespace kortex {
 
     void Image::convert( ImageType im_type ) {
         if( m_type == im_type ) return;
+        if( m_wrapper ) logman_fatal("cannot convert wrapper image");
         Image new_image;
         new_image.create( m_w, m_h, im_type );
         convert_image( this, &new_image );
@@ -93,6 +99,7 @@ namespace kortex {
 
     void Image::swap( Image* img ) {
         passert_pointer( img );
+        passert_statement( !m_wrapper && !img->is_wrapper(), "cannot swap wrapper image" );
         std::swap( m_w            , img->m_w            );
         std::swap( m_h            , img->m_h            );
         std::swap( m_ch           , img->m_ch           );
@@ -653,6 +660,7 @@ namespace kortex {
         img->m_h = m_h;
         img->m_ch = 1;
         img->m_channel_type = ITC_IMAGE;
+        img->m_wrapper = true;
         switch( precision() ) {
         case TYPE_UCHAR:
             img->m_type = IT_U_GRAY;
@@ -675,6 +683,7 @@ namespace kortex {
         img->m_h = m_h;
         img->m_ch = 1;
         img->m_channel_type = ITC_IMAGE;
+        img->m_wrapper = true;
         switch( precision() ) {
         case TYPE_UCHAR:
             img->m_type = IT_U_GRAY;
@@ -762,8 +771,5 @@ namespace kortex {
         }
         return true;
     }
-
-
-
 
 }
