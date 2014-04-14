@@ -94,6 +94,12 @@ namespace kortex {
 //
 // single mat ops
 //
+    double mat_det_2( const double* A, int nra ) {
+        assert_pointer( A );
+        assert_statement_g( nra == 2, "invalid sized matrix [%d]", nra );
+        return ( A[0]*A[3] - A[1]*A[2] );
+    }
+
     double mat_det_3( const double* A, int nra ) {
         assert_pointer( A );
         assert_statement_g( nra == 3, "invalid sized matrix [%d]", nra );
@@ -262,6 +268,25 @@ namespace kortex {
 
     inline double det_2(double a00, double a01, double a10, double a11) {
         return a00*a11 - a01*a10;
+    }
+
+    bool mat_inv_2( const double* A, int nra, double* iA, int nria, double inversion_threshold ) {
+        assert_pointer( A && iA );
+        assert_statement( (nra == 2) && (nria==2), "invalid matrix size" );
+        if( inversion_threshold == 0.0 ) {
+            inversion_threshold = MAT_EPS;
+        }
+        double d = det_2( A[0], A[1], A[2], A[3] );
+        if( fabs(d) < inversion_threshold ) {
+            mat_zero( iA, nria, nria );
+            return false;
+        }
+        double id = 1.0 / d;
+        iA[0] =  A[3] * id;
+        iA[1] = -A[1] * id;
+        iA[2] = -A[2] * id;
+        iA[3] =  A[0] * id;
+        return true;
     }
 
     bool mat_inv_3( const double* A, int nra,

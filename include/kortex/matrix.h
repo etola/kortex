@@ -22,6 +22,7 @@ namespace kortex {
 //
 // single mat ops
 //
+    double  mat_det_2( const double* A, int nra );
     double  mat_det_3( const double* A, int nra );
     double  mat_trace( const double* A, int nra, int nca );
 
@@ -52,6 +53,7 @@ namespace kortex {
     double  mat_norm( const double* A, int nra, int nca );
     double  mat_norm_sq( const double* A, int nra, int nca );
 
+    bool    mat_inv_2( const double* A, int nra, double* iA, int nria, double inversion_threshold );
     bool    mat_inv_3( const double* A, int nra,          double* iA, int nria, double inversion_threshold );
     bool    mat_inv  ( const double* A, int nra, int nca, double* iA, int nria, int ncia );
 
