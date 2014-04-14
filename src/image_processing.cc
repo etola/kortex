@@ -79,7 +79,8 @@ namespace kortex {
         return true;
     }
 
-
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_hv( const Image* img, const float* kernel, const int& ksz, Image* out ) {
         assert_pointer( img && out && kernel );
         assert_pointer_size( ksz );
@@ -106,6 +107,8 @@ namespace kortex {
         }
     }
 
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_hv_par( const Image* img, const float* kernel, const int& ksz, Image* out ) {
         assert_pointer( img && out && kernel );
         assert_pointer_size( ksz );
@@ -141,6 +144,8 @@ namespace kortex {
         return fsz;
     }
 
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_gaussian( const Image* img, const float& sigma, Image* out ) {
         assert_pointer( img && out );
         assert_statement( !img->is_empty(), "image is empty" );
@@ -155,6 +160,8 @@ namespace kortex {
         deallocate( sfilter );
     }
 
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_gaussian_par( const Image* img, const float& sigma, Image* out ) {
         assert_pointer( img && out );
         assert_statement( !img->is_empty(), "image is empty" );
