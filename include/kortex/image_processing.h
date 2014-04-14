@@ -75,6 +75,16 @@ namespace kortex {
         }
     }
 
+    void image_add    ( const Image* im0, const Image* im1, Image* out );
+    void image_add_par( const Image* im0, const Image* im1, Image* out );
+    inline void image_add( const Image* im0, const Image* im1, bool run_parallel, Image* out ) {
+        switch( run_parallel ) {
+        case true : image_add    ( im0, im1, out ); break;
+        case false: image_add_par( im0, im1, out ); break;
+        }
+    }
+
+
     void image_color_invert( Image* img );
 
     template <typename T>

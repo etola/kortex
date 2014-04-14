@@ -498,4 +498,45 @@ namespace kortex {
     }
 
 
+    void image_add( const Image* im0, const Image* im1, Image* out ) {
+        passert_pointer( im0 && im1 && out );
+        im0->passert_type( IT_F_GRAY );
+        im1->passert_type( IT_F_GRAY );
+        int w = im0->w();
+        int h = im0->h();
+        passert_statement( (im1->w() == w) && (im1->h()==h), "dimension mismatch" );
+        out->create( w, h, im0->type() );
+
+        for( int y=0; y<h; y++ ) {
+            const float* row0 = im0->get_row_f(y);
+            const float* row1 = im1->get_row_f(y);
+            float      * drow = out->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                drow[x] = row0[x]+row1[x];
+            }
+        }
+    }
+
+    void image_add_par( const Image* im0, const Image* im1, Image* out ) {
+        passert_pointer( im0 && im1 && out );
+        im0->passert_type( IT_F_GRAY );
+        im1->passert_type( IT_F_GRAY );
+        int w = im0->w();
+        int h = im0->h();
+        passert_statement( (im1->w() == w) && (im1->h()==h), "dimension mismatch" );
+        out->create( w, h, im0->type() );
+
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            const float* row0 = im0->get_row_f(y);
+            const float* row1 = im1->get_row_f(y);
+            float      * drow = out->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                drow[x] = row0[x]+row1[x];
+            }
+        }
+    }
+
+
+
 }
