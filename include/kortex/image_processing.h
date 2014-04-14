@@ -29,6 +29,15 @@ namespace kortex {
     inline void filter_hv( Image* img, const float* kernel, const int& ksz ) {
         filter_hv( img, kernel, ksz, img );
     }
+    void filter_hv_par( const Image* img, const float* kernel, const int& ksz, Image* out );
+
+    inline void filter_hv( const Image* img, const float* kernel, const int& ksz, const bool& run_parallel, Image* out ) {
+        switch( run_parallel ) {
+        case true : filter_hv_par( img, kernel, ksz, out ); break;
+        case false: filter_hv    ( img, kernel, ksz, out ); break;
+        }
+    }
+
     void filter_gaussian    ( const Image* img, const float& sigma, Image* out );
     void filter_gaussian_par( const Image* img, const float& sigma, Image* out );
     inline void filter_gaussian( Image* img, const float& sigma ) {
