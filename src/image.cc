@@ -27,6 +27,7 @@ namespace kortex {
         m_ch           = 0;
         m_type         = IT_U_GRAY;
         m_channel_type = ITC_PIXEL;
+        m_data_i       = NULL;
         m_data_u       = NULL;
         m_data_f       = NULL;
     }
@@ -51,6 +52,7 @@ namespace kortex {
         switch( image_precision(type) ) {
         case TYPE_UCHAR: m_data_u = (uchar*) m_memory.get_buffer(); break;
         case TYPE_FLOAT: m_data_f = (float*) m_memory.get_buffer(); break;
+        case TYPE_INT  : m_data_i = (int  *) m_memory.get_buffer(); break;
         default        : switch_fatality();
         }
         m_w    = w;
@@ -96,6 +98,7 @@ namespace kortex {
         std::swap( m_ch           , img->m_ch           );
         std::swap( m_type         , img->m_type         );
         std::swap( m_channel_type , img->m_channel_type );
+        std::swap( m_data_i       , img->m_data_i       );
         std::swap( m_data_u       , img->m_data_u       );
         std::swap( m_data_f       , img->m_data_f       );
         m_memory.swap( &(img->m_memory) );
@@ -109,6 +112,7 @@ namespace kortex {
         switch( image_precision(m_type) ) {
         case TYPE_UCHAR: memcpy( m_data_u, img->m_data_u, sizeof(*m_data_u)* imsz ); break;
         case TYPE_FLOAT: memcpy( m_data_f, img->m_data_f, sizeof(*m_data_f)* imsz ); break;
+        case TYPE_INT  : memcpy( m_data_i, img->m_data_i, sizeof(*m_data_i)* imsz ); break;
         default        : switch_fatality();
         }
     }
@@ -118,6 +122,7 @@ namespace kortex {
         switch( precision() ) {
         case TYPE_UCHAR: memset( m_data_u, 0, sizeof(*m_data_u)*im_sz ); break;
         case TYPE_FLOAT: memset( m_data_f, 0, sizeof(*m_data_f)*im_sz ); break;
+        case TYPE_INT  : memset( m_data_i, 0, sizeof(*m_data_i)*im_sz ); break;
         default        : switch_fatality();
         }
     }
@@ -138,6 +143,17 @@ namespace kortex {
         passert_type( IT_U_GRAY );
         for( int y=0; y<m_h; y++ ) {
             uchar* row = get_row_u( y );
+            for( int x=0; x<m_w; x++ ) {
+                row[x] = v;
+            }
+        }
+    }
+
+    void Image::set( const int& v ) {
+        passert_statement( !is_empty(), "empty image" );
+        passert_type( IT_I_GRAY );
+        for( int y=0; y<m_h; y++ ) {
+            int* row = get_row_i( y );
             for( int x=0; x<m_w; x++ ) {
                 row[x] = v;
             }
@@ -168,10 +184,26 @@ namespace kortex {
         assert_boundary( cid, 0, m_ch );
         return m_data_f + cid*m_h*m_w;
     }
+    int        * Image::get_channel_i( int cid ) {
+        assert_type( IT_I_GRAY );
+        assert_boundary( cid, 0, m_ch );
+        return m_data_i + cid*m_h*m_w;
+    }
+    const int  * Image::get_channel_i( int cid ) const {
+        assert_type( IT_I_GRAY );
+        assert_boundary( cid, 0, m_ch );
+        return m_data_i + cid*m_h*m_w;
+    }
+
 
     //
     // row pointers
     //
+    int* Image::get_row_i ( int y0 ) { // use for int gray
+        assert_type( IT_I_GRAY );
+        assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
+        return m_data_i + y0 * m_w * m_ch;
+    }
     uchar* Image::get_row_u ( int y0 ) { // use for u gray, prgb
         assert_type( IT_U_GRAY | IT_U_PRGB );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
@@ -182,6 +214,7 @@ namespace kortex {
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
         return m_data_f + y0 * m_w * m_ch;
     }
+
     uchar* Image::get_row_ui( int y0, int cid ) { // cid'th channel y0'th row
         assert_type( IT_U_IRGB | IT_U_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
@@ -193,6 +226,11 @@ namespace kortex {
         return m_data_f + (cid * m_h + y0) * m_w;
     }
 
+    const int* Image::get_row_i ( int y0 ) const { // use for u gray, prgb
+        assert_type( IT_I_GRAY );
+        assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
+        return m_data_i + y0 * m_w * m_ch;
+    }
     const uchar* Image::get_row_u ( int y0 ) const { // use for u gray, prgb
         assert_type( IT_U_GRAY | IT_U_PRGB );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
@@ -228,12 +266,19 @@ namespace kortex {
         assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
         return m_data_u[ y0*m_w+x0 ];
     }
+    int   Image::geti( int x0, int y0 ) const {
+        assert_type  ( IT_I_GRAY );
+        assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
+        return m_data_i[ y0*m_w+x0 ];
+    }
+
 
     float Image::get( int x0, int y0 ) const {
         assert_type( IT_U_GRAY | IT_F_GRAY );
         switch( m_type ) {
         case IT_U_GRAY: return static_cast<float>(m_data_u[ y0*m_w+x0 ]); break;
         case IT_F_GRAY: return m_data_f[ y0*m_w+x0 ]; break;
+        case IT_I_GRAY: return static_cast<float>(m_data_i[ y0*m_w+x0 ]); break;
         default       : switch_fatality();
         }
     }
@@ -414,6 +459,11 @@ namespace kortex {
         assert_statement_g( is_inside(x0,y0), "[x0 %d] [y0 %d] oob", x0, y0 );
         m_data_u[ y0*m_w + x0 ] = v;
     }
+    void Image::set ( const int& x0, const int& y0, const int  & v ) {
+        assert_type( IT_I_GRAY );
+        assert_statement_g( is_inside(x0,y0), "[x0 %d] [y0 %d] oob", x0, y0 );
+        m_data_i[ y0*m_w + x0 ] = v;
+    }
 
 
     /// sets a patch centered at (x,y) with half_width = hsz to v
@@ -428,7 +478,6 @@ namespace kortex {
             }
         }
     }
-
     /// sets a patch centered at (x,y) with half_width = hsz to v
     void Image::set( const int& x0, const int& y0, const int& hsz, const uchar& v ) {
         assert_type( IT_U_GRAY );
@@ -441,6 +490,19 @@ namespace kortex {
             }
         }
     }
+    /// sets a patch centered at (x,y) with half_width = hsz to v
+    void Image::set( const int& x0, const int& y0, const int& hsz, const int & v ) {
+        assert_type( IT_I_GRAY );
+        for(int y=y0-hsz; y<=y0+hsz; y++) {
+            if( y<0 || y>=m_h ) continue;
+            int* row_y = get_row_i(y);
+            for(int x=x0-hsz; x<=x0+hsz; x++) {
+                if( x<0 || x>=m_w ) continue;
+                row_y[x] = v;
+            }
+        }
+    }
+
 
     // 3-channel set
     void Image::set( const int& x0, const int& y0, const uchar& r, const uchar& g, const uchar& b ) {
@@ -567,6 +629,15 @@ namespace kortex {
                 }
             }
             break;
+        case IT_I_GRAY:
+            for( int y=0; y<rh; y++ ) {
+                const int* sptr =  src->get_row_i(sy0+y) + sx0*m_ch;
+                int*       dptr = this->get_row_i(dy0+y) + dx0*m_ch;
+                memcpy( dptr, sptr, sizeof(int)*rw*m_ch );
+            }
+            break;
+
+            break;
         default: switch_fatality(); break;
         }
     }
@@ -650,6 +721,20 @@ namespace kortex {
         }
         return true;
     }
+    bool Image::is_maximum( const int& x0, const int& y0, const int& wnd_rad, const int& v0 ) const {
+        assert_type( IT_I_GRAY );
+        assert_statement( wnd_rad > 0, "window should be nonnegative" );
+        for( int y=y0-wnd_rad; y<=y0+wnd_rad; y++ ) {
+            if( y<0 || y>=m_h ) continue;
+            const int* row = get_row_i(y);
+            for( int x=x0-wnd_rad; x<=x0+wnd_rad; x++ ) {
+                if( x<0 || x>=m_w ) continue;
+                if( row[x] > v0 ) return false;
+            }
+        }
+        return true;
+    }
+
 
     bool Image::is_minimum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const {
         assert_type( IT_F_GRAY );
@@ -657,6 +742,19 @@ namespace kortex {
         for( int y=y0-wnd_rad; y<=y0+wnd_rad; y++ ) {
             if( y<0 || y>=m_h ) continue;
             const float* row = get_row_f(y);
+            for( int x=x0-wnd_rad; x<=x0+wnd_rad; x++ ) {
+                if( x<0 || x>=m_w ) continue;
+                if( row[x] < v0 ) return false;
+            }
+        }
+        return true;
+    }
+    bool Image::is_minimum( const int& x0, const int& y0, const int& wnd_rad, const int& v0 ) const {
+        assert_type( IT_F_GRAY );
+        assert_statement( wnd_rad > 0, "window should be nonnegative" );
+        for( int y=y0-wnd_rad; y<=y0+wnd_rad; y++ ) {
+            if( y<0 || y>=m_h ) continue;
+            const int* row = get_row_i(y);
             for( int x=x0-wnd_rad; x<=x0+wnd_rad; x++ ) {
                 if( x<0 || x>=m_w ) continue;
                 if( row[x] < v0 ) return false;
