@@ -33,8 +33,8 @@ namespace kortex {
 
     inline void filter_hv( const Image* img, const float* kernel, const int& ksz, const bool& run_parallel, Image* out ) {
         switch( run_parallel ) {
-        case true : filter_hv_par( img, kernel, ksz, out ); break;
         case false: filter_hv    ( img, kernel, ksz, out ); break;
+        case true : filter_hv_par( img, kernel, ksz, out ); break;
         }
     }
 
@@ -48,8 +48,8 @@ namespace kortex {
     }
     inline void filter_gaussian( const Image* img, const float& sigma, const bool& run_parallel, Image* out ) {
         switch( run_parallel ) {
-        case true : filter_gaussian_par( img, sigma, out ); break;
         case false: filter_gaussian    ( img, sigma, out ); break;
+        case true : filter_gaussian_par( img, sigma, out ); break;
         }
     }
 
@@ -70,8 +70,8 @@ namespace kortex {
     void image_subtract_par( const Image* im0, const Image* im1, Image* out );
     inline void image_subtract( const Image* im0, const Image* im1, bool run_parallel, Image* out ) {
         switch( run_parallel ) {
-        case true : image_subtract    ( im0, im1, out ); break;
-        case false: image_subtract_par( im0, im1, out ); break;
+        case false: image_subtract    ( im0, im1, out ); break;
+        case true : image_subtract_par( im0, im1, out ); break;
         }
     }
 
@@ -79,8 +79,8 @@ namespace kortex {
     void image_add_par( const Image* im0, const Image* im1, Image* out );
     inline void image_add( const Image* im0, const Image* im1, bool run_parallel, Image* out ) {
         switch( run_parallel ) {
-        case true : image_add    ( im0, im1, out ); break;
-        case false: image_add_par( im0, im1, out ); break;
+        case false: image_add    ( im0, im1, out ); break;
+        case true : image_add_par( im0, im1, out ); break;
         }
     }
 
