@@ -323,6 +323,14 @@ namespace kortex {
         }
     }
 
+    inline bool check_dimensions( const Image* p, const Image* q ) {
+        assert_pointer( p && q );
+        if( p->w() != q->w() ) return false;
+        if( p->h() != q->h() ) return false;
+        return true;
+    }
+
+
 
 }
 
