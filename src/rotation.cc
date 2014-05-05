@@ -21,19 +21,26 @@ namespace kortex {
 
     /// computes the rotation matrix that rotates na to nb
     void rotate_normal_to_normal( const double* na, const double* nb, double* Rab ) {
+
         double Na[3];
         double Nb[3];
         normalize_l2norm3(na, Na);
         normalize_l2norm3(nb, Nb);
 
         double dot_ab = dot3(Na,Nb);
+        assert_statement( fabs(dot_ab) <= 1.0, "dot product oob" );
 
         double axis[4];
-        if( 1-dot_ab < 1e-10 ) {
+        if( fabs(1-dot_ab) < 1e-10 ) {
             axis[0] = 0.0;
             axis[1] = 0.0;
             axis[2] = 1.0;
             axis[3] = 0.0;
+        } else if( fabs( -1-dot_ab ) < 1e-10 ) {
+            axis[0] = 1.0;
+            axis[1] = 0.0;
+            axis[2] = 0.0;
+            axis[3] = PI;
         } else {
             cross3(Na, Nb, axis);
             normalize_l2norm3(axis);

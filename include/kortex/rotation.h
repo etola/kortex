@@ -29,8 +29,8 @@ namespace kortex {
     void rotation_to_euler( const  double* R, double& theta, double &phi, double& psi );
 
     // azimuth and elevation is in DEGREES
-    // azimuth  : angle from the positive x-axis to the normal [ -pi  , pi   ]
-    // elevation: angle from the xy-plane to the normal        [ -pi/2, pi/2 ]
+    // azimuth  : angle from the positive x-axis to the normal [ -180 , 180 ]
+    // elevation: angle from the xy-plane to the normal        [ - 90 ,  90 ]
     void azel_to_cartesian( double az, double el, double n[3] );
     void cartesian_to_azel( const double n[3], double& az, double& el );
 
