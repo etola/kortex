@@ -16,6 +16,7 @@
 #include <kortex/image_conversion.h>
 #include <kortex/image_io.h>
 #include <kortex/check.h>
+#include <kortex/fileio.h>
 
 #include <cstring>
 
@@ -43,6 +44,7 @@ namespace kortex {
     }
 
     Image::Image( const Image& img ) {
+        init_();
         this->copy( &img );
     }
 
@@ -587,6 +589,29 @@ namespace kortex {
     void Image::load( const string& file ) {
         load_image( file.c_str(), this );
     }
+
+    void Image::save( ofstream& fout ) const {
+        insert_binary_stream_begin_tag( fout );
+        write_bparam( fout, m_w );
+        write_bparam( fout, m_h );
+        int imt = int( m_type );
+        write_bparam( fout, imt );
+        write_bparam( fout, m_memory.get_buffer(), m_memory.capacity() );
+        insert_binary_stream_end_tag( fout );
+    }
+
+    void Image::load( ifstream& fin  ) {
+        check_binary_stream_begin_tag( fin );
+        int w, h, imt;
+        read_bparam( fin, w );
+        read_bparam( fin, h );
+        read_bparam( fin, imt );
+        ImageType type = ImageType(imt);
+        this->create( w, h, type );
+        read_bparam( fin, m_memory.get_buffer(), m_memory.capacity() );
+        check_binary_stream_end_tag( fin );
+    }
+
 
     //
     //

@@ -14,9 +14,14 @@
 #ifndef KORTEX_IMAGE_H
 #define KORTEX_IMAGE_H
 
+#include <fstream>
+
 #include <kortex/types.h>
 #include <kortex/check.h>
 #include <kortex/mem_unit.h>
+
+using std::ofstream;
+using std::ifstream;
 
 namespace kortex {
 
@@ -205,6 +210,9 @@ namespace kortex {
         //
         void save( const string& file ) const;
         void load( const string& file );
+
+        void save( ofstream& fout ) const;
+        void load( ifstream& fin  );
 
         //
         //
