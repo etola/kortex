@@ -39,10 +39,13 @@ namespace kortex {
         assert_statement( is_inside(x0,0,w) && is_inside(x1,0,w), "coords oob" );
         assert_statement( is_inside(y0,0,h) && is_inside(y1,0,h), "coords oob" );
 
-        const T* row0 = img + y0*w;
-        const T* row1 = img + y1*w;
+        const T* row0 = img + y0*w*nc+c;
+        const T* row1 = img + y1*w*nc+c;
 
         double ab = alfa * beta;
+
+        x1 = nc*x1;
+        x0 = nc*x0;
 
         return (alfa - ab) * row0[x1] + (1.0-beta)*(1.0-alfa) * row0[x0] + ab * row1[x1] + (beta-ab) * row1[x0];
     }
