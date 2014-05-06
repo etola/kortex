@@ -67,6 +67,7 @@ namespace kortex {
     void image_to_gradient(const float* im, int w, int h, float* dx, float* dy);
 
     void image_resize_coarse( const Image* src, const int& nw, const int& nh, Image* dst );
+    void image_resize_fine  ( const Image* src, const int& nw, const int& nh, Image* dst );
 
     void image_subtract    ( const Image* im0, const Image* im1, Image* out );
     void image_subtract_par( const Image* im0, const Image* im1, Image* out );
