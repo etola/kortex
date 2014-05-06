@@ -29,6 +29,7 @@ namespace kortex {
     float  dot128( const float* a, const float* b );
 
     double dot ( const double * a, const double* b, int asz );
+    float  dot ( const float  * a, const float * b, int asz );
 
     inline float  dot3( const float * a, const float * b ) {
         return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
@@ -57,6 +58,8 @@ namespace kortex {
             return true;
         return false;
     }
+
+    bool is_unit_norm( const float* a, int asz, float eps = 1e-5 );
 
     inline float  l2norm_sq3( const float * a ) { return dot3(a,a); }
     inline double l2norm_sq3( const double* a ) { return dot3(a,a); }

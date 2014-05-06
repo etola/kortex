@@ -23,6 +23,14 @@
 
 namespace kortex {
 
+    bool is_unit_norm( const float* a, int asz, float eps ) {
+        assert_pointer( a );
+        assert_pointer_size( asz );
+        if( fabs( dot(a, a, asz) - 1.0f ) < eps )
+            return true;
+        return false;
+    }
+
     float  dot128( const float* a, const float* b ) {
         float s = 0.0f;
 #ifdef WITH_SSE
@@ -40,6 +48,14 @@ namespace kortex {
             s += a[i]*b[i];
         return s;
     }
+    float  dot( const float  * a, const float * b, int asz ) {
+        float  s = 0.0f;
+        for( int i=0; i<asz; i++ )
+            s += a[i]*b[i];
+        return s;
+    }
+
+
     void cross3(const float * a, const float * b, float * c ) {
         assert_pointer( a && b && c );
         assert_noalias_p( a, c );
