@@ -18,9 +18,15 @@
 
 namespace kortex {
 
+    float sse_dot_128( const float* a, const float* b ) {
+        switch( is_16_byte_aligned(a) && is_16_byte_aligned(b) ) {
+        case true : return sse_dot_128a(a,b); break;
+        case false: return sse_dot_128u(a,b); break;
+        }
+    }
     float sse_dot_128a( const float* a, const float* b ) {
         assert_statement( (is_16_byte_aligned(a) && is_16_byte_aligned(b)),
-                          "both arrays must be 16-byte aligned - call sse128u_dot instead" );
+                          "both arrays must be 16-byte aligned - call sse_dot_128u instead" );
         __m128 xmm_a, xmm_b;
         F128   xmm_s;
         int j;
@@ -32,6 +38,21 @@ namespace kortex {
         }
         return xmm_s.f[0]+xmm_s.f[1]+xmm_s.f[2]+xmm_s.f[3];
     }
+    float sse_dot_128u( const float* a, const float* b ) {
+        assert_statement( !is_16_byte_aligned(a) || !is_16_byte_aligned(b),
+                          "both arrays are 16-byte aligned - call sse_dot_128a instead" );
+        __m128 xmm_a, xmm_b;
+        F128   xmm_s;
+        int j;
+        xmm_s.pack = _mm_set1_ps(0.0);
+        for( j=0; j<128; j+=4 ) {
+            xmm_a = _mm_loadu_ps(a+j);
+            xmm_b = _mm_loadu_ps(b+j);
+            xmm_s.pack = _mm_add_ps(xmm_s.pack, _mm_mul_ps(xmm_a,xmm_b));
+        }
+        return xmm_s.f[0]+xmm_s.f[1]+xmm_s.f[2]+xmm_s.f[3];
+    }
+
     /// A 128x128 : b 128x1
     void sse_mat_vec_mul_128a( const float* A, const float* b, float* c ) {
         assert_pointer( A && b && c );

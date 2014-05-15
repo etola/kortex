@@ -87,7 +87,7 @@ namespace kortex {
         uint64_t* tb = (uint64_t*)b;
         int s = 0;
         s += __builtin_popcountll( (*ta++) ^ (*tb++) );
-        s += __builtin_popcountll( (*ta++) ^ (*tb++) );
+        s += __builtin_popcountll( (*ta  ) ^ (*tb  ) );
         return s;
     }
 
@@ -98,7 +98,7 @@ namespace kortex {
         s += __builtin_popcountll( (*ta++) ^ (*tb++) );
         s += __builtin_popcountll( (*ta++) ^ (*tb++) );
         s += __builtin_popcountll( (*ta++) ^ (*tb++) );
-        s += __builtin_popcountll( (*ta++) ^ (*tb++) );
+        s += __builtin_popcountll( (*ta  ) ^ (*tb  ) );
         return s;
     }
 

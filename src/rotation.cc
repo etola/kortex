@@ -21,19 +21,26 @@ namespace kortex {
 
     /// computes the rotation matrix that rotates na to nb
     void rotate_normal_to_normal( const double* na, const double* nb, double* Rab ) {
+
         double Na[3];
         double Nb[3];
         normalize_l2norm3(na, Na);
         normalize_l2norm3(nb, Nb);
 
         double dot_ab = dot3(Na,Nb);
+        assert_statement( fabs(dot_ab) <= 1.0, "dot product oob" );
 
         double axis[4];
-        if( 1-dot_ab < 1e-10 ) {
+        if( fabs(1-dot_ab) < 1e-10 ) {
             axis[0] = 0.0;
             axis[1] = 0.0;
             axis[2] = 1.0;
             axis[3] = 0.0;
+        } else if( fabs( -1-dot_ab ) < 1e-10 ) {
+            axis[0] = 1.0;
+            axis[1] = 0.0;
+            axis[2] = 0.0;
+            axis[3] = PI;
         } else {
             cross3(Na, Nb, axis);
             normalize_l2norm3(axis);
@@ -123,18 +130,22 @@ namespace kortex {
     void azel_to_cartesian( double az, double el, double n[3] ) {
         az *= RADIANS;
         el *= RADIANS;
-        n[0] = sin( el ) * cos( az );
-        n[1] = sin( el ) * sin( az );
-        n[2] = cos( el );
+        n[0] = cos( el ) * cos( az );
+        n[1] = cos( el ) * sin( az );
+        n[2] = sin( el );
     }
 
     void cartesian_to_azel( const double n[3], double& az, double& el ) {
         double r = sqrt( sq(n[0]) + sq(n[1]) + sq(n[2]) );
+        assert_statement( r > 1e-16, "normal magnitude approaches zero..." );
         double n2 = n[2]/r;
         if     ( n2 >  1.0 ) n2 =  1.0;
         else if( n2 < -1.0 ) n2 = -1.0;
-        el = acos( n2 ) * DEGREES;
-        az = atan2( n[1], n[0] ) * DEGREES;
+        el = asin( n2 ) * DEGREES;
+        if( fabs(fabs(el)-90) > 1e-8 )
+            az = atan2( n[1], n[0] ) * DEGREES;
+        else
+            az = 0.0;
     }
 
     static const double  canonical_xd[] = { 1.0, 0.0, 0.0 };
@@ -158,6 +169,61 @@ namespace kortex {
 
         assert_statement( is_unit_norm_3(new_u) && is_unit_norm_3(new_v),
                           "output is not unit normed" );
+    }
+
+
+    void rotation_to_az_el_zeta( const double R[9], double& az, double& el, double& zeta ) {
+        double nz[3];
+        nz[0] = R[6];
+        nz[1] = R[7];
+        nz[2] = R[8];
+        normalize_l2norm3( nz );
+
+        cartesian_to_azel( nz, az, el );
+
+        double nx[3], ny[3];
+        construct_local_coordinate_frame( nz, nx, ny );
+        double Rtmp[9];
+        Rtmp[0] = nx[0]; Rtmp[1] = nx[1]; Rtmp[2] = nx[2];
+        Rtmp[3] = ny[0]; Rtmp[4] = ny[1]; Rtmp[5] = ny[2];
+        Rtmp[6] = nz[0]; Rtmp[7] = nz[1]; Rtmp[8] = nz[2];
+
+        double Rz[9];
+        mat_mat_trans( R, 3, 3, Rtmp, 3, 3, Rz, 9 );
+
+        double xd[] = { 1.0, 0.0, 0.0 };
+        double nx0[3];
+        // double nx1[3];
+        // mat_vec_3( Rtmp, xd, nx0 );
+        // mat_vec_3( R,    xd, nx1 );
+        // zeta = acos( dot3( nx0, nx1 ) ) * DEGREES;
+        mat_vec_3( Rz, xd, nx0 );
+
+        zeta  = acos( std::max( -1.0, std::min(nx0[0],1.0) ) ) * DEGREES;
+        zeta *= sign( nx0[1] );
+    }
+
+    void rotation_matrix_frame_error( const double* R_ref, const double* R_obs,
+                                      double& e_boresight, double& e_inplain ) {
+        assert_pointer( R_ref );
+        assert_pointer( R_obs );
+
+        double normal_z[3] = { 0.0, 0.0, 1.0 };
+        double normal_x[3] = { 1.0, 0.0, 0.0 };
+
+        double ref_bore[3], ref_x[3];
+        mat_trans_vec_3( R_ref, normal_z, ref_bore );
+        mat_trans_vec_3( R_ref, normal_x, ref_x );
+
+        double obs_bore[3], obs_x[3];
+        mat_trans_vec_3( R_obs, normal_z, obs_bore );
+        mat_trans_vec_3( R_obs, normal_x, obs_x );
+
+        double ebd = std::max( std::min( dot3( ref_bore, obs_bore ), 1.0 ), -1.0 );
+        double eid = std::max( std::min( dot3( ref_x,    obs_x    ), 1.0 ), -1.0 );
+
+        e_boresight = acos( ebd ) * DEGREES;
+        e_inplain   = acos( eid ) * DEGREES;
     }
 
 

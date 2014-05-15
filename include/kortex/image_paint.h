@@ -30,7 +30,9 @@ namespace kortex {
     void draw_rectangle     ( Image* im, const Rect2i* rectangle, ColorName col );
     void draw_circle        ( Image* im, int x, int y, float dr, ColorName color );
     void draw_shaded_square ( Image* im, int x0, int y0, int w, float ss, ColorName color);
+    void draw_filled_square ( Image* im, int x0, int y0, int w, ColorName color);
     void draw_shaded        ( Image* im, const Image* mask, float ss, ColorName color);
+
 
 }
 

@@ -65,11 +65,15 @@ namespace kortex {
 
         Rect2i() { lx = ux = ly = uy = dx = dy = 0; id = 0; }
         Rect2i(int xmin, int xmax, int ymin, int ymax) {
+            init( xmin, xmax, ymin, ymax );
+            id = 0;
+        }
+
+        void init(int xmin, int xmax, int ymin, int ymax) {
             lx = xmin;
             ux = xmax;
             ly = ymin;
             uy = ymax;
-            id = 0;
             update();
         }
 
@@ -94,6 +98,28 @@ namespace kortex {
         bool is_inside_y(int y) const;
         bool is_inside_x(int x) const;
     };
+
+    /// checks if the smaller rect structure resides within the larger one
+    inline bool is_inside( const Rect2i& larger, const Rect2i& smaller ) {
+        if( !larger.is_inside( smaller.lx,   smaller.ly   ) ) return false;
+        if( !larger.is_inside( smaller.ux-1, smaller.uy-1 ) ) return false;
+        return true;
+    }
+
+    inline bool does_intersect( const Rect2i& p, const Rect2i& q ) {
+        if( p.is_inside( q.lx, q.ly ) ) return true;
+        if( p.is_inside( q.lx, q.uy ) ) return true;
+        if( p.is_inside( q.ux, q.ly ) ) return true;
+        if( p.is_inside( q.ux, q.uy ) ) return true;
+        return false;
+    }
+
+    void rect_move     ( const Rect2i& irect, int mx, int my, Rect2i& orect  );
+    void rect_union    ( const Rect2i& r0, const Rect2i& r1, Rect2i& out );
+    bool rect_intersect( const Rect2i& r0, const Rect2i& r1, Rect2i& out );
+
+
+
 
 }
 

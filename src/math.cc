@@ -15,10 +15,24 @@
 #include <kortex/check.h>
 #include <kortex/defs.h>
 #include <kortex/sse_extensions.h>
+#include <kortex/mem_unit.h>
+#include <kortex/linear_algebra.h>
 
 #include <cstring>
+#include <cfloat>
 
 namespace kortex {
+
+    float  dot128( const float* a, const float* b ) {
+        float s = 0.0f;
+#ifdef WITH_SSE
+        s = sse_dot_128(a,b);
+#else
+        for( int i=0; i<asz; i++ )
+            s += a[i]*b[i];
+#endif
+        return s;
+    }
 
     double dot( const double * a, const double* b, int asz ) {
         double s = 0.0;
@@ -26,7 +40,6 @@ namespace kortex {
             s += a[i]*b[i];
         return s;
     }
-
     void cross3(const float * a, const float * b, float * c ) {
         assert_pointer( a && b && c );
         assert_noalias_p( a, c );
@@ -164,6 +177,45 @@ namespace kortex {
             for( int x=0; x<fsz; x++ )
                 fltr[x] *= isum;
         }
+    }
+
+
+    // assuming p(x) = c0 + c1 x + c2 x^2 + ...
+    bool find_real_roots_of_polynomial( const vector<double>& coeffs, vector<double>& real_roots ) {
+        real_roots.clear();
+        int csz = coeffs.size();
+        if( csz <= 1 ) {
+            return false;
+        } else if( csz == 2 ) {
+            real_roots.push_back( -coeffs[0]/coeffs[1] );
+            return true;
+        }
+        int dim = csz - 1;
+        const static int n_pre_dim = 10;
+        assert_statement( dim < n_pre_dim, "non enough static memory allocated" );
+        double D[ n_pre_dim * n_pre_dim ];
+        memset( D, 0, sizeof(*D)*n_pre_dim*n_pre_dim );
+        double eigs_r[n_pre_dim], eigs_i[n_pre_dim];
+
+        for( int i=0; i<dim; i++ ) {
+            if( i != dim-1 )
+                D[ (i+1)*dim+i ] = 1.0;
+
+            D[i] = -coeffs[dim-1-i]/coeffs[dim];
+        }
+
+        MemUnit mem;
+        bool rval = mat_eigenvalues_upper_hessenberg( D, dim, eigs_r, eigs_i, n_pre_dim, mem );
+        if( !rval ) {
+            return false;
+        } else {
+            for( int i=0; i<dim; i++ ) {
+                if( fabs(eigs_i[i]) < DBL_MIN )
+                    real_roots.push_back( eigs_r[i] );
+            }
+        }
+
+        return true;
     }
 
 

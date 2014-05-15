@@ -27,6 +27,9 @@ namespace kortex {
     } F128;
 
     float sse_dot_128a( const float* a, const float* b );
+    float sse_dot_128u( const float* a, const float* b );
+    float sse_dot_128 ( const float* a, const float* b );
+
     void  sse_mat_vec_mul_128a( const float* A, const float* b, float* c );
 
     /// returns sum( a^2 )

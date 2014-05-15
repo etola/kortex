@@ -29,12 +29,16 @@ namespace kortex {
                      COLOR_CYAN,   COLOR_MAGENTA, COLOR_YELLOW,
                      COLOR_ORANGE, COLOR_PURPLE,  COLOR_PINK,
                      COLOR_BROWN,  COLOR_GOLD,    COLOR_NAVY,
-                     COLOR_GRAY,
+                     COLOR_GRAY, COLOR_LGRAY,
                      COLOR_WHITE }; // white should be the last color!
 
     inline uchar cast_to_gray_range( const float& f ) {
         return static_cast<uchar>( std::min( 255.0f, std::max(0.0f, f+0.5f) ) );
     }
+    inline uchar cast_to_gray_range( const int  & i ) {
+        return static_cast<uchar>( std::min( 255, std::max(0, i) ) );
+    }
+
 
     inline uchar rgb_to_gray_u(const uchar& r, const uchar& g, const uchar& b) {
         return cast_to_gray_range( 0.299f*r + 0.587f*g + 0.114f*b );
@@ -67,6 +71,7 @@ namespace kortex {
         case COLOR_GOLD   : cr = 255; cg = 215; cb =   0; break;
         case COLOR_NAVY   : cr =   0; cg =   0; cb = 128; break;
         case COLOR_GRAY   : cr = 190; cg = 190; cb = 190; break;
+        case COLOR_LGRAY  : cr =  90; cg =  90; cb =  90; break;
         default           : cr = 255; cg =   0; cb =   0; break;
         }
     }

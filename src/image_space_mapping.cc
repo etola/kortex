@@ -21,6 +21,7 @@ namespace kortex {
 
     void image_map_linear(const Image* img, float& min_v, float& max_v, Image* out ) {
         passert_pointer( img && out );
+        passert_statement( img != out, "no memory aliasing allowed" );
         img->passert_type( IT_U_GRAY | IT_F_GRAY );
 
         float scale = 1.0f;

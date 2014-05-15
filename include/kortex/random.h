@@ -14,6 +14,8 @@
 #ifndef KORTEX_RANDOM_H
 #define KORTEX_RANDOM_H
 
+#include <vector>
+
 namespace kortex {
 
     void initialize_random_seed();
@@ -29,6 +31,8 @@ namespace kortex {
 
     void select_prosac_like_random_samples(const int& prosac_iter, const int& selection_limit, const int& no_samples_to_select,
                                            int* selected_samples);
+
+    void random_permutation( int n, std::vector<int>& perm );
 
 }
 

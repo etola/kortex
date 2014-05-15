@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------
 #include <kortex/random.h>
 #include <kortex/check.h>
+#include <kortex/indexed_types.h>
 
 #include <cstdlib>
 #include <sys/timeb.h>
@@ -99,6 +100,21 @@ namespace kortex {
             logman_fatal_g("could not select enough random samples [prosac_iter %d] [no_samples_to_select %d] [selection_limit %d]", prosac_iter, no_samples_to_select, selection_limit);
     }
 
+    void random_permutation( int n, std::vector<int>& perm ) {
+        assert_statement( n>0, "number of samples is not positive" );
+
+        vector<ifloat> nums( n );
+        for( int i=0; i<n; i++ ) {
+            nums[i].id  = i;
+            nums[i].val = uniform_sample();
+        }
+        sort_ascending( nums );
+
+        perm.clear();
+        perm.resize( n );
+        for( int i=0; i<n; i++ )
+            perm[i] = nums[i].id;
+    }
 
 }
 

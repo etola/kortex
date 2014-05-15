@@ -33,6 +33,12 @@ namespace kortex {
     /// removes leading and trailing spaces (remove_str)
     string trim_string(const string& str, const string& remove_str);
 
+    string pad_zeros4( int num );
+    string pad_zeros8( int num );
+
+    string file_name( const string& str, int num, const string& ext, int num_padding=4 );
+    string file_name( const string& str, int num0, int num1, const string& ext, int num_padding=4 );
+
 }
 
 #endif

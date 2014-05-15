@@ -94,6 +94,12 @@ namespace kortex {
 //
 // single mat ops
 //
+    double mat_det_2( const double* A, int nra ) {
+        assert_pointer( A );
+        assert_statement_g( nra == 2, "invalid sized matrix [%d]", nra );
+        return ( A[0]*A[3] - A[1]*A[2] );
+    }
+
     double mat_det_3( const double* A, int nra ) {
         assert_pointer( A );
         assert_statement_g( nra == 3, "invalid sized matrix [%d]", nra );
@@ -262,6 +268,25 @@ namespace kortex {
 
     inline double det_2(double a00, double a01, double a10, double a11) {
         return a00*a11 - a01*a10;
+    }
+
+    bool mat_inv_2( const double* A, int nra, double* iA, int nria, double inversion_threshold ) {
+        assert_pointer( A && iA );
+        assert_statement( (nra == 2) && (nria==2), "invalid matrix size" );
+        if( inversion_threshold == 0.0 ) {
+            inversion_threshold = MAT_EPS;
+        }
+        double d = det_2( A[0], A[1], A[2], A[3] );
+        if( fabs(d) < inversion_threshold ) {
+            mat_zero( iA, nria, nria );
+            return false;
+        }
+        double id = 1.0 / d;
+        iA[0] =  A[3] * id;
+        iA[1] = -A[1] * id;
+        iA[2] = -A[2] * id;
+        iA[3] =  A[0] * id;
+        return true;
     }
 
     bool mat_inv_3( const double* A, int nra,
@@ -541,8 +566,8 @@ namespace kortex {
 
         // set A[6] = 0 by Ry
         r = sqrt( ARx[8]*ARx[8] + ARx[6]*ARx[6] );
-        c = -ARx[8]/r;
-        s =  ARx[6]/r;
+        c = ARx[8]/r;
+        s = ARx[6]/r;
         if( !is_a_number(s*c) ) return false;
         double Ry[] = { c, 0.0, s, 0.0, 1.0, 0.0, -s, 0.0, c };
         double ARxRy[9];
@@ -587,6 +612,47 @@ namespace kortex {
         for( int i=0; i<3; i++ ) {
             A[ 3*rid+i ] *= alpha;
         }
+    }
+
+    bool mat_inv_mat_3( const double A[9], const double B[9], double C[9] ) {
+        assert_statement( B != C, "mem aliasing not allowed" );
+        double iA[9];
+        if( !mat_inv_3( A, 3, iA, 3, 0.0 ) ) return false;
+        mat_mat_3( iA, B, C );
+        return true;
+    }
+
+    bool mat_inv_mat_mat( const double* A, int nra, int nca,
+                          const double* B, int nrb, int ncb,
+                          const double* C, int nrc, int ncc,
+                          double* D, int dsz ) {
+        assert_statement( nra==nca, "A must be square" );
+        passert_statement( nra <= 11, "insufficient inversion buffer" );
+
+        double iA[121];
+        if( !mat_inv(A, nra, nca, iA, nra, nca ) )
+            return false;
+        mat_mat_mat( iA, nra, nca, B, nrb, ncb, C, nrc, ncc, D, dsz );
+        return true;
+    }
+
+    bool mat_inv_mat_mat_3( const double A[9], const double B[9], const double C[9], double D[9] ) {
+        double BC[9];
+        mat_mat_3(B, C, BC);
+        return mat_inv_mat_3( A, BC, D );
+    }
+
+    bool mat_is_upper_hessenberg( const double* A, int nra, int nca ) {
+        assert_pointer( A );
+        assert_pointer_size( nra*nca );
+        if( nra != nca ) return false;
+        for( int i=2; i<nra; i++ ) {
+            for( int j=0; j<i-1; j++ ) {
+                if( fabs(A[i*nra+j]) > MAT_EPS )
+                    return false;
+            }
+        }
+        return true;
     }
 
 

@@ -14,9 +14,14 @@
 #ifndef KORTEX_IMAGE_H
 #define KORTEX_IMAGE_H
 
+#include <fstream>
+
 #include <kortex/types.h>
 #include <kortex/check.h>
 #include <kortex/mem_unit.h>
+
+using std::ofstream;
+using std::ifstream;
 
 namespace kortex {
 
@@ -25,7 +30,8 @@ namespace kortex {
                      IT_U_PRGB=4,    // uchar 3-channel pixel-ordered
                      IT_F_PRGB=8,    // float 3-channel pixel-ordered
                      IT_U_IRGB=16,   // uchar 3-channel image-ordered
-                     IT_F_IRGB=32 }; // float 3-channel image-ordered
+                     IT_F_IRGB=32,   // float 3-channel image-ordered
+                     IT_I_GRAY=64 }; // int   1-channel
 
     enum ChannelType { ITC_PIXEL=1,   // pixel-ordered  [ r0g0b0 r1g1b1...]
                        ITC_IMAGE=2 }; // image-ordered  [ r0r1r2 g0g1g2...]
@@ -52,11 +58,14 @@ namespace kortex {
         ChannelType m_channel_type;
         uchar*      m_data_u;
         float*      m_data_f;
+        int  *      m_data_i;
         MemUnit     m_memory;
+        bool        m_wrapper;
 
     public:
         Image();
         Image(int w, int h, ImageType type);
+        Image(const Image& img);
 
         void create( int w, int h, ImageType type );
 
@@ -74,6 +83,7 @@ namespace kortex {
         ChannelType channel_type() const { return m_channel_type;          }
         DataType    precision()    const { return image_precision(m_type); }
         bool        is_empty()     const { return !(m_w*m_h);              }
+        bool        is_wrapper()   const { return m_wrapper;               }
         size_t      pixel_count()  const { return size_t(m_w)*size_t(m_h)*size_t(m_ch); }
 
         bool is_inside( int x, int y ) const {
@@ -96,6 +106,7 @@ namespace kortex {
         void zero();
         void set( const float& v );
         void set( const uchar& v );
+        void set( const int  & v );
 
         //
         // get image channels
@@ -104,6 +115,8 @@ namespace kortex {
         const uchar* get_channel_u( int cid ) const;
         float      * get_channel_f( int cid );
         const float* get_channel_f( int cid ) const;
+        int        * get_channel_i( int cid );
+        const int  * get_channel_i( int cid ) const;
 
         //
         // easy access get/set functions - use the row pointers for performance
@@ -111,6 +124,7 @@ namespace kortex {
         //
 
         // 1-channel get
+        int   geti( int x0, int y0 ) const;
         float getf( int x0, int y0 ) const;
         uchar getu( int x0, int y0 ) const;
         float get ( int x0, int y0 ) const; // accesses the pixel val of
@@ -149,12 +163,18 @@ namespace kortex {
         // 1-channel set
         void  set( const int& x0, const int& y0, const float& v );
         void  set( const int& x0, const int& y0, const uchar& v );
+        void  set( const int& x0, const int& y0, const int  & v );
         void  set( const int& x0, const int& y0, const int& hsz, const uchar& v );
         void  set( const int& x0, const int& y0, const int& hsz, const float& v );
+        void  set( const int& x0, const int& y0, const int& hsz, const int  & v );
 
         // 3-channel set
         void  set ( const int& x0, const int& y0, const float& r, const float& g, const float& b );
         void  set ( const int& x0, const int& y0, const uchar& r, const uchar& g, const uchar& b );
+
+        void  set ( const int& x0, const int& y0, const int& hsz, const uchar& r, const uchar& g, const uchar& b );
+        void  set ( const int& x0, const int& y0, const int& hsz, const float& r, const float& g, const float& b );
+
 
         /// copies the src region [ (sx0,sy0) -> (sx0+rw, sy0+rh) ] to the
         /// 'this' region starting from (dx0,dy0)
@@ -167,11 +187,15 @@ namespace kortex {
         //
         uchar* get_row_u ( int y0 ); // use for u gray, prgb
         float* get_row_f ( int y0 ); // use for f gray, prgb
+        int  * get_row_i ( int y0 ); // use for i gray
+
         uchar* get_row_ui( int y0, int cid ); // cid'th channel y0'th row
         float* get_row_fi( int y0, int cid ); // cid'th channel y0'th row
 
         const uchar* get_row_u ( int y0 ) const; // use for u gray, prgb
         const float* get_row_f ( int y0 ) const; // use for f gray, prgb
+        const int  * get_row_i ( int y0 ) const; // use for i gray
+
         const uchar* get_row_ui( int y0, int cid ) const; // cid'th channel y0'th row
         const float* get_row_fi( int y0, int cid ) const; // cid'th channel y0'th row
 
@@ -187,15 +211,20 @@ namespace kortex {
         void save( const string& file ) const;
         void load( const string& file );
 
+        void save( ofstream& fout ) const;
+        void load( ifstream& fin  );
+
         //
         //
         //
         bool is_maximum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const;
+        bool is_maximum( const int& x0, const int& y0, const int& wnd_rad, const int  & v0 ) const;
         bool is_minimum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const;
+        bool is_minimum( const int& x0, const int& y0, const int& wnd_rad, const int  & v0 ) const;
 
 
         //
-        // assrtions
+        // assertions
         //
         void assert_type( int type ) const {
             assert_statement( m_type & type, "invalid image type" );
@@ -222,6 +251,7 @@ namespace kortex {
         switch( it ) {
         case IT_U_GRAY: return 1;
         case IT_F_GRAY: return 1;
+        case IT_I_GRAY: return 1;
         case IT_U_PRGB: return 3;
         case IT_F_PRGB: return 3;
         case IT_U_IRGB: return 3;
@@ -238,6 +268,7 @@ namespace kortex {
         case IT_F_GRAY:
         case IT_F_PRGB:
         case IT_F_IRGB: return TYPE_FLOAT;
+        case IT_I_GRAY: return TYPE_INT;
         default       : switch_fatality();
         }
         return TYPE_UCHAR;
@@ -249,6 +280,7 @@ namespace kortex {
         switch( it ) {
         case IT_U_GRAY:
         case IT_F_GRAY:
+        case IT_I_GRAY:
         case IT_U_PRGB:
         case IT_F_PRGB: return ITC_PIXEL;
         case IT_U_IRGB:
@@ -264,6 +296,7 @@ namespace kortex {
             switch( precision ) {
             case TYPE_UCHAR: return IT_U_GRAY;
             case TYPE_FLOAT: return IT_F_GRAY;
+            case TYPE_INT  : return IT_I_GRAY;
             default        : switch_fatality();
             } break;
         case 3:
@@ -293,9 +326,18 @@ namespace kortex {
         case 8 : return IT_F_PRGB;
         case 16: return IT_U_IRGB;
         case 32: return IT_F_IRGB;
+        case 64: return IT_I_GRAY;
         default: switch_fatality();
         }
     }
+
+    inline bool check_dimensions( const Image* p, const Image* q ) {
+        assert_pointer( p && q );
+        if( p->w() != q->w() ) return false;
+        if( p->h() != q->h() ) return false;
+        return true;
+    }
+
 
 
 }

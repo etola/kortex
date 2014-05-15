@@ -48,6 +48,9 @@ C+ :just a bit of c++ features but almost c... again, less is more...
 
 17. Common Mistake -> do not forget the copy constructor -> could cause double free corruptions
 
+18. Do not use the auto keyword -> easy during implementation but makes it
+difficult to understand for later passes...
+
 style:
 
 0. do not waste vertical space

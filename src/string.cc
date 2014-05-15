@@ -94,6 +94,42 @@ namespace kortex {
         return str.substr(begin_str, range);
     }
 
+    string pad_zeros4( int num ) {
+        string nstr = num2str(num);
+        if     ( num   < 10 ) nstr = "000" + nstr;
+        else if( num  < 100 ) nstr = "00"  + nstr;
+        else if( num < 1000 ) nstr = "0"   + nstr;
+        return nstr;
+    }
+
+    string pad_zeros8( int num ) {
+        string nstr = num2str(num);
+        if     ( num   <     10 ) nstr = "0000000" + nstr;
+        else if( num  <     100 ) nstr = "000000"  + nstr;
+        else if( num <     1000 ) nstr = "00000"   + nstr;
+        else if( num <    10000 ) nstr = "0000"    + nstr;
+        else if( num <   100000 ) nstr = "000"     + nstr;
+        else if( num <  1000000 ) nstr = "00"      + nstr;
+        else if( num < 10000000 ) nstr = "0"       + nstr;
+        return nstr;
+    }
+
+    string file_name( const string& str, int num, const string& ext, int num_padding ) {
+        switch( num_padding ) {
+        case 4:  return string( str + pad_zeros4(num) + "." + ext ); break;
+        case 8:
+        default: return string( str + pad_zeros8(num) + "." + ext ); break;
+        }
+    }
+
+    string file_name( const string& str, int num1, int num2, const string& ext, int num_padding ) {
+        switch( num_padding ) {
+        case 4:  return string( str + pad_zeros4(num1) + "-" + pad_zeros4(num2) + "." + ext ); break;
+        case 8:
+        default: return string( str + pad_zeros8(num1) + "-" + pad_zeros8(num2) + "." + ext ); break;
+        }
+    }
+
 
 }
 

@@ -22,6 +22,7 @@ namespace kortex {
 //
 // single mat ops
 //
+    double  mat_det_2( const double* A, int nra );
     double  mat_det_3( const double* A, int nra );
     double  mat_trace( const double* A, int nra, int nca );
 
@@ -52,6 +53,7 @@ namespace kortex {
     double  mat_norm( const double* A, int nra, int nca );
     double  mat_norm_sq( const double* A, int nra, int nca );
 
+    bool    mat_inv_2( const double* A, int nra, double* iA, int nria, double inversion_threshold );
     bool    mat_inv_3( const double* A, int nra,          double* iA, int nria, double inversion_threshold );
     bool    mat_inv  ( const double* A, int nra, int nca, double* iA, int nria, int ncia );
 
@@ -76,6 +78,12 @@ namespace kortex {
                          const double* B, int nrb, int ncb,
                          const double* C, int nrc, int ncc,
                          double      * D, int dsz );
+
+    bool mat_inv_mat_mat( const double* A, int nra, int nca,
+                          const double* B, int nrb, int ncb,
+                          const double* C, int nrc, int ncc,
+                          double* D, int dsz );
+
 
     void    mat_mat_mat_trans( const double* A, int nra, int nca,
                                const double* B, int nrb, int ncb,
@@ -148,6 +156,12 @@ namespace kortex {
         mat_mat( A, 3, 3, B, 3, 3, C, 9 );
     }
 
+    /// C = inv(A)*B
+    bool mat_inv_mat_3( const double A[9], const double B[9], double C[9] );
+
+    /// D = inv(A) * B * C
+    bool mat_inv_mat_mat_3( const double A[9], const double B[3], const double C[3], double D[9] );
+
     inline void mat_mat_mat_3( const double A[9], const double B[9], const double C[9], double D[9] ) {
         mat_mat_mat( A, 3, 3, B, 3, 3, C, 3, 3, D, 9 );
     }
@@ -202,6 +216,7 @@ namespace kortex {
     /// A[rid, :] *= alpha
     void mat_scale_row_3( double* A, int rid, double alpha );
 
+    bool mat_is_upper_hessenberg( const double* A, int nra, int nca );
 
 }
 

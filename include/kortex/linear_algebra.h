@@ -69,6 +69,10 @@ namespace kortex {
                        MemUnit* memory);
     // Least Square Solvers
 
+
+    bool mat_eigenvalues_upper_hessenberg( const double* H, int nra, double* eigs_r, double* eigs_i, int n_eigs, MemUnit& mem );
+
+
 }
 
 #endif

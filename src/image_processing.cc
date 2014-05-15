@@ -79,14 +79,14 @@ namespace kortex {
         return true;
     }
 
-
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_hv( const Image* img, const float* kernel, const int& ksz, Image* out ) {
         assert_pointer( img && out && kernel );
         assert_pointer_size( ksz );
         assert_statement( !img->is_empty(), "image is empty" );
         passert_statement( out->type() == img->type(), "image types not agree" );
-        passert_statement( img->w() == out->w() && img->h() == out->h(),
-                           "image in/out has different sizes");
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
         img->passert_type( IT_F_GRAY | IT_F_IRGB );
 
         switch( img->type() ) {
@@ -106,13 +106,14 @@ namespace kortex {
         }
     }
 
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_hv_par( const Image* img, const float* kernel, const int& ksz, Image* out ) {
         assert_pointer( img && out && kernel );
         assert_pointer_size( ksz );
         assert_statement( !img->is_empty(), "image is empty" );
         passert_statement( out->type() == img->type(), "image types not agree" );
-        passert_statement( img->w() == out->w() && img->h() == out->h(),
-                           "image in/out has different sizes");
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
         img->passert_type( IT_F_GRAY | IT_F_IRGB ); // supporting these types
                                                     // for now
         switch( img->type() ) {
@@ -141,12 +142,13 @@ namespace kortex {
         return fsz;
     }
 
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_gaussian( const Image* img, const float& sigma, Image* out ) {
         assert_pointer( img && out );
         assert_statement( !img->is_empty(), "image is empty" );
         passert_statement( out->type() == img->type(), "image types not agree" );
-        passert_statement( img->w() == out->w() && img->h() == out->h(),
-                           "image in/out has different sizes");
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
         int sz = filter_size(sigma);
         float* sfilter = NULL;
         allocate(sfilter, sz);
@@ -155,57 +157,19 @@ namespace kortex {
         deallocate( sfilter );
     }
 
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_gaussian_par( const Image* img, const float& sigma, Image* out ) {
         assert_pointer( img && out );
         assert_statement( !img->is_empty(), "image is empty" );
         passert_statement( out->type() == img->type(), "image types not agree" );
-        passert_statement( img->w() == out->w() && img->h() == out->h(),
-                           "image in/out has different sizes");
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
         int sz = filter_size(sigma);
         float* sfilter = NULL;
         allocate(sfilter, sz);
         gaussian_1d(sfilter, sz, 0, sigma);
         filter_hv_par( img, sfilter, sz, out );
         deallocate( sfilter );
-    }
-
-    void subtract( const Image* im0, const Image* im1, Image* out ) {
-        assert_pointer( im0 && im1 && out );
-        im0->assert_type( IT_F_GRAY );
-        im1->assert_type( IT_F_GRAY );
-        int w = im0->w();
-        int h = im0->h();
-        passert_statement( (im1->w() == w) && (im1->h()==h), "dimension mismatch" );
-        passert_statement( im0->type() == im1->type(), "image type mismatch" );
-        out->create(w,h,im0->type());
-        for( int y=0; y<h; y++ ) {
-            const float*  row0 = im0->get_row_f(y);
-            const float*  row1 = im1->get_row_f(y);
-            float      * drow  = out->get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                drow[x] = row0[x]-row1[x];
-            }
-        }
-    }
-
-    void subtract_par( const Image* im0, const Image* im1, Image* out ) {
-        assert_pointer( im0 && im1 && out );
-        im0->assert_type( IT_F_GRAY );
-        im1->assert_type( IT_F_GRAY );
-        int w = im0->w();
-        int h = im0->h();
-        passert_statement( (im1->w() == w) && (im1->h()==h), "dimension mismatch" );
-        passert_statement( im0->type() == im1->type(), "image type mismatch" );
-        out->create(w,h,im0->type());
-#pragma omp parallel for
-        for( int y=0; y<h; y++ ) {
-            const float*  row0 = im0->get_row_f(y);
-            const float*  row1 = im1->get_row_f(y);
-            float      * drow  = out->get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                drow[x] = row0[x]-row1[x];
-            }
-        }
     }
 
     void combine_horizontally(const Image* im0, const Image* im1, Image* out) {
@@ -311,24 +275,27 @@ namespace kortex {
         }
     }
 
-    void image_threshold( Image* img, float th ) {
-        assert_pointer( img );
+    void image_threshold( const Image* img, float th, Image* msk ) {
+        assert_pointer( img && msk );
+        passert_statement( check_dimensions(img, msk), "dimension mismatch" );
         img->passert_type( IT_F_GRAY );
+        msk->passert_type( IT_F_GRAY );
         int w = img->w();
         int h = img->h();
         for( int y=0; y<h; y++ ) {
-            float* row = img->get_row_f(y);
+            const float* irow = img->get_row_f(y);
+            float      * orow = msk->get_row_f(y);
             for( int x=0; x<w; x++ ) {
-                if( row[x] > th ) row[x] = 1.0f;
-                else              row[x] = 0.0f;
+                if( irow[x] > th ) orow[x] = 1.0f;
+                else               orow[x] = 0.0f;
             }
         }
     }
 
     void image_resize_coarse_rgb( const Image* src, const int& nw, const int& nh, Image* dst ) {
-        passert_pointer( src && dst );
+        assert_pointer( src && dst );
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
-        src->assert_type( IT_U_PRGB | IT_U_IRGB | IT_F_IRGB | IT_F_PRGB );
+        src->passert_type( IT_U_PRGB | IT_U_IRGB | IT_F_IRGB | IT_F_PRGB );
 
         dst->create( nw, nh, src->type() );
         dst->zero();
@@ -359,9 +326,9 @@ namespace kortex {
     }
 
     void image_resize_coarse_g( const Image* src, const int& nw, const int& nh, Image* dst ) {
-        passert_pointer( src && dst );
+        assert_pointer( src && dst );
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
-        src->assert_type( IT_U_GRAY | IT_F_GRAY );
+        src->passert_type( IT_U_GRAY | IT_F_GRAY );
 
         dst->create( nw, nh, src->type() );
         dst->zero();
@@ -373,8 +340,10 @@ namespace kortex {
 
         for( int y=0; y<nh; y++ ) {
             float ny = y*ratioy;
+            if( ny >= src->h()-1 ) ny = src->h()-1;
             for( int x=0; x<nw; x++ ) {
                 float nx = x*ratiox;
+                if( nx >= src->w()-1 ) nx = src->w()-1;
                 float v = src->get_bilinear(nx, ny);
                 switch( dtype ) {
                 case TYPE_FLOAT: dst->set(x, y, v); break;
@@ -457,49 +426,20 @@ namespace kortex {
         dy[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-2)*w + w-1 ] - im[ (h-1)*w + w-1 ] );
     }
 
-    void image_scale( const Image* im, const float& scale, const bool& run_parallel, Image* out ) {
-        passert_pointer( im && out );
-        im->passert_type( IT_F_GRAY );
-        int w = im->w();
-        int h = im->h();
-        passert_statement( out->w() == w && out->h() == h, "image dimension mismatch" );
-
-        switch( run_parallel ) {
-        case true:
-#pragma omp parallel for
-            for( int y=0; y<h; y++ ) {
-                const float* srow =  im->get_row_f(y);
-                float*       drow = out->get_row_f(y);
-                for( int x=0; x<w; x++ ) {
-                    drow[x] = srow[x] * scale;
-                }
-            }
-            break;
-        case false:
-            for( int y=0; y<h; y++ ) {
-                const float* srow =  im->get_row_f(y);
-                float*       drow = out->get_row_f(y);
-                for( int x=0; x<w; x++ ) {
-                    drow[x] = srow[x] * scale;
-                }
-            }
-            break;
-        }
-    }
-
     void image_subtract( const Image* im0, const Image* im1, Image* out ) {
         passert_pointer( im0 && im1 && out );
+        passert_statement( check_dimensions(im0,im1), "dimension mismatch" );
+        passert_statement( check_dimensions(im0,out), "dimension mismatch" );
         im0->passert_type( IT_F_GRAY );
+        im1->passert_type( IT_F_GRAY );
+        out->passert_type( IT_F_GRAY );
+
         int w = im0->w();
         int h = im0->h();
-        passert_statement( (im1->w() == w) && (im1->h()==h), "dimension mismatch" );
-        passert_statement( im0->type() == im1->type(), "image type mismatch" );
-
-        out->create(w,h,im0->type());
         for( int y=0; y<h; y++ ) {
-            const float*  row0 = im0->get_row_f(y);
-            const float*  row1 = im1->get_row_f(y);
-            float      * drow  = out->get_row_f(y);
+            const float* row0 = im0->get_row_f(y);
+            const float* row1 = im1->get_row_f(y);
+            float      * drow = out->get_row_f(y);
             for( int x=0; x<w; x++ ) {
                 drow[x] = row0[x]-row1[x];
             }
@@ -508,20 +448,313 @@ namespace kortex {
 
     void image_subtract_par( const Image* im0, const Image* im1, Image* out ) {
         passert_pointer( im0 && im1 && out );
+        passert_statement( check_dimensions(im0,im1), "dimension mismatch" );
+        passert_statement( check_dimensions(im0,out), "dimension mismatch" );
         im0->passert_type( IT_F_GRAY );
+        im1->passert_type( IT_F_GRAY );
+        out->passert_type( IT_F_GRAY );
+
         int w = im0->w();
         int h = im0->h();
-        passert_statement( (im1->w() == w) && (im1->h()==h), "dimension mismatch" );
-        passert_statement( im0->type() == im1->type(), "image type mismatch" );
-
-        out->create(w,h,im0->type());
 #pragma omp parallel for
         for( int y=0; y<h; y++ ) {
-            const float*  row0 = im0->get_row_f(y);
-            const float*  row1 = im1->get_row_f(y);
-            float      * drow  = out->get_row_f(y);
+            const float* row0 = im0->get_row_f(y);
+            const float* row1 = im1->get_row_f(y);
+            float      * drow = out->get_row_f(y);
             for( int x=0; x<w; x++ ) {
                 drow[x] = row0[x]-row1[x];
+            }
+        }
+    }
+
+
+    void image_add( const Image* im0, const Image* im1, Image* out ) {
+        passert_pointer( im0 && im1 && out );
+        passert_statement( check_dimensions(im0,im1), "dimension mismatch" );
+        passert_statement( check_dimensions(im0,out), "dimension mismatch" );
+        im0->passert_type( IT_F_GRAY );
+        im1->passert_type( IT_F_GRAY );
+        out->passert_type( IT_F_GRAY );
+
+        int w = im0->w();
+        int h = im0->h();
+        for( int y=0; y<h; y++ ) {
+            const float* row0 = im0->get_row_f(y);
+            const float* row1 = im1->get_row_f(y);
+            float      * drow = out->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                drow[x] = row0[x]+row1[x];
+            }
+        }
+    }
+
+    void image_add_par( const Image* im0, const Image* im1, Image* out ) {
+        passert_pointer( im0 && im1 && out );
+        passert_statement( check_dimensions(im0,im1), "dimension mismatch" );
+        passert_statement( check_dimensions(im0,out), "dimension mismatch" );
+        im0->passert_type( IT_F_GRAY );
+        im1->passert_type( IT_F_GRAY );
+        out->passert_type( IT_F_GRAY );
+
+        int w = im0->w();
+        int h = im0->h();
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            const float* row0 = im0->get_row_f(y);
+            const float* row1 = im1->get_row_f(y);
+            float      * drow = out->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                drow[x] = row0[x]+row1[x];
+            }
+        }
+    }
+
+
+    /// r = p/q for q(i,j) > 1e-6
+    void image_divide( const Image* p, const Image* q, Image* r ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        assert_statement( check_dimensions(p,r), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        r->assert_type( IT_F_GRAY );
+        int h = p->h();
+        int w = p->w();
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            const float* qrow = q->get_row_f(y);
+            float      * rrow = r->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                if( fabs(qrow[x]) < 1e-6 ) {
+                    rrow[x] = 0.0f;
+                } else {
+                    rrow[x] = prow[x]/qrow[x];
+                }
+            }
+        }
+    }
+
+    /// r = p/q for q(i,j) > 1e-6
+    void image_divide_par( const Image* p, const Image* q, Image* r ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        assert_statement( check_dimensions(p,r), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        r->assert_type( IT_F_GRAY );
+        int h = p->h();
+        int w = p->w();
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            const float* qrow = q->get_row_f(y);
+            float      * rrow = r->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                if( fabs(qrow[x]) < 1e-6 ) {
+                    rrow[x] = 0.0f;
+                } else {
+                    rrow[x] = prow[x]/qrow[x];
+                }
+            }
+        }
+    }
+
+    // r = p*q
+    void image_multiply    ( const Image* p, const Image* q, Image* r ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        assert_statement( check_dimensions(p,r), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        r->assert_type( IT_F_GRAY );
+        int h = p->h();
+        int w = p->w();
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            const float* qrow = q->get_row_f(y);
+            float      * rrow = r->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                rrow[x] = prow[x]*qrow[x];
+            }
+        }
+    }
+
+    // r = p*q
+    void image_multiply_par( const Image* p, const Image* q, Image* r ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        assert_statement( check_dimensions(p,r), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        r->assert_type( IT_F_GRAY );
+        int h = p->h();
+        int w = p->w();
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            const float* qrow = q->get_row_f(y);
+            float      * rrow = r->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                rrow[x] = prow[x]*qrow[x];
+            }
+        }
+    }
+
+    /// r = o + p*q
+    void image_multiply_add( const Image* p, const Image* q, const Image* r, Image* o ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        assert_statement( check_dimensions(p,r), "dimension mismatch" );
+        assert_statement( check_dimensions(p,o), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        r->assert_type( IT_F_GRAY );
+        o->assert_type( IT_F_GRAY );
+        int h = p->h();
+        int w = p->w();
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            const float* qrow = q->get_row_f(y);
+            const float* rrow = r->get_row_f(y);
+            float      * orow = o->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                orow[x] = rrow[x] + prow[x]*qrow[x];
+            }
+        }
+    }
+
+
+    /// r = o + p*q
+    void image_multiply_add_par( const Image* p, const Image* q, const Image* r, Image* o ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        assert_statement( check_dimensions(p,r), "dimension mismatch" );
+        assert_statement( check_dimensions(p,o), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        r->assert_type( IT_F_GRAY );
+        o->assert_type( IT_F_GRAY );
+        int h = p->h();
+        int w = p->w();
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            const float* qrow = q->get_row_f(y);
+            const float* rrow = r->get_row_f(y);
+            float      * orow = o->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                orow[x] = rrow[x] + prow[x]*qrow[x];
+            }
+        }
+    }
+
+    /// q = s * p
+    void image_scale( const Image* p, const float& s, Image* q ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        int h = p->h();
+        int w = p->w();
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            float      * qrow = q->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                qrow[x] = s * prow[x];
+            }
+        }
+    }
+
+    /// q = s * p
+    void image_scale_par( const Image* p, const float& s, Image* q ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        int h = p->h();
+        int w = p->w();
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            float      * qrow = q->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                qrow[x] = s * prow[x];
+            }
+        }
+    }
+
+
+    /// checks whether p has values of either 0.0f or 1.0f
+    bool is_binarized( const Image* p ) {
+        assert_pointer( p );
+        assert_statement( !p->is_empty(), "passed empty image" );
+        p->assert_type( IT_F_GRAY );
+        int sz = p->h() * p->w();
+        const float* prow = p->get_row_f(0);
+        for( int i=0; i<sz; i++ ) {
+            if( prow[i] == 0.0f ) continue;
+            if( prow[i] == 1.0f ) continue;
+            return false;
+        }
+        return true;
+    }
+
+    /// checks whether p and q are non-zero for the same pixel
+    bool does_overlap( const Image* p, const Image* q ) {
+        assert_pointer( p && q );
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        p->assert_type( IT_F_GRAY );
+        q->assert_type( IT_F_GRAY );
+        int w = p->w();
+        int h = p->h();
+        for( int y=0; y<h; y++ ) {
+            const float* prow = p->get_row_f(y);
+            const float* qrow = q->get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                if( (prow[x] != 0.0f)  && ( qrow[x] != 0.0f ) ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    void init_gaussian_weight_mask( Image* mask ) {
+        assert_pointer( mask );
+        assert_statement( !mask->is_empty(), "passed empty mask" );
+        mask->assert_type( IT_F_GRAY );
+
+        int w = mask->w();
+        int h = mask->h();
+        int d = std::max(w,h)/2+1;
+        vector<float> exp_vals(d, 0.0f);
+        float sigma = d / 2.0f;
+        float v = sqrt(254.0f); // 1.0f / ( sqrt(PI2) * sigma );
+        for( int i=0; i<d; i++ ) {
+            exp_vals[i] = v * exp( -0.5f * i*i / sigma / sigma );
+        }
+
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            float* mrow = mask->get_row_f(y);
+            int yd = fabs(y-h/2);
+            assert_statement_g( yd>=0 && yd < d, "[oob %d %d]", yd, d );
+            float ey = exp_vals[ yd ];
+            for( int x=0; x<w; x++ ) {
+                int xd = fabs(x-w/2);
+                assert_statement_g( xd>=0 && xd < d, "[oob %d %d]", xd, d );
+                mrow[x] = ey * exp_vals[ xd ] + 1.0f;
+            }
+        }
+    }
+
+    void init_linear_weight_mask( Image* mask ) {
+        assert_pointer( mask );
+        assert_statement( !mask->is_empty(), "passed empty mask" );
+        mask->assert_type( IT_F_GRAY );
+        int w = mask->w();
+        int h = mask->h();
+
+#pragma omp parallel for
+        for(int y=0; y<h; y++) {
+            float* mrow = mask->get_row_f(y);
+            float y_w = 1.0 - fabs(2.0f*float(y)/(h-1.0f)-1.0f);
+            for( int x=0; x<w; x++ ) {
+                float x_w = 1.0 - fabs(2.0f*float(x)/(w-1.0f)-1.0f);
+                mrow[x] = 254.0f * (y_w*x_w) + 1.0f;
             }
         }
     }
