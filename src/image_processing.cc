@@ -366,6 +366,82 @@ namespace kortex {
         }
     }
 
+    void image_resize_fine_g( const Image* src, const int& nw, const int& nh, Image* dst ) {
+        assert_pointer( src && dst );
+        passert_statement( nw > 0 && nh > 0, "invalid new image size" );
+        src->passert_type( IT_U_GRAY | IT_F_GRAY );
+
+        dst->create( nw, nh, src->type() );
+        dst->zero();
+
+        float ratioy = src->h() / (float)nh;
+        float ratiox = src->w() / (float)nw;
+
+        DataType dtype = image_precision( src->type() );
+
+        for( int y=0; y<nh; y++ ) {
+            float ny = y*ratioy;
+            if( ny >= src->h()-1 ) ny = src->h()-1;
+            for( int x=0; x<nw; x++ ) {
+                float nx = x*ratiox;
+                // if( nx >= src->w()-1 ) nx = src->w()-1;
+                if( !src->is_inside_margin(nx, ny, 2) ) continue;
+                float v = src->get_bicubic(nx, ny);
+                switch( dtype ) {
+                case TYPE_FLOAT: dst->set(x, y, v); break;
+                case TYPE_UCHAR: {
+                    uchar uv = cast_to_gray_range( v );
+                    dst->set(x, y, uv);
+                } break;
+                default: switch_fatality();
+                }
+            }
+        }
+    }
+
+    void image_resize_fine_rgb( const Image* src, const int& nw, const int& nh, Image* dst ) {
+        assert_pointer( src && dst );
+        passert_statement( nw > 0 && nh > 0, "invalid new image size" );
+        src->passert_type( IT_U_PRGB | IT_U_IRGB | IT_F_IRGB | IT_F_PRGB );
+
+        dst->create( nw, nh, src->type() );
+        dst->zero();
+
+        float ratioy = src->h() / (float)nh;
+        float ratiox = src->w() / (float)nw;
+
+        DataType dtype = image_precision( src->type() );
+
+        float r, g, b;
+        for( int y=0; y<nh; y++ ) {
+            float ny = y*ratioy;
+            for( int x=0; x<nw; x++ ) {
+                float nx = x*ratiox;
+                if( !src->is_inside_margin(nx, ny, 2) ) continue;
+                src->get_bicubic(nx, ny, r, g, b);
+                switch( dtype ) {
+                case TYPE_FLOAT: dst->set(x, y, r, g, b); break;
+                case TYPE_UCHAR: {
+                    uchar ur = cast_to_gray_range( r );
+                    uchar ug = cast_to_gray_range( g );
+                    uchar ub = cast_to_gray_range( b );
+                    dst->set(x, y, ur, ug, ub);
+                } break;
+                default: switch_fatality();
+                }
+            }
+        }
+    }
+
+
+    void image_resize_fine( const Image* src, const int& nw, const int& nh, Image* dst ) {
+        passert_pointer( src && dst );
+        switch( src->ch() ) {
+        case 1: image_resize_fine_g  ( src, nw, nh, dst ); break;
+        case 3: image_resize_fine_rgb( src, nw, nh, dst ); break;
+        default: switch_fatality();
+        }
+    }
 
     void image_to_gradient(const float* im, int w, int h, float* dx, float* dy) {
         assert_pointer( im && dx && dy );
