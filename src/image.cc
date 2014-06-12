@@ -742,6 +742,34 @@ namespace kortex {
         else                   return        ( col[  (y0-1)*m_w ] - col[  (y0+1)*m_w ] );
     }
 
+    bool Image::is_non_zero( const int& x0, const int& y0, const int& rad ) const {
+        assert_type( IT_F_GRAY );
+        for( int y=y0-rad; y<=y0+rad; y++ ) {
+            if( y<0 || y>=m_h ) continue;
+            const float* row = get_row_f(y);
+            for( int x=x0-rad; x<=x0+rad; x++ ) {
+                if( x<0 || x>=m_w ) continue;
+                if( row[x] ) return true;
+            }
+        }
+        return false;
+    }
+    bool Image::does_contain_zero( const int& x0, const int& y0, const int& rad ) const {
+        assert_type( IT_F_GRAY );
+        for( int y=y0-rad; y<=y0+rad; y++ ) {
+            if( y<0 || y>=m_h ) continue;
+            const float* row = get_row_f(y);
+            for( int x=x0-rad; x<=x0+rad; x++ ) {
+                if( x<0 || x>=m_w ) continue;
+                if( row[x] == 0.0f ) return true;
+            }
+        }
+        return false;
+    }
+
+
+
+
     bool Image::is_maximum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const {
         assert_type( IT_F_GRAY );
         assert_statement( wnd_rad > 0, "window should be nonnegative" );

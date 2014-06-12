@@ -99,6 +99,9 @@ namespace kortex {
                 && kortex::is_inside(y,margin,m_h-margin);
         }
 
+        bool is_non_zero( const int& x0, const int& y0, const int& rad ) const;
+        bool does_contain_zero( const int& x0, const int& y0, const int& rad ) const;
+
         void convert( ImageType im_type );
         void swap(       Image* img );
         void copy( const Image* img );
