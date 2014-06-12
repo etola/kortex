@@ -147,8 +147,8 @@ namespace kortex {
     void filter_gaussian( const Image* img, const float& sigma, Image* out ) {
         assert_pointer( img && out );
         assert_statement( !img->is_empty(), "image is empty" );
-        passert_statement( out->type() == img->type(), "image types not agree" );
         passert_statement( check_dimensions(img, out), "dimension mismatch" );
+        passert_statement( out->type() == img->type(), "image types not agree" );
         int sz = filter_size(sigma);
         float* sfilter = NULL;
         allocate(sfilter, sz);
@@ -162,8 +162,8 @@ namespace kortex {
     void filter_gaussian_par( const Image* img, const float& sigma, Image* out ) {
         assert_pointer( img && out );
         assert_statement( !img->is_empty(), "image is empty" );
-        passert_statement( out->type() == img->type(), "image types not agree" );
         passert_statement( check_dimensions(img, out), "dimension mismatch" );
+        passert_statement( out->type() == img->type(), "image types not agree" );
         int sz = filter_size(sigma);
         float* sfilter = NULL;
         allocate(sfilter, sz);
@@ -441,6 +441,15 @@ namespace kortex {
         case 3: image_resize_fine_rgb( src, nw, nh, dst ); break;
         default: switch_fatality();
         }
+    }
+
+    void image_to_gradient( const Image& img, Image& dx, Image& dy ) {
+        img.passert_type( IT_F_GRAY );
+        int w = img.w();
+        int h = img.h();
+        dx.create( w, h, IT_F_GRAY );
+        dy.create( w, h, IT_F_GRAY );
+        image_to_gradient( img.get_row_f(0), w, h, dx.get_row_f(0), dy.get_row_f(0) );
     }
 
     void image_to_gradient(const float* im, int w, int h, float* dx, float* dy) {
