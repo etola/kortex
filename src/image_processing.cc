@@ -108,6 +108,117 @@ namespace kortex {
 
     // allows img out to be point to the same mem location -> therefore passerts
     // that out image is mem-allocated.
+    void filter_hor( const Image* img, const float* kernel, const int& ksz, Image* out ) {
+        assert_pointer( img &&  out  && kernel );
+        assert_pointer_size( ksz );
+        assert_statement( !img->is_empty(), "empty image" );
+        passert_statement( out->type() == img->type(), "image types not agree" );
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
+        img->passert_type( IT_F_GRAY | IT_F_IRGB );
+
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            filter_hor( img->get_row_f(0), img->w(), img->h(), kernel, ksz, out->get_row_f(0) );
+            break;
+        case IT_F_IRGB: {
+            for( int c=0; c<3; c++ ) {
+                const Image* sch = img->get_channel_wrapper( c );
+                Image      * dch = out->get_channel_wrapper( c );
+                filter_hor( sch, kernel, ksz, dch );
+                delete sch;
+                delete dch;
+            }
+        } break;
+        default: switch_fatality();
+        }
+    }
+
+
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
+    void filter_hor_par( const Image* img, const float* kernel, const int& ksz, Image* out ) {
+        assert_pointer( img &&  out  && kernel );
+        assert_pointer_size( ksz );
+        assert_statement( !img->is_empty(), "empty image" );
+        passert_statement( out->type() == img->type(), "image types not agree" );
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
+        img->passert_type( IT_F_GRAY | IT_F_IRGB );
+
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            filter_hor_par( img->get_row_f(0), img->w(), img->h(), kernel, ksz, out->get_row_f(0) );
+            break;
+        case IT_F_IRGB: {
+            for( int c=0; c<3; c++ ) {
+                const Image* sch = img->get_channel_wrapper( c );
+                Image      * dch = out->get_channel_wrapper( c );
+                filter_hor_par( sch, kernel, ksz, dch );
+                delete sch;
+                delete dch;
+            }
+        } break;
+        default: switch_fatality();
+        }
+    }
+
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
+    void filter_ver( const Image* img, const float* kernel, const int& ksz, Image* out ) {
+        assert_pointer( img &&  out  && kernel );
+        assert_pointer_size( ksz );
+        assert_statement( !img->is_empty(), "empty image" );
+        passert_statement( out->type() == img->type(), "image types not agree" );
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
+        img->passert_type( IT_F_GRAY | IT_F_IRGB );
+
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            filter_ver( img->get_row_f(0), img->w(), img->h(), kernel, ksz, out->get_row_f(0) );
+            break;
+        case IT_F_IRGB: {
+            for( int c=0; c<3; c++ ) {
+                const Image* sch = img->get_channel_wrapper( c );
+                Image      * dch = out->get_channel_wrapper( c );
+                filter_ver( sch, kernel, ksz, dch );
+                delete sch;
+                delete dch;
+            }
+        } break;
+        default: switch_fatality();
+        }
+    }
+
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
+    void filter_ver_par( const Image* img, const float* kernel, const int& ksz, Image* out ) {
+        assert_pointer( img &&  out  && kernel );
+        assert_pointer_size( ksz );
+        assert_statement( !img->is_empty(), "empty image" );
+        passert_statement( out->type() == img->type(), "image types not agree" );
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
+        img->passert_type( IT_F_GRAY | IT_F_IRGB );
+
+        switch( img->type() ) {
+        case IT_F_GRAY:
+            filter_ver_par( img->get_row_f(0), img->w(), img->h(), kernel, ksz, out->get_row_f(0) );
+            break;
+        case IT_F_IRGB: {
+            for( int c=0; c<3; c++ ) {
+                const Image* sch = img->get_channel_wrapper( c );
+                Image      * dch = out->get_channel_wrapper( c );
+                filter_ver_par( sch, kernel, ksz, dch );
+                delete sch;
+                delete dch;
+            }
+        } break;
+        default: switch_fatality();
+        }
+    }
+
+
+
+    // allows img out to be point to the same mem location -> therefore passerts
+    // that out image is mem-allocated.
     void filter_hv_par( const Image* img, const float* kernel, const int& ksz, Image* out ) {
         assert_pointer( img && out && kernel );
         assert_pointer_size( ksz );
