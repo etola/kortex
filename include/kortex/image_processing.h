@@ -160,6 +160,7 @@ namespace kortex {
     template <typename T>
     float  bicubic_interpolation(const T* im,  const int& w, const int& h, const int& nc, const int& ch, const float& x, const float& y);
 
+    int  filter_size( const float& sigma );
 
 }
 

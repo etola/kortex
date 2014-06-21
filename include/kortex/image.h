@@ -112,6 +112,17 @@ namespace kortex {
         void set( const int  & v );
 
         //
+        // get raw pointers
+        //
+        const float* get_fptr() const { return m_data_f; }
+        const uchar* get_uptr() const { return m_data_u; }
+        const int  * get_iptr() const { return m_data_i; }
+        float      * get_fptr()       { return m_data_f; }
+        uchar      * get_uptr()       { return m_data_u; }
+        int        * get_iptr()       { return m_data_i; }
+
+
+        //
         // get image channels
         //
         uchar      * get_channel_u( int cid );
@@ -338,6 +349,12 @@ namespace kortex {
         assert_pointer( p && q );
         if( p->w() != q->w() ) return false;
         if( p->h() != q->h() ) return false;
+        return true;
+    }
+
+    inline bool check_dimensions( const Image& p, const Image& q ) {
+        if( p.w() != q.w() ) return false;
+        if( p.h() != q.h() ) return false;
         return true;
     }
 
