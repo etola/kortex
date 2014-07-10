@@ -1,0 +1,72 @@
+// ---------------------------------------------------------------------------
+//
+// Installation instructions for libkortex
+//
+// ---------------------------------------------------------------------------
+
+1. install dependency packages : liblapack-dev libblas-dev libjpeg-dev libpng12-dev git
+
+$ sudo apt-get -y --force-yes --install-recommends install pkg-config libjpeg-dev
+libpng12-dev liblapack-dev libblas-dev git
+$ mkdir -p ${HOME}/usr/lib/pkgconfig
+$ export PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:${HOME}/usr/lib/pkgconfig/
+
+2. set up a working directory and cd into it
+
+$ mkdir -p ${HOME}/src/cpp/
+$ cd ${HOME}/src/cpp/
+
+3. install makefile-heaven from github
+
+$ git clone https://github.com/etola/makefile-heaven
+
+4. edit your .bashrc and add the following line to it. after that open up a new
+terminal.
+
+$ MAKEFILE_HEAVEN=${HOME}/src/cpp/makefile-heaven/
+
+--> in a new terminal running 'env | grep MAKEFILE' should produce a non-empty
+    output
+
+5. get kortex
+
+$ mkdir ${HOME}/src/cpp/lib
+$ cd ${HOME}/src/cpp/lib
+$ git clone https://github.com/etola/kortex
+$ cd kortex
+
+7. compilation
+
+$ cp -f pcfiles/*.pc ${HOME}/usr/lib/pkgconfig/ ---> installs pkg-config files
+                                                     to the system
+$ make library  ----> static library
+$ make slib     ----> dynamic library
+
+// run 'make rules' to get a list of possible commands
+
+8. installation
+
+$ mkdir ${HOME}/usr/local/
+$ make install-lib  ----> static library installation
+$ make install-slib ----> dynamic library installtion
+
+9. In a new project, to link against kortex you need to
+
+- add the output of the following to LDFLAGS
+  pkg-config --libs kortex
+- add the output of the following to CXXFLAGS
+  pkg-config --cflags kortex
+
+10. You can also use the template makefile file given under
+
+    ${HOME}/src/cpp/makefile-heaven/makefile
+
+    to setup you project. kortex is alredy setup for that. all you need to do is
+    add your .cc files to the 'sources :=' field and add a packagename.
+
+    For an example makefile-heaven use, check out the makefile given in the
+    'imshow' application @ https://github.com/etola/imshow/. It links against
+    the kortex-ext-opencv library. For your own project to link against kortex,
+    just replace kortex-ext-opencv with kortex.
+
+        https://github.com/etola/imshow/blob/master/makefile
