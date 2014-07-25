@@ -67,6 +67,8 @@ namespace kortex {
         Image(int w, int h, ImageType type);
         Image(const Image& img);
 
+        Image& operator=( const Image& p );
+
         void create( int w, int h, ImageType type );
 
         ~Image();
@@ -76,15 +78,16 @@ namespace kortex {
         static size_t req_mem( const Image* img );
         size_t mem_usage() const;
 
-        int         w ()           const { return m_w;                     }
-        int         h ()           const { return m_h;                     }
-        int         ch()           const { return m_ch;                    }
-        ImageType   type()         const { return m_type;                  }
-        ChannelType channel_type() const { return m_channel_type;          }
-        DataType    precision()    const { return image_precision(m_type); }
-        bool        is_empty()     const { return !(m_w*m_h);              }
-        bool        is_wrapper()   const { return m_wrapper;               }
-        size_t      pixel_count()  const { return size_t(m_w)*size_t(m_h)*size_t(m_ch); }
+        int         w ()            const { return m_w;                     }
+        int         h ()            const { return m_h;                     }
+        int         ch()            const { return m_ch;                    }
+        ImageType   type()          const { return m_type;                  }
+        ChannelType channel_type()  const { return m_channel_type;          }
+        DataType    precision()     const { return image_precision(m_type); }
+        bool        is_empty()      const { return !(m_w*m_h);              }
+        bool        is_wrapper()    const { return m_wrapper;               }
+        int         pixel_count()   const { return m_w*m_h;                 }
+        size_t      element_count() const { return size_t(m_w)*size_t(m_h)*size_t(m_ch); }
 
         bool is_inside( int x, int y ) const {
             return kortex::is_inside(x,0,m_w)

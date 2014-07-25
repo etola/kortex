@@ -48,6 +48,11 @@ namespace kortex {
         this->copy( &img );
     }
 
+    Image& Image::operator=( const Image& p ) {
+        this->copy( &p );
+        return *this;
+    }
+
     void Image::create( int w, int h, ImageType type ) {
         passert_statement( w*h>0, "will not create null image" );
         size_t sz = req_mem( w, h, type );
