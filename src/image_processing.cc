@@ -887,6 +887,22 @@ namespace kortex {
         return true;
     }
 
+    /// checks whether p has values in the range [0.0f 1.0f]
+    bool is_normalized( const Image* p ) {
+        assert_pointer( p );
+        assert_statement( !p->is_empty(), "passed empty image" );
+        p->assert_type( IT_F_GRAY );
+        int sz = p->h() * p->w();
+        const float* prow = p->get_row_f(0);
+
+        for( int i=0; i<sz; i++ ) {
+            if( prow[i] < 0.0f ) return false;
+            if( prow[i] > 1.0f ) return false;
+        }
+        return true;
+    }
+
+
     /// checks whether p and q are non-zero for the same pixel
     bool does_overlap( const Image* p, const Image* q ) {
         assert_pointer( p && q );
@@ -955,6 +971,25 @@ namespace kortex {
         }
     }
 
+    ///
+    /// assumes image_threshold is called first over mask.
+    ///
+    /// er_size : how many pixels to erode
+    void erode_mask( Image* mask, int er_size ) {
+        assert_pointer( mask );
+        mask->assert_type( IT_F_GRAY );
+        assert_statement( !mask->is_empty(), "passed empty image" );
+        assert_statement( is_binarized( mask ), "passed image is not binarized" );
+
+        // how much pixels to erode
+        float kernel[255];
+        int ksz = 2*er_size+1;
+        assert_statement( ksz <= 255, "buffer overflow" );
+        for(int i=0; i<ksz; i++)
+            kernel[i] = 1.0f;
+        filter_hv( mask, kernel, ksz, mask );
+        image_threshold( mask, ksz*ksz-1 );
+    }
 
 
 }

@@ -78,6 +78,12 @@ namespace kortex {
         image_threshold( img, th, img );
     }
 
+    ///
+    /// assumes image_threshold is called first over mask.
+    ///
+    /// er_size : how many pixels to erode
+    void erode_mask( Image* mask, int er_size );
+
     void image_to_gradient(const float* im, int w, int h, float* dx, float* dy);
     void image_to_gradient( const Image& img, Image& dx, Image& dy );
 
@@ -146,6 +152,9 @@ namespace kortex {
     /// checks whether p has values of either 0.0f or 1.0f
     bool is_binarized( const Image* p );
 
+    /// checks whether p has values in the range [0.0f 1.0f]
+    bool is_normalized( const Image* p );
+
     /// checks whether p and q are non-zero for the same pixel
     bool does_overlap( const Image* p, const Image* q );
 
@@ -161,6 +170,8 @@ namespace kortex {
     float  bicubic_interpolation(const T* im,  const int& w, const int& h, const int& nc, const int& ch, const float& x, const float& y);
 
     int  filter_size( const float& sigma );
+
+
 
 }
 
