@@ -31,7 +31,7 @@ namespace kortex {
         write_bparam( fout, img->h() );
         write_bparam( fout, img->ch() );
         write_bparam( fout, (int)img->type() );
-        size_t imsz = img->pixel_count();
+        size_t imsz = img->element_count();
         switch( img->type() ) {
         case IT_U_GRAY: write_bparam( fout, img->get_row_u (0  ), imsz ); break;
         case IT_U_PRGB: write_bparam( fout, img->get_row_u (0  ), imsz ); break;
@@ -56,7 +56,7 @@ namespace kortex {
         read_bparam( fin, ch );
         read_bparam( fin, type );
         img->create( w, h, get_image_type(type) );
-        size_t imsz = img->pixel_count();
+        size_t imsz = img->element_count();
         switch( img->type() ) {
         case IT_U_GRAY: read_bparam( fin, img->get_row_u (0  ), imsz ); break;
         case IT_U_PRGB: read_bparam( fin, img->get_row_u (0  ), imsz ); break;
