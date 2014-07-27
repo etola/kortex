@@ -11,22 +11,21 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-#include <kortex/image_space_mapping.h>
 #include <kortex/image_processing.h>
 #include <kortex/image.h>
 #include <kortex/check.h>
 #include <kortex/color.h>
+#include <kortex/image_space_mapping.h>
 
 namespace kortex {
 
-    void image_map_linear(const Image* img, float& min_v, float& max_v, Image* out ) {
-        passert_pointer( img && out );
-        passert_statement( img != out, "no memory aliasing allowed" );
-        img->passert_type( IT_U_GRAY | IT_F_GRAY );
+    void image_map_linear(const Image& img, float& min_v, float& max_v, Image& out ) {
+        passert_noalias( img, out );
+        img.passert_type( IT_U_GRAY | IT_F_GRAY );
 
         float scale = 1.0f;
         if( min_v == -1.0f && max_v == -1.0f ) {
-            if( !image_min_max( img, 0, 0, img->w(), img->h(), min_v, max_v ) ) {
+            if( !image_min_max( img, 0, 0, img.w(), img.h(), min_v, max_v ) ) {
                 logman_error("min max range for the image could not be found");
                 min_v = 0.0f;
                 max_v = 0.0f;
@@ -36,16 +35,16 @@ namespace kortex {
             scale = 255.0f / ( max_v - min_v );
         }
 
-        int h = img->h();
-        int w = img->w();
-        out->create( w, h, IT_U_GRAY );
-        out->zero();
+        int h = img.h();
+        int w = img.w();
+        out.create( w, h, IT_U_GRAY );
+        out.zero();
 
-        switch( img->type() ) {
+        switch( img.type() ) {
         case IT_F_GRAY:
             for( int y=0; y<h; y++ ) {
-                const float* srow = img->get_row_f(y);
-                uchar      * orow = out->get_row_u(y);
+                const float* srow = img.get_row_f(y);
+                uchar      * orow = out.get_row_u(y);
                 for( int x=0; x<w; x++ ) {
                     const float& v = srow[x];
                     if( is_a_number(v) )
@@ -55,8 +54,8 @@ namespace kortex {
             break;
         case IT_U_GRAY:
             for( int y=0; y<h; y++ ) {
-                const uchar* srow = img->get_row_u(y);
-                uchar      * orow = out->get_row_u(y);
+                const uchar* srow = img.get_row_u(y);
+                uchar      * orow = out.get_row_u(y);
                 for( int x=0; x<w; x++ ) {
                     float v = static_cast<float>(srow[x]);
                     if( is_a_number(v) )
@@ -68,20 +67,19 @@ namespace kortex {
         }
     }
 
-    void image_power(const Image* img, const float& pscale, Image* out ) {
-        passert_pointer( img && out );
-        img->passert_type( IT_F_GRAY | IT_U_GRAY );
+    void image_power(const Image& img, float pscale, Image& out ) {
+        img.passert_type( IT_F_GRAY | IT_U_GRAY );
 
-        int h = img->h();
-        int w = img->w();
-        out->create( w, h, IT_F_GRAY );
-        out->zero();
+        int h = img.h();
+        int w = img.w();
+        out.create( w, h, IT_F_GRAY );
+        out.zero();
 
-        switch( img->type() ) {
+        switch( img.type() ) {
         case IT_F_GRAY:
             for( int y=0; y<h; y++ ) {
-                const float* srow = img->get_row_f(y);
-                float      * orow = out->get_row_f(y);
+                const float* srow = img.get_row_f(y);
+                float      * orow = out.get_row_f(y);
                 for( int x=0; x<w; x++ ) {
                     const float& v = srow[x];
                     if( is_a_number(v) )
@@ -91,8 +89,8 @@ namespace kortex {
             break;
         case IT_U_GRAY:
             for( int y=0; y<h; y++ ) {
-                const uchar* srow = img->get_row_u(y);
-                float      * orow = out->get_row_f(y);
+                const uchar* srow = img.get_row_u(y);
+                float      * orow = out.get_row_f(y);
                 for( int x=0; x<w; x++ ) {
                     float v = static_cast<float>(srow[x]);
                     if( is_a_number(v) )
@@ -104,20 +102,19 @@ namespace kortex {
         }
     }
 
-    void image_log(const Image* img, Image* out ) {
-        passert_pointer( img && out );
-        img->passert_type( IT_F_GRAY | IT_U_GRAY );
+    void image_log(const Image& img, Image& out ) {
+        img.passert_type( IT_F_GRAY | IT_U_GRAY );
 
-        int h = img->h();
-        int w = img->w();
-        out->create( w, h, IT_F_GRAY );
-        out->zero();
+        int h = img.h();
+        int w = img.w();
+        out.create( w, h, IT_F_GRAY );
+        out.zero();
 
-        switch( img->type() ) {
+        switch( img.type() ) {
         case IT_F_GRAY:
             for( int y=0; y<h; y++ ) {
-                const float* srow = img->get_row_f(y);
-                float      * orow = out->get_row_f(y);
+                const float* srow = img.get_row_f(y);
+                float      * orow = out.get_row_f(y);
                 for( int x=0; x<w; x++ ) {
                     const float& v = srow[x];
                     if( is_a_number(v) ) orow[x] = log(v);
@@ -127,8 +124,8 @@ namespace kortex {
             break;
         case IT_U_GRAY:
             for( int y=0; y<h; y++ ) {
-                const uchar* srow = img->get_row_u(y);
-                float      * orow = out->get_row_f(y);
+                const uchar* srow = img.get_row_u(y);
+                float      * orow = out.get_row_f(y);
                 for( int x=0; x<w; x++ ) {
                     float v = static_cast<float>(srow[x]);
                     if( is_a_number(v) ) orow[x] = log(v);
@@ -140,31 +137,31 @@ namespace kortex {
         }
     }
 
-    void image_map( const Image* img, const ColorMap& cm, Image* out ) {
+    void image_map( const Image& img, const ColorMap& cm, Image& out ) {
 
-        img->passert_type( IT_F_GRAY | IT_U_GRAY );
-        assert_statement( !img->is_empty(), "image is empty!" );
+        img.passert_type( IT_F_GRAY | IT_U_GRAY );
+        assert_statement( !img.is_empty(), "image is empty!" );
 
         Histogram hist(1000);
         float minv=0.0f, maxv=0.0f;
         Image tmp;
         switch( cm.cm_type ) {
         case CMT_LINEAR:
-            hist.build( img, HT_UNIFORM );
+            hist.build( &img, HT_UNIFORM );
             find_min_max_range( cm, &hist, minv, maxv );
-            image_map_linear(img, minv, maxv, out );
+            image_map_linear( img, minv, maxv, out );
             break;
         case CMT_POWER:
-            image_power(img, cm.pow_scale, &tmp);
+            image_power( img, cm.pow_scale, tmp );
             hist.build( &tmp, HT_UNIFORM );
             find_min_max_range( cm, &hist, minv, maxv );
-            image_map_linear(&tmp, minv, maxv, out );
+            image_map_linear( tmp, minv, maxv, out );
             break;
         case CMT_LOG:
-            image_log(img, &tmp);
+            image_log(img, tmp);
             hist.build( &tmp, HT_LINEAR );
             find_min_max_range( cm, &hist, minv, maxv );
-            image_map_linear(&tmp, minv, maxv, out );
+            image_map_linear( tmp, minv, maxv, out );
             break;
         }
 

@@ -23,15 +23,15 @@ namespace kortex {
     class Image;
     class Rect2i;
 
-    void draw_point         ( Image* im, int x, int y, ColorName color);
-    void draw_line          ( Image* im, int x0, int y0, int x1, int y1, ColorName color);
-    void draw_plus          ( Image* im, int x, int y, int ps, ColorName color);
-    void draw_square        ( Image* im, int x, int y, int ss, int ori, ColorName color);
-    void draw_rectangle     ( Image* im, const Rect2i* rectangle, ColorName col );
-    void draw_circle        ( Image* im, int x, int y, float dr, ColorName color );
-    void draw_shaded_square ( Image* im, int x0, int y0, int w, float ss, ColorName color);
-    void draw_filled_square ( Image* im, int x0, int y0, int w, ColorName color);
-    void draw_shaded        ( Image* im, const Image* mask, float ss, ColorName color);
+    void draw_point         ( Image& im, int x, int y, ColorName color);
+    void draw_line          ( Image& im, int x0, int y0, int x1, int y1, ColorName color);
+    void draw_plus          ( Image& im, int x, int y, int ps, ColorName color);
+    void draw_square        ( Image& im, int x, int y, int ss, int ori, ColorName color);
+    void draw_rectangle     ( Image& im, const Rect2i& rectangle, ColorName col );
+    void draw_circle        ( Image& im, int x, int y, float dr, ColorName color );
+    void draw_shaded_square ( Image& im, int x0, int y0, int w, float ss, ColorName color);
+    void draw_filled_square ( Image& im, int x0, int y0, int w, ColorName color);
+    void draw_shaded        ( Image& im, const Image& mask, float ss, ColorName color);
 
 
 }

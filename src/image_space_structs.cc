@@ -97,7 +97,7 @@ namespace kortex {
 
         switch( ht ) {
         case HT_LINEAR: {
-            if( !image_min_max( img, 0, 0, w, h, lo, hi ) ) {
+            if( !image_min_max( *img, 0, 0, w, h, lo, hi ) ) {
                 hi = 1.0f;
                 lo = 0.0f;
             }
