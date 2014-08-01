@@ -82,7 +82,7 @@ namespace kortex {
             if( xtags[i] > v ) break;
             bid++;
         }
-        bid = std::min( bid-1, n_bins-1 );
+        bid = std::max( 0, std::min( bid-1, n_bins-1 ) );
         return bid;
     }
 
