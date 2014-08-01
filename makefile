@@ -26,8 +26,6 @@ image_io_pnm.cc \
 image_io_png.cc \
 image_io_jpg.cc \
 image_paint.cc \
-image_space_structs.cc \
-image_space_mapping.cc \
 sse_extensions.cc \
 string.cc \
 fileio.cc \
@@ -63,8 +61,6 @@ image_io_pnm.h \
 image_io_png.h \
 image_io_jpg.h \
 image_paint.h \
-image_space_structs.h \
-image_space_mapping.h \
 sse_extensions.h \
 string.h \
 fileio.h \
