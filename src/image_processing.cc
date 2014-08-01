@@ -965,4 +965,77 @@ namespace kortex {
     }
 
 
+    /// maps the src image to 0.0 -> 1.0 range linearly. assumes the original
+    /// image is of type IT_F_GRAY
+    void image_linearize( const Image& src, Image& dst ) {
+        src.assert_type( IT_F_GRAY );
+        dst.assert_type( IT_F_GRAY );
+        assert_statement( check_dimensions(src,dst), "dimension mismatch" );
+        assert_statement( !src.is_empty(), "empty image" );
+
+        float mins, maxs;
+        image_min_max( src, 0, 0, src.w(), src.h(), mins, maxs );
+
+        float srange = maxs - mins;
+        if( fabs(srange ) < 1e-8 ) {
+            logman_warning_g( "image range is too low [%f %f]", mins, maxs );
+            dst.zero();
+            return;
+        }
+        float isrange = 1.0f/srange;
+
+        const float* sptr = src.get_row_f(0);
+        float      * dptr = dst.get_row_f(0);
+        int pc = src.pixel_count();
+        for( int i=0; i<pc; i++ ) {
+            dptr[i] = ( sptr[i] - mins ) * isrange;
+        }
+    }
+
+    void image_normalize( const Image& src, Image& dst ) {
+        src.assert_type( IT_F_GRAY );
+        dst.assert_type( IT_F_GRAY );
+        assert_statement( check_dimensions(src,dst), "dimension mismatch" );
+        image_scale( src, 1.0f/255.0f, dst );
+    }
+
+    void image_unnormalize( const Image& src, Image& dst ) {
+        src.assert_type( IT_F_GRAY );
+        dst.assert_type( IT_F_GRAY );
+        assert_statement( check_dimensions(src,dst), "dimension mismatch" );
+        image_scale( src, 255.0f, dst );
+    }
+
+    /// computes per pixel image gradient magnitude
+    void image_gradient_magnitude( const Image& src, bool run_parallel, Image& mag ) {
+        src.assert_type( IT_F_GRAY );
+        assert_statement( !src.is_empty(), "empty image" );
+        assert_noalias( src, mag );
+
+        mag.create( src.w(), src.h(), IT_F_GRAY );
+        mag.zero();
+
+        Image dx, dy;
+        image_to_gradient( src, dx, dy );
+
+        const float* xptr = dx.get_row_f(0);
+        const float* yptr = dy.get_row_f(0);
+        float      * mptr = mag.get_row_f(0);
+        int pc = src.pixel_count();
+        switch( run_parallel ) {
+        case false: {
+            for( int i=0; i<pc; i++ ) {
+                mptr[i] = sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
+            }
+        } break;
+        case true: {
+#pragma omp parallel for
+            for( int i=0; i<pc; i++ ) {
+                mptr[i] = sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
+            }
+        } break;
+        }
+    }
+
+
 }

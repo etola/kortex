@@ -173,7 +173,24 @@ namespace kortex {
 
     int  filter_size( const float& sigma );
 
+    /// maps the src image to 0.0 -> 1.0 range linearly
+    void image_linearize( const Image& src, Image& dst );
+    inline void image_linearize( Image& img ) {
+        image_linearize( img, img );
+    }
 
+    void image_normalize( const Image& src, Image& dst );
+    inline void image_normalize( Image& img ) {
+        image_normalize( img, img );
+    }
+
+    void image_unnormalize( const Image& src, Image& dst );
+    inline void image_unnormalize( Image& img ) {
+        image_unnormalize( img, img );
+    }
+
+    /// computes per pixel image gradient magnitude
+    void image_gradient_magnitude( const Image& src, bool run_parallel, Image& mag );
 
 }
 
