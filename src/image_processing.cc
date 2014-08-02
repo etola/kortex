@@ -1037,5 +1037,38 @@ namespace kortex {
         }
     }
 
+    void image_stretch( const Image& src, float minv, float maxv, Image& out ) {
+        src.assert_type( IT_F_GRAY );
+
+        float scale = 1.0f;
+        if( minv == 0.0f && maxv == 0.0f ) {
+            if( !image_min_max( src, 0, 0, src.w(), src.h(), minv, maxv ) ) {
+                logman_error("min max range for the image could not be found");
+                minv = 0.0f;
+                maxv = 0.0f;
+                scale = 1.0f;
+            } else {
+                scale = 255.0f / ( maxv - minv );
+            }
+        } else {
+            scale = 255.0f / ( maxv - minv );
+        }
+
+        out.create( src.w(), src.h(), IT_U_GRAY );
+        out.zero();
+
+        for( int y=0; y<src.h(); y++ ) {
+            const float* srow = src.get_row_f(y);
+            uchar      * orow = out.get_row_u(y);
+            for( int x=0; x<src.w(); x++ ) {
+                const float& v = srow[x];
+                if( is_a_number(v) )
+                    orow[x] = cast_to_gray_range( (v-minv)*scale );
+            }
+        }
+
+
+    }
+
 
 }

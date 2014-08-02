@@ -192,6 +192,10 @@ namespace kortex {
     /// computes per pixel image gradient magnitude
     void image_gradient_magnitude( const Image& src, bool run_parallel, Image& mag );
 
+    /// stretches image info such that its minv->0.0f maxv->255.0f. if minv,maxv
+    /// specified as 0.0f 0.0f range is extracted from the source image.
+    void image_stretch( const Image& src, float minv, float maxv, Image& out );
+
 }
 
 #endif
