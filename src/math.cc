@@ -20,8 +20,22 @@
 
 #include <cstring>
 #include <cfloat>
+#include <climits>
 
 namespace kortex {
+
+    int nearest_int( const float& f ) {
+        if     ( f > INT_MAX ) return INT_MAX;
+        else if( f < INT_MIN ) return INT_MIN;
+        // return (int)( f + 0.49999997f ); // --> works only on positive values
+        return (int)rint(f);
+    }
+
+    int nearest_int( const double& f ) {
+        if     ( f > INT_MAX ) return INT_MAX;
+        else if( f < INT_MIN ) return INT_MIN;
+        return (int)rint(f);
+    }
 
     bool is_unit_norm( const float* a, int asz, float eps ) {
         assert_pointer( a );
@@ -150,6 +164,13 @@ namespace kortex {
 #endif
     }
 
+    double l2norm( const double* a, int asz ) {
+        double nrm = 0.0;
+        for( int k=0; k<asz; a++ )
+            nrm += sq(a[k]);
+        return sqrt(nrm);
+    }
+
     float l2norm ( const float* a, int asz ) {
 #ifdef WITH_SSE
         return sqrt( sse_sq_sum(a, asz) );
@@ -232,6 +253,21 @@ namespace kortex {
         }
 
         return true;
+    }
+
+    int absmax( const double* arr, int narr, double &mn ) {
+        assert_pointer( arr );
+        assert_pointer_size( narr );
+
+        mn       = fabs(arr[0]);
+        int maxi = 0;
+        for( int i=1; i<narr; i++ ) {
+            if( fabs(arr[i])>mn ) {
+                mn   = fabs(arr[i]);
+                maxi = i;
+            }
+        }
+        return maxi;
     }
 
 

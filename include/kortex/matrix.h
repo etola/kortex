@@ -218,6 +218,14 @@ namespace kortex {
 
     bool mat_is_upper_hessenberg( const double* A, int nra, int nca );
 
+    /// AtA = A' * A : computes only upper part
+    void mat_trans_mat_upper( const double* A, int ar,  int ac, double* AtA, int ata_sz );
+
+    /// makes matrix symmetric by copying keep_upper [true: upper->lower, false:
+    /// lower->upper];
+    void mat_sym( double* A, int nra, int nca, bool keep_upper );
+
+
 }
 
 #endif

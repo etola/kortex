@@ -655,6 +655,52 @@ namespace kortex {
         return true;
     }
 
+    /// AtA = A' * A
+    void mat_trans_mat_upper( const double* A, int nra,  int nca, double* AtA, int ata_sz ) {
+        assert_pointer( A && AtA );
+        assert_noalias_p( A, AtA );
+        assert_statement_g( is_positive_number(nra) && is_positive_number(nca),
+                            "[nra %d] [nca %d] should be positive", nra, nca );
+        assert_matrix_size( MO_T_MUL, nra, nca, nra, nca, ata_sz );
+
+        for( int j=0; j<nca; j++ ) {
+            double* AtAj = AtA + j*nca;
+            const double* Aj = A + j;
+            for( int i=j; i<nca; i++ ) {
+                const double* Ai = A + i;
+                double v = 0.0;
+                for( int k=0; k<nra; k++ )
+                    v += Aj[k*nca] * Ai[k*nca];
+                AtAj[i] = v;
+            }
+        }
+    }
+
+
+    /// makes matrix symmetric by copying keep_upper [true: upper->lower, false:
+    /// lower->upper];
+    void mat_sym( double* A, int nra, int nca, bool keep_upper ) {
+        assert_pointer( A );
+        assert_statement( nra == nca, "matrix needs to be square" );
+        assert_statement_g( is_positive_number(nra), "[ar %d] should be positive", nra );
+
+        switch( keep_upper ) {
+        case true:
+            for(int r=0; r<nra; r++) {
+                for(int c=r+1; c<nra; c++) {
+                    A[c*nra+r] = A[r*nra+c];
+                }
+            }
+            break;
+        case false:
+            for(int r=0; r<nra; r++) {
+                for(int c=r+1; c<nra; c++) {
+                    A[r*nra+c] = A[c*nra+r];
+                }
+            }
+            break;
+        }
+    }
 
 
 

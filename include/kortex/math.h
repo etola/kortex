@@ -20,6 +20,9 @@ using std::vector;
 
 namespace kortex {
 
+    int nearest_int( const float & f );
+    int nearest_int( const double& f );
+
     template <typename T> int sign(T v) { return (T(0) < v) - (v<T(0)); }
 
     inline float  sq(const float&  v) { return v*v; }
@@ -67,8 +70,10 @@ namespace kortex {
     inline float  l2norm3( const float * a ) { return sqrt(dot3(a,a)); }
     inline double l2norm3( const double* a ) { return sqrt(dot3(a,a)); }
 
-    void  scale( float* arr, int asz, float v );
-    float l2norm( const float* a, int asz );
+    void   scale( float* arr, int asz, float v );
+    float  l2norm( const float * a, int asz );
+    double l2norm( const double* a, int asz );
+
     float normalize_l2norm( float * arr, int asz );
 
     float  normalize_l2norm3( float * arr );
@@ -84,6 +89,8 @@ namespace kortex {
 
     // assuming p(x) = c0 + c1 x + c2 x^2 + ...
     bool find_real_roots_of_polynomial( const vector<double>& coeffs, vector<double>& real_roots );
+
+    int absmax( const double* arr, int narr, double &mn );
 
 }
 

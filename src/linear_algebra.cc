@@ -146,6 +146,31 @@ namespace kortex {
         return info;
     }
 
+    int lsq_solve_QR_lwork( int nr, int nc, int lda, int nrhs, int ldb, bool transp_A ) {
+        int     info;
+        char        trans = (transp_A ? 'T' : 'N');
+        double* A = NULL;
+        double* B = NULL;
+        double  work;
+        int        lwork = -1;
+        dgels_(&trans, &nr, &nc, &nrhs, A, &lda, B, &ldb, &work, &lwork, &info);
+        return !info ? (int)work : 1;
+    }
+
+    int lapack_lsq_solve_QR(double* A, int nr, int nc, int lda,
+                            double* B, int nrhs, int ldb, bool transp_A,
+                            MemUnit* memory) {
+
+        int info;
+        int lwork = lsq_solver_QR_lwork(nr, nc, lda, nrhs, ldb, transp_A);
+        memory->resize( lwork*sizeof(*A) );
+        double* work = (double*)memory->get_buffer();
+        char trans = (transp_A ? 'T' : 'N');
+        dgels_(&trans, &nr, &nc, &nrhs, (double*)A, &lda, (double*)B, &ldb, (double*)work, &lwork, &info);
+        return info;
+    }
+
+
 //
     bool mat_eigenvalues_upper_hessenberg( const double* H, int nra, double* eigs_r, double* eigs_i, int n_eigs, MemUnit& mem ) {
 

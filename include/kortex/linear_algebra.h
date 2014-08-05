@@ -23,11 +23,11 @@ namespace kortex {
 
 
     // Least Square Solvers
-    // -----------------------------------------------------------
-    // The functions in this file provide a C++ interface to
-    // Lapack functions. They expect matrices to be in !!! COLUMN MAJOR !!!
-    // form contrary to the rest of the argus library. This is done
-    // to preserve functionality and efficiency at the same time.
+    // ----------------------------------------------------------- The functions
+    // in this file provide a C++ interface to Lapack functions. They expect
+    // matrices to be in !!! COLUMN MAJOR !!!  form contrary to the rest of the
+    // kortex library. This is done to preserve functionality and efficiency at
+    // the same time.
     // -----------------------------------------------------------
 
     /// Solve the square system Ax = b for each column of B, A ~ (n x n), B ~ (n
@@ -67,6 +67,15 @@ namespace kortex {
                        double* B, int nrhs, int ldb,
                        double* sing_val, double rcond, int& rank,
                        MemUnit* memory);
+
+    /// min_x |A*x - b|_2 for each column of B, A ~ (nr x nc), B ~ (nr x nrhs)
+    /// If transp A = true then solve the least squares problem using LQ
+    /// factorization.  min_x |At*x - b|_2 for each column of B, A ~ (nr x nc),
+    /// B ~ (nc x nrhs)
+    int lapack_lsq_solve_QR(double* A, int nr, int nc, int lda,
+                            double* B, int nrhs, int ldb, bool transp_A,
+                            MemUnit* memory);
+
     // Least Square Solvers
 
 
