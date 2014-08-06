@@ -15,7 +15,10 @@
 #define KORTEX_MATRIX_H
 
 #include <algorithm>
+#include <cstring>
+
 #include <kortex/defs.h>
+#include <kortex/check.h>
 
 namespace kortex {
 
@@ -28,7 +31,9 @@ namespace kortex {
 
     void    mat_zero    ( double* A, int nra, int nca );
     void    mat_identity( double* A, int nra, int nca );
+
     void    mat_cross_form( const double* v, int vsz, double* A, int asz );
+    void    mat_cross_form( double x, double y, double z, double* A, int asz );
 
     // A[ r, : ] <-- rdata
     void    mat_set_row( double* A, int nra, int nca, int rid, const double* rdata, int rdsz );
@@ -56,6 +61,10 @@ namespace kortex {
     bool    mat_inv_2( const double* A, int nra, double* iA, int nria, double inversion_threshold );
     bool    mat_inv_3( const double* A, int nra,          double* iA, int nria, double inversion_threshold );
     bool    mat_inv  ( const double* A, int nra, int nca, double* iA, int nria, int ncia );
+
+    inline bool mat_inv_3( const double A[9], double iA[9] ) {
+        return mat_inv_3( A, 3, iA, 3, 0.0 );
+    }
 
     double  mat_pseudo_inv( const double* A, int nra, int nca, double* iA, int nria, int ncia );
 
@@ -119,9 +128,17 @@ namespace kortex {
                    double* dst, int nrd, int ncd,
                    int dr, int dc );
 
+    bool mat_is_upper_hessenberg( const double* A, int nra, int nca );
+
+    /// AtA = A' * A : computes only upper part
+    void mat_trans_mat_upper( const double* A, int ar,  int ac, double* AtA, int ata_sz );
+
+    /// makes matrix symmetric by copying keep_upper [true: upper->lower, false:
+    /// lower->upper];
+    void mat_sym( double* A, int nra, int nca, bool keep_upper );
 
 //
-//
+// some specialized functions
 //
     bool    mat_solve_Ax_b_3( const double* A, int nra, int nca,
                               const double* b, int bsz,
@@ -135,10 +152,6 @@ namespace kortex {
         }
     }
 
-
-//
-// some specialized functions
-//
 
     /// decompose matrix A so that U is an upper triangular matrix and R is an
     /// orthonormal matrix and A = U*R
@@ -156,8 +169,23 @@ namespace kortex {
         mat_mat( A, 3, 3, B, 3, 3, C, 9 );
     }
 
+    inline void mat_trans_mat_mat_3( const double* A, const double* B, const double* C, double* D ) {
+        mat_trans_mat_mat( A, 3, 3, B, 3, 3, C, 3, 3, D, 9 );
+    }
+
+    inline void mat_minus_mat_3( const double* A, const double* B, double* C ) {
+        mat_minus_mat( A, 3, 3, B, 3, 3, C, 3, 3 );
+    }
+
+    inline void mat_plus_mat_3( const double* A, const double* B, double* C ) {
+        mat_plus_mat( A, 3, 3, B, 3, 3, C, 3, 3 );
+    }
+
     /// C = inv(A)*B
     bool mat_inv_mat_3( const double A[9], const double B[9], double C[9] );
+
+    /// C = A*inv(B)
+    bool mat_mat_inv_3( const double A[9], const double B[9], double C[9] );
 
     /// D = inv(A) * B * C
     bool mat_inv_mat_mat_3( const double A[9], const double B[3], const double C[3], double D[9] );
@@ -170,6 +198,12 @@ namespace kortex {
         std::swap( A[1], A[3] );
         std::swap( A[2], A[6] );
         std::swap( A[5], A[7] );
+    }
+
+    inline void mat_transpose_3( const double A[9], double At[9] ) {
+        assert_noalias_p( A, At );
+        memcpy( At, A, sizeof(*A)*9 );
+        mat_transpose_3( At );
     }
 
     inline void vec_minus_vec_3( const double a[3], const double b[3], double c[3] ) {
@@ -215,15 +249,6 @@ namespace kortex {
 
     /// A[rid, :] *= alpha
     void mat_scale_row_3( double* A, int rid, double alpha );
-
-    bool mat_is_upper_hessenberg( const double* A, int nra, int nca );
-
-    /// AtA = A' * A : computes only upper part
-    void mat_trans_mat_upper( const double* A, int ar,  int ac, double* AtA, int ata_sz );
-
-    /// makes matrix symmetric by copying keep_upper [true: upper->lower, false:
-    /// lower->upper];
-    void mat_sym( double* A, int nra, int nca, bool keep_upper );
 
 
 }

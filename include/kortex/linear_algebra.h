@@ -17,6 +17,15 @@ namespace kortex {
 
     class MemUnit;
 
+    /// computes the right null vector of A - returns only 1 null
+    /// vector. possible to return multiple ones by checking a tolerance... see
+    /// null implementation of octave
+    void mat_null( const double* A, int ar, int ac, double* v, int vsz );
+
+    inline void mat_null_3( const double A[9], double v[3] ) {
+        mat_null( A, 3, 3, v, 3 );
+    }
+
     int matrix_invert_g_lu( const double* A, int ar, double* iA );
 
     double matrix_pseudo_invert_g_svd( const double* A, int ar, int ac, double* iA );

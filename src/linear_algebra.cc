@@ -23,6 +23,15 @@
 
 namespace kortex {
 
+    void mat_null( const double* A, int ar, int ac, double* v, int vsz ) {
+        assert_pointer( A );
+        assert_statement( vsz == ac, "insufficient vsz" );
+        SVD svd;
+        svd.decompose(A, ar, ac, false, true );
+        const double* vt = svd.Vt();
+        memcpy( v, vt+ac*(ac-1), sizeof(*v)*ac );
+    }
+
     int matrix_invert_g_lu( const double* A, int ar, double* iA ) {
         passert_pointer( A && iA );
 

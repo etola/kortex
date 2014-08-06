@@ -41,7 +41,8 @@ namespace kortex {
         MO_T_MUL,    // trans(A)*B
         MO_MUL_T,    // A*trans(B)
         MO_I_MUL,    // inv(A)*B
-        MO_PI_MUL    // pseudo_inv(A)*B
+        MO_PI_MUL,   // pseudo_inv(A)*B
+        MO_ELEM      // element-wise operation
     };
 
     bool matrix_compatibility( const MatrixOperation& op,
@@ -51,8 +52,9 @@ namespace kortex {
         case MO_MUL   : return (nca == nrb);
         case MO_T_MUL : return (nra == nrb);
         case MO_MUL_T : return (nca == ncb);
-        case MO_I_MUL : return (nra == nca) && ( nra == nrb);
+        case MO_I_MUL : return (nra == nca) && (nra == nrb);
         case MO_PI_MUL: return (nra == nrb);
+        case MO_ELEM  : return (nra == nrb) && (nca == ncb);
         default       : switch_fatality();
         }
     }
@@ -68,17 +70,19 @@ namespace kortex {
         case MO_MUL_T : return nra*nrb;
         case MO_I_MUL : return nra*ncb;
         case MO_PI_MUL: return nca*ncb;
+        case MO_ELEM  : return nra*nca;
         default       : switch_fatality();
         }
     }
 
     string mat_op_string( const MatrixOperation& op ) {
         switch( op ) {
-        case MO_MUL   : return string("A*B"); break;
-        case MO_T_MUL : return string("trans(A)*B"); break;
-        case MO_MUL_T : return string("A*trans(B)"); break;
-        case MO_I_MUL : return string("inv(A)*B"); break;
+        case MO_MUL   : return string("A*B");             break;
+        case MO_T_MUL : return string("trans(A)*B");      break;
+        case MO_MUL_T : return string("A*trans(B)");      break;
+        case MO_I_MUL : return string("inv(A)*B");        break;
         case MO_PI_MUL: return string("pseudo_inv(A)*B"); break;
+        case MO_ELEM  : return string("element-wise operation(A,B)"); break;
         default       : switch_fatality();
         }
     }
@@ -130,14 +134,21 @@ namespace kortex {
             A[ i*nca+i ] = 1.0;
     }
 
+    void mat_cross_form( double x, double y, double z, double* A, int asz ) {
+        assert_pointer( A );
+        assert_statement( asz == 9, "insufficient A matrix" );
+        A[0] =  0; A[1] = -z; A[2] =  y;
+        A[3] =  z; A[4] =  0; A[5] = -x;
+        A[6] = -y; A[7] =  x; A[8] =  0;
+    }
+
     void mat_cross_form( const double* v, int vsz,
                          double* A, int asz ) {
         assert_pointer( v && A );
         assert_statement( vsz == 3, "invalid number of inputs" );
         assert_statement( asz == 9, "A size not enough" );
-        A[0] =     0; A[1] = -v[2]; A[2] =  v[1];
-        A[3] =  v[2]; A[4] =     0; A[5] = -v[0];
-        A[6] = -v[1]; A[7] =  v[0]; A[8] =     0;
+
+        mat_cross_form( v[0], v[1], v[2], A, asz );
     }
 
     void mat_set_row( double* A, int nra, int nca, int rid, const double* rdata, int rdsz ) {
@@ -294,6 +305,7 @@ namespace kortex {
                     double inversion_threshold ) {
         assert_pointer( A && iA );
         assert_statement( nra == 3 && nria == 3, "invalid matrix size" );
+        assert_noalias_p( A, iA );
 
         double d = mat_det_3( A, nra );
         if( inversion_threshold == 0.0 ) {
@@ -452,8 +464,8 @@ namespace kortex {
         assert_matrix_init( A, nra, nca );
         assert_matrix_init( B, nrb, ncb );
         assert_matrix_init( C, nrc, ncc );
-        assert_statement( (nra == nrb) && (nrb == nrc), "invalid mat size" );
-        assert_statement( (nca == ncb) && (ncb == ncc), "invalid mat size" );
+        assert_matrix_compat( MO_ELEM, nra, nca, nrb, ncb );
+        assert_matrix_compat( MO_ELEM, nra, nca, nrc, ncc );
 
         for( int r=0; r<nra; r++ ) {
             const double* arow = A + r*nca;
@@ -471,8 +483,8 @@ namespace kortex {
         assert_matrix_init( A, nra, nca );
         assert_matrix_init( B, nrb, ncb );
         assert_matrix_init( C, nrc, ncc );
-        assert_statement( (nra == nrb) && (nrb == nrc), "invalid mat size" );
-        assert_statement( (nca == ncb) && (ncb == ncc), "invalid mat size" );
+        assert_matrix_compat( MO_ELEM, nra, nca, nrb, ncb );
+        assert_matrix_compat( MO_ELEM, nra, nca, nrc, ncc );
 
         for( int r=0; r<nra; r++ ) {
             const double* arow = A + r*nca;
@@ -490,8 +502,8 @@ namespace kortex {
         assert_matrix_init( A, nra, nca );
         assert_matrix_init( B, nrb, ncb );
         assert_matrix_init( C, nrc, ncc );
-        assert_statement( (nra == nrb) && (nrb == nrc), "invalid mat size" );
-        assert_statement( (nca == ncb) && (ncb == ncc), "invalid mat size" );
+        assert_matrix_compat( MO_ELEM, nra, nca, nrb, ncb );
+        assert_matrix_compat( MO_ELEM, nra, nca, nrc, ncc );
 
         for( int r=0; r<nra; r++ ) {
             const double* arow = A + r*nca;
@@ -615,10 +627,20 @@ namespace kortex {
     }
 
     bool mat_inv_mat_3( const double A[9], const double B[9], double C[9] ) {
-        assert_statement( B != C, "mem aliasing not allowed" );
+        assert_noalias_p( A, C );
+        assert_noalias_p( B, C );
         double iA[9];
         if( !mat_inv_3( A, 3, iA, 3, 0.0 ) ) return false;
         mat_mat_3( iA, B, C );
+        return true;
+    }
+
+    bool mat_mat_inv_3( const double A[9], const double B[9], double C[9] ) {
+        assert_noalias_p( A, C );
+        assert_noalias_p( B, C );
+        double iB[9];
+        if( !mat_inv_3( B, 3, iB, 3, 0.0 ) ) return false;
+        mat_mat_3( A, iB, C );
         return true;
     }
 
