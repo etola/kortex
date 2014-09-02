@@ -11,8 +11,11 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-#include <kortex/indexed_types.h>
+
 #include <algorithm>
+
+#include <kortex/indexed_types.h>
+#include <kortex/check.h>
 
 using namespace std;
 
@@ -27,6 +30,15 @@ namespace kortex {
 
     void sort_descending( vector<ifloat>& arr ) {
         sort( arr.begin(), arr.end(), ifloat_cmp_l );
+    }
+
+    void init( const vector<int>& inds, const vector<float>& vals, vector<ifloat>& ifarr ) {
+        assert_statement( inds.size() == vals.size(), "size mismatch" );
+        ifarr.resize( inds.size() );
+        for( unsigned i=0; i<inds.size(); i++ ) {
+            ifarr[i].id  = inds[i];
+            ifarr[i].val = vals[i];
+        }
     }
 
 }

@@ -29,6 +29,10 @@ namespace kortex {
     inline double sq(const double& v) { return v*v; }
     inline int    sq(const int&    v) { return v*v; }
 
+    inline float  cube(const float&  v) { return v*v*v; }
+    inline double cube(const double& v) { return v*v*v; }
+    inline int    cube(const int&    v) { return v*v*v; }
+
     float  dot128( const float* a, const float* b );
 
     double dot ( const double * a, const double* b, int asz );

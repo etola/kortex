@@ -27,6 +27,8 @@ namespace kortex {
         ifloat(int i, float v) : id(i), val(v) {}
     };
 
+    void init( const vector<int>& inds, const vector<float>& vals, vector<ifloat>& ifarr );
+
     void sort_ascending( vector<ifloat>& arr );
     void sort_descending( vector<ifloat>& arr );
 
