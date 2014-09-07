@@ -38,4 +38,38 @@ namespace kortex {
         }
     }
 
+    void get_color(ColorName color, uchar &cr, uchar &cg, uchar &cb) {
+        switch( color ) {
+        case COLOR_BLACK    : cr =   0; cg =   0; cb =   0; break;
+        case COLOR_WHITE    : cr = 255; cg = 255; cb = 255; break;
+        case COLOR_RED      : cr = 255; cg =   0; cb =   0; break;
+        case COLOR_GREEN    : cr =   0; cg = 255; cb =   0; break;
+        case COLOR_BLUE     : cr =   0; cg =   0; cb = 255; break;
+        case COLOR_CYAN     : cr =   0; cg = 255; cb = 255; break;
+        case COLOR_YELLOW   : cr = 255; cg = 255; cb =   0; break;
+        case COLOR_MAGENTA  : cr = 255; cg =   0; cb = 255; break;
+        case COLOR_ORANGE   : cr = 255; cg = 165; cb =   0; break;
+        case COLOR_PURPLE   : cr = 128; cg =   0; cb = 128; break;
+        case COLOR_PINK     : cr = 255; cg = 192; cb = 203; break;
+        case COLOR_BROWN    : cr = 136; cg =  69; cb =  19; break;
+        case COLOR_GOLD     : cr = 255; cg = 215; cb =   0; break;
+        case COLOR_SILVER   : cr = 190; cg = 190; cb = 190; break;
+        case COLOR_GRAY     : cr = 128; cg = 128; cb = 128; break;
+        case COLOR_LRED     : cr = 255; cg =  51; cb =  51; break;
+        case COLOR_LGREEN   : cr =  51; cg = 255; cb =  51; break;
+        case COLOR_LBLUE    : cr =  51; cg =  51; cb = 255; break;
+        case COLOR_LCYAN    : cr =  51; cg = 255; cb = 255; break;
+        case COLOR_LMAGENTA : cr = 255; cg =  51; cb = 255; break;
+        case COLOR_LYELLOW  : cr = 255; cg = 255; cb =  51; break;
+        case COLOR_LORANGE  : cr = 255; cg = 153; cb =  51; break;
+        case COLOR_LPURPLE  : cr = 178; cg = 102; cb = 255; break;
+        case COLOR_LPINK    : cr = 255; cg = 102; cb = 255; break;
+        case COLOR_LBROWN   : cr = 205; cg = 133; cb =  63; break;
+        case COLOR_LGOLD    : cr = 250; cg = 250; cb = 210; break;
+        case COLOR_LGRAY    : cr =  90; cg =  90; cb =  90; break;
+        default             : cr = 255; cg =   0; cb =   0; break;
+        }
+    }
+
+
 }

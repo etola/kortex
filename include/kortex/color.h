@@ -28,8 +28,12 @@ namespace kortex {
                      COLOR_RED,    COLOR_GREEN,   COLOR_BLUE,
                      COLOR_CYAN,   COLOR_MAGENTA, COLOR_YELLOW,
                      COLOR_ORANGE, COLOR_PURPLE,  COLOR_PINK,
-                     COLOR_BROWN,  COLOR_GOLD,    COLOR_NAVY,
-                     COLOR_GRAY, COLOR_LGRAY,
+                     COLOR_BROWN,  COLOR_GOLD,    COLOR_SILVER,
+                     COLOR_GRAY,
+                     COLOR_LRED,    COLOR_LGREEN,   COLOR_LBLUE,
+                     COLOR_LCYAN,   COLOR_LMAGENTA, COLOR_LYELLOW,
+                     COLOR_LORANGE, COLOR_LPURPLE,  COLOR_LPINK,
+                     COLOR_LBROWN,  COLOR_LGOLD,    COLOR_LGRAY,
                      COLOR_WHITE }; // white should be the last color!
 
     inline uchar cast_to_gray_range( const float& f ) {
@@ -54,27 +58,7 @@ namespace kortex {
         return std::min( 255.0f, 0.299f*r + 0.587f*g + 0.114f*b );
     }
 
-    inline void get_color(ColorName color, uchar &cr, uchar &cg, uchar &cb) {
-        switch( color ) {
-        case COLOR_BLACK  : cr =   0; cg =   0; cb =   0; break;
-        case COLOR_WHITE  : cr = 255; cg = 255; cb = 255; break;
-        case COLOR_RED    : cr = 255; cg =   0; cb =   0; break;
-        case COLOR_GREEN  : cr =   0; cg = 255; cb =   0; break;
-        case COLOR_BLUE   : cr =   0; cg =   0; cb = 255; break;
-        case COLOR_CYAN   : cr =   0; cg = 255; cb = 255; break;
-        case COLOR_YELLOW : cr = 255; cg = 255; cb =   0; break;
-        case COLOR_MAGENTA: cr = 255; cg =   0; cb = 255; break;
-        case COLOR_ORANGE : cr = 255; cg = 165; cb =   0; break;
-        case COLOR_PURPLE : cr = 160; cg =  32; cb = 240; break;
-        case COLOR_PINK   : cr = 255; cg =  20; cb = 147; break;
-        case COLOR_BROWN  : cr = 165; cg =  42; cb =  42; break;
-        case COLOR_GOLD   : cr = 255; cg = 215; cb =   0; break;
-        case COLOR_NAVY   : cr =   0; cg =   0; cb = 128; break;
-        case COLOR_GRAY   : cr = 190; cg = 190; cb = 190; break;
-        case COLOR_LGRAY  : cr =  90; cg =  90; cb =  90; break;
-        default           : cr = 255; cg =   0; cb =   0; break;
-        }
-    }
+    void get_color(ColorName color, uchar &cr, uchar &cg, uchar &cb);
 
     inline void get_color(int color, uchar &cr, uchar &cg, uchar &cb) {
         int mc = color % COLOR_WHITE + 1;

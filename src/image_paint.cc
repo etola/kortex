@@ -19,15 +19,15 @@
 
 namespace kortex {
 
-    void draw_point( Image& im, int x, int y, ColorName color) {
+    void draw_point( Image& im, int x, int y, ColorName color, int thickness ) {
         im.assert_type( IT_U_PRGB | IT_U_IRGB );
 
         uchar cr, cg, cb;
         get_color(color, cr, cg, cb);
-        im.set( x, y, cr, cg, cb );
+        im.set( x, y, thickness, cr, cg, cb );
     }
 
-    void draw_line( Image& im, int x0, int y0, int x1, int y1, ColorName color) {
+    void draw_line( Image& im, int x0, int y0, int x1, int y1, ColorName color, int thickness ) {
         im.assert_type( IT_U_PRGB | IT_U_IRGB );
         float dx = x1 - x0;
         float dy = y1 - y0;
@@ -39,7 +39,7 @@ namespace kortex {
         float y=y0, x=x0;
         while(1) {
             if( !im.is_inside( (int)x, (int)y ) ) break;
-            im.set( (int)x, (int)y, cr, cg, cb);
+            im.set( (int)x, (int)y, thickness, cr, cg, cb);
             y += dy;
             x += dx;
             if( dy > 0 ) { if( y > y1 ) break; }
@@ -49,12 +49,12 @@ namespace kortex {
         }
     }
 
-    void draw_plus( Image& im, int x, int y, int ps, ColorName color) {
-        draw_line(im, x-ps, y, x+ps, y, color);
-        draw_line(im, x, y-ps, x, y+ps, color);
+    void draw_plus( Image& im, int x, int y, int ps, ColorName color, int thickness ) {
+        draw_line(im, x-ps, y, x+ps, y, color, thickness );
+        draw_line(im, x, y-ps, x, y+ps, color, thickness );
     }
 
-    void draw_square( Image& im, int x, int y, int ss, int ori, ColorName color) {
+    void draw_square( Image& im, int x, int y, int ss, int ori, ColorName color, int thickness ) {
         double dr = sqrt(2.0) * ss;
         double o  = ori*RADIANS;
         int rx0 = (int)( x + dr * cos( o + PI_4 ) );
@@ -66,20 +66,20 @@ namespace kortex {
         int rx3 = (int)( x + dr * cos( o + PI_34) );
         int ry3 = (int)( y + dr * sin( o + PI_34) );
 
-        draw_line(im, rx0, ry0, rx1, ry1, color);
-        draw_line(im, rx1, ry1, rx2, ry2, color);
-        draw_line(im, rx2, ry2, rx3, ry3, color);
-        draw_line(im, rx3, ry3, rx0, ry0, color);
+        draw_line( im, rx0, ry0, rx1, ry1, color, thickness );
+        draw_line( im, rx1, ry1, rx2, ry2, color, thickness );
+        draw_line( im, rx2, ry2, rx3, ry3, color, thickness );
+        draw_line( im, rx3, ry3, rx0, ry0, color, thickness );
     }
 
-    void draw_rectangle( Image& im, const Rect2i& rectangle, ColorName col ) {
-        draw_line( im, rectangle.lx, rectangle.ly, rectangle.lx, rectangle.uy, col );
-        draw_line( im, rectangle.lx, rectangle.uy, rectangle.ux, rectangle.uy, col );
-        draw_line( im, rectangle.ux, rectangle.ly, rectangle.ux, rectangle.uy, col );
-        draw_line( im, rectangle.lx, rectangle.ly, rectangle.ux, rectangle.ly, col );
+    void draw_rectangle( Image& im, const Rect2i& rectangle, ColorName col, int thickness ) {
+        draw_line( im, rectangle.lx, rectangle.ly, rectangle.lx, rectangle.uy, col, thickness );
+        draw_line( im, rectangle.lx, rectangle.uy, rectangle.ux, rectangle.uy, col, thickness );
+        draw_line( im, rectangle.ux, rectangle.ly, rectangle.ux, rectangle.uy, col, thickness );
+        draw_line( im, rectangle.lx, rectangle.ly, rectangle.ux, rectangle.ly, col, thickness );
     }
 
-    void draw_circle( Image& im, int x, int y, float dr, ColorName color ) {
+    void draw_circle( Image& im, int x, int y, float dr, ColorName color, int thickness ) {
         im.assert_type( IT_U_PRGB | IT_U_IRGB );
 
         uchar cr, cg, cb;
@@ -91,13 +91,13 @@ namespace kortex {
             int cy = (int)(y + dr * cos(a*RADIANS));
             int cx = (int)(x + dr * sin(a*RADIANS));
             if( im.is_inside(sx,sy) && im.is_inside(cx,cy) )
-                draw_line(im, sx, sy, cx, cy, color);
+                draw_line( im, sx, sy, cx, cy, color, thickness );
             sx = cx;
             sy = cy;
         }
     }
 
-    void draw_shaded_square( Image& im, int x0, int y0, int w, float ss, ColorName color) {
+    void draw_shaded_square( Image& im, int x0, int y0, int w, float ss, ColorName color ) {
         im.assert_type( IT_U_PRGB | IT_U_IRGB );
 
         uchar cr, cg, cb;
