@@ -33,6 +33,8 @@ namespace kortex {
     void draw_filled_square ( Image& im, int x0, int y0, int w, ColorName color);
     void draw_shaded        ( Image& im, const Image& mask, float ss, ColorName color);
 
+    void draw_region( Image& im, int xs, int ys, int xe, int ye, ColorName col, int thickness=0 );
+    void draw_region_filled( Image& im, int xs, int ys, int xe, int ye, ColorName col );
 
 }
 

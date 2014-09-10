@@ -158,7 +158,7 @@ namespace kortex {
         assert_statement( is_unit_norm_3(z_normal), "z should be unit normed" );
 
         const double *tmp_n = canonical_xd;
-        if( fabs(dot3(z_normal, tmp_n)) > 0.8 ) {
+        if( fabs(dot3(z_normal, tmp_n)) > 0.99 ) {
             tmp_n = canonical_yd;
             cross3_normalized(tmp_n, z_normal, new_u);
             cross3_normalized(z_normal, new_u, new_v);

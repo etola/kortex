@@ -72,6 +72,27 @@ namespace kortex {
         draw_line( im, rx3, ry3, rx0, ry0, color, thickness );
     }
 
+    void draw_region( Image& im, int xs, int ys, int xe, int ye, ColorName col, int thickness ) {
+        draw_line( im, xs, ys, xe, ys, col, thickness );
+        draw_line( im, xe, ys, xe, ye, col, thickness );
+        draw_line( im, xe, ye, xs, ye, col, thickness );
+        draw_line( im, xs, ye, xs, ys, col, thickness );
+    }
+
+    void draw_region_filled( Image& im, int xs, int ys, int xe, int ye, ColorName col ) {
+        im.assert_type( IT_U_PRGB | IT_U_IRGB );
+        uchar cr, cg, cb;
+        get_color(col, cr, cg, cb);
+
+#pragma omp parallel for
+        for( int y=ys; y<ye; y++ ) {
+            for( int x=xs; x<xe; x++ ) {
+                im.set( x, y, cr, cg, cb );
+            }
+        }
+
+    }
+
     void draw_rectangle( Image& im, const Rect2i& rectangle, ColorName col, int thickness ) {
         draw_line( im, rectangle.lx, rectangle.ly, rectangle.lx, rectangle.uy, col, thickness );
         draw_line( im, rectangle.lx, rectangle.uy, rectangle.ux, rectangle.uy, col, thickness );
