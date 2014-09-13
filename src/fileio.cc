@@ -381,6 +381,11 @@ namespace kortex {
         fin.read( (char*)&v, sizeof(v) );
         check_file_stream_error(fin);
     }
+    void read_bparam(ifstream& fin, size_t& v) {
+        fin.read( (char*)&v, sizeof(v) );
+        check_file_stream_error(fin);
+    }
+
 
     void read_bparam(ifstream& fin, int* varr, const int& nv) {
         passert_pointer( varr );
@@ -480,6 +485,10 @@ namespace kortex {
         check_file_stream_error(fout);
     }
     void write_bparam(ofstream& fout, const uchar& v) {
+        fout.write( (const char*)&v, sizeof(v) );
+        check_file_stream_error(fout);
+    }
+    void write_bparam(ofstream& fout, const size_t& v) {
         fout.write( (const char*)&v, sizeof(v) );
         check_file_stream_error(fout);
     }

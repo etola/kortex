@@ -11,11 +11,13 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-#include <kortex/mem_unit.h>
-#include <kortex/check.h>
-#include <kortex/mem_manager.h>
 
 #include <cstring> // memcpy
+
+#include <kortex/check.h>
+#include <kortex/mem_manager.h>
+#include <kortex/fileio.h>
+#include <kortex/mem_unit.h>
 
 namespace kortex {
 
@@ -83,6 +85,20 @@ namespace kortex {
         m_cap     = unit->m_cap;
         m_owner   = false;
     }
+
+    void MemUnit::save( ofstream& fout ) const {
+        write_bparam( fout, m_cap );
+        write_bparam( fout, m_buffer, m_cap );
+    }
+
+    void MemUnit::load( ifstream& fin  ) {
+        size_t cap;
+        read_bparam( fin, cap );
+        this->resize( cap );
+        read_bparam( fin, m_buffer, cap );
+    }
+
+
 
 
 }

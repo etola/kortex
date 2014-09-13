@@ -14,7 +14,11 @@
 #ifndef KORTEX_MEM_UNIT_H
 #define KORTEX_MEM_UNIT_H
 
+#include <fstream>
 #include <kortex/types.h>
+
+using std::ofstream;
+using std::ifstream;
 
 namespace kortex {
 
@@ -45,6 +49,9 @@ namespace kortex {
         /// makes an alias of unit. sets owner=false
         void borrow( MemUnit* unit );
 
+        void save( ofstream& fout ) const;
+        void load( ifstream& fin  );
+
     private:
         void init_();
         void set_buffer(uchar* new_buff, const size_t& new_cap, const bool& new_own_buff);
@@ -54,7 +61,6 @@ namespace kortex {
         bool   m_owner;
 
     };
-
 
 }
 

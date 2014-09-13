@@ -96,6 +96,7 @@ namespace kortex {
     void read_bparam(ifstream& fin, uint& v);
     void read_bparam(ifstream& fin, bool& v);
     void read_bparam(ifstream& fin, uchar& v);
+    void read_bparam(ifstream& fin, size_t& v);
 
     void read_bparam(ifstream& fin, int* varr, const int& nv);
     void read_bparam(ifstream& fin, bool* varr, const int& nv);
@@ -113,6 +114,7 @@ namespace kortex {
     void write_bparam(ofstream& fout, const uint& v);
     void write_bparam(ofstream& fout, const bool& v);
     void write_bparam(ofstream& fout, const uchar& v);
+    void write_bparam(ofstream& fout, const size_t& v);
 
     void write_bparam(ofstream& fout, const uchar* varr, const int& nv);
     void write_bparam(ofstream& fout, const bool* varr, const int& nv);
