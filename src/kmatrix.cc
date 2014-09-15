@@ -307,6 +307,10 @@ namespace kortex {
     }
 
     void KMatrix::print( const string& str ) const {
+        if( size() == 0 ) {
+            printf( "%s = []\n", str.c_str() );
+            return;
+        }
         matrix_print( str.c_str(), get_const_pointer(), nr, nc, false, true );
     }
 
