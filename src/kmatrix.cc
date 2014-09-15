@@ -114,6 +114,17 @@ namespace kortex {
         }
     }
 
+    void KMatrix::expand( int h, int w ) {
+        passert_statement( is_wrapper(), "cannot expand wrapped matrix" );
+        m_memory.expand( req_mem(h,w) );
+        m_ro_data = NULL;
+        m_data = (double*)m_memory.get_buffer();
+        m_wrapper = false;
+        m_const   = false;
+        nr        = h;
+        nc        = w;
+    }
+
     void KMatrix::reset() {
         init_();
     }
@@ -295,18 +306,18 @@ namespace kortex {
         return mat_norm_sq( get_const_pointer(), nr, nc );
     }
 
-    void KMatrix::print( const char* str ) const {
-        matrix_print( str, get_const_pointer(), nr, nc, false, true );
+    void KMatrix::print( const string& str ) const {
+        matrix_print( str.c_str(), get_const_pointer(), nr, nc, false, true );
     }
 
-    void KMatrix::save( const char* file ) const {
+    void KMatrix::save( const string& file ) const {
         ofstream fout;
         open_or_fail( file, fout );
         save( fout, "X" );
         fout.close();
     }
-    void KMatrix::save( ofstream& fout, const char* mat_name ) const {
-        fout << mat_name << " " << nr << " " << nc << " ";
+    void KMatrix::save( ofstream& fout, const string& mat_name ) const {
+        fout << mat_name.c_str() << " " << nr << " " << nc << " ";
         for( int r=0; r<nr; r++ ) {
             const double* row = get_row( r );
             for( int c=0; c<nc; c++ ) {
@@ -343,7 +354,7 @@ namespace kortex {
         }
     }
 
-    void KMatrix::load( const char* file ) {
+    void KMatrix::load( const string& file ) {
         passert_statement( !is_const(), "cannot modify const matrix" );
         ifstream fin;
         open_or_fail( file, fin );
@@ -351,10 +362,10 @@ namespace kortex {
         fin.close();
     }
 
-    void KMatrix::load( ifstream& fin, const char* mat_name ) {
+    void KMatrix::load( ifstream& fin, const string& mat_name ) {
         passert_statement( !is_const(), "cannot modify const matrix" );
         string stmp;
-        read_string( fin, stmp, mat_name );
+        read_string( fin, stmp, mat_name.c_str() );
         int th, tw;
         fin >> th >> tw;
 

@@ -59,6 +59,10 @@ namespace kortex {
         /// alloc/dealloc occurs. see resize.
         void reshape( int h, int w );
 
+        /// expands the size of the matrix while keeping original values
+        /// intact. new entries are uninitialized. see resize and reshape also.
+        void expand( int h, int w );
+
         /// sets the matrix data - does not do any initializations for memory !
         /// if this is a fresh matrix - call init(h,w) before. data size 'dsz'
         /// should be equivalent to nr*nc
@@ -128,13 +132,13 @@ namespace kortex {
         void scale_col( int cid, double alpha );
         void scale    ( double s );
 
-        void print( const char* str ) const;
+        void print( const string& str ) const;
 
-        void save( const char* file ) const;
-        void load( const char* file );
+        void save( const string& file ) const;
+        void load( const string& file );
 
-        void save( ofstream& fout, const char* mat_name ) const;
-        void load( ifstream& fin,  const char* mat_name );
+        void save( ofstream& fout, const string& mat_name ) const;
+        void load( ifstream& fin,  const string& mat_name );
 
         void save_binary( ofstream& fout ) const;
         void load_binary( ifstream& fin );
