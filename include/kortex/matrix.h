@@ -22,6 +22,26 @@
 
 namespace kortex {
 
+    enum MatrixOperation {
+        MO_MUL,      // A*B
+        MO_T_MUL,    // trans(A)*B
+        MO_MUL_T,    // A*trans(B)
+        MO_I_MUL,    // inv(A)*B
+        MO_PI_MUL,   // pseudo_inv(A)*B
+        MO_ELEM      // element-wise operation
+    };
+
+    bool matrix_compatibility( const MatrixOperation& op,
+                               const int& nra, const int& nca,
+                               const int& nrb, const int& ncb );
+
+    int mat_out_size( const MatrixOperation& op,
+                      const int& nra, const int& nca,
+                      const int& nrb, const int& ncb );
+
+    string mat_op_string( const MatrixOperation& op );
+
+
 //
 // single mat ops
 //
