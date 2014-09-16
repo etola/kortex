@@ -49,7 +49,7 @@ namespace kortex {
     }
 
     KMatrix::KMatrix( const KMatrix& rhs ) {
-        release();
+        init_();
         copy( rhs );
     }
 
@@ -69,8 +69,12 @@ namespace kortex {
 
     void KMatrix::copy( const KMatrix& rhs ) {
         passert_statement( !is_const(), "cannot copy onto const matrix" );
-        resize( rhs.h(), rhs.w() );
-        memcpy( m_data, rhs.get_const_pointer(), sizeof(*m_data)*rhs.size() );
+        if( rhs.size() ) {
+            resize( rhs.h(), rhs.w() );
+            memcpy( m_data, rhs.get_const_pointer(), sizeof(*m_data)*rhs.size() );
+        } else {
+            release();
+        }
     }
 
     void KMatrix::clone( const KMatrix& rhs ) {
@@ -115,7 +119,7 @@ namespace kortex {
     }
 
     void KMatrix::expand( int h, int w ) {
-        passert_statement( is_wrapper(), "cannot expand wrapped matrix" );
+        passert_statement( !is_wrapper(), "cannot expand wrapped matrix" );
         m_memory.expand( req_mem(h,w) );
         m_ro_data = NULL;
         m_data = (double*)m_memory.get_buffer();

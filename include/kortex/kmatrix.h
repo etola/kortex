@@ -40,6 +40,13 @@ namespace kortex {
         /// wraps around data - possible to change
         KMatrix( double* data, int h, int w );
 
+        ~KMatrix();
+
+        /// sets the state of the matrix to init_  and deallocates any memory. see reset()
+        void release();
+        /// sets the state of the matrix to init_ but does not deallocate memory. see release()
+        void reset();
+
         /// copies the matrix contents - creates memory and copies the
         /// contents. see clone() also
         void copy ( const KMatrix& rhs );
@@ -77,14 +84,6 @@ namespace kortex {
         void set_col( int r0, int c0, const double* cdata, int csz );
         void set_col( int c, const double* cdata, int csz, double alpha );
 
-
-        ~KMatrix();
-
-        /// sets the state of the matrix to init_  and deallocates any memory. see reset()
-        void release();
-        /// sets the state of the matrix to init_ but does not deallocate memory. see release()
-        void reset();
-
         double      * get_pointer();
         double      * get_row( int rid );
         double      * get_col( int cid );
@@ -92,6 +91,12 @@ namespace kortex {
         const double* get_const_pointer() const;
         const double* get_row( int rid ) const;
         const double* get_col( int cid ) const;
+
+        // to prevent double-free errors when inserted into a vector
+        KMatrix& operator= ( const KMatrix& rhs ) {
+            copy( rhs );
+            return *this;
+        }
 
         // convenient access
         const double* operator() () const {
