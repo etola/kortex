@@ -287,6 +287,7 @@ namespace kortex {
     /// A[rid, :] *= alpha
     void mat_scale_row_3( double* A, int rid, double alpha );
 
+    void mat_add_3( const double* A, double* sA );
 
 }
 

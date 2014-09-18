@@ -724,6 +724,11 @@ namespace kortex {
         }
     }
 
+    void mat_add_3( const double* A, double* sA ) {
+        assert_pointer( A && sA );
+        for( int i=0; i<9; i++ )
+            sA[i] += A[i];
+    }
 
 
 }

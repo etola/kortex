@@ -74,6 +74,9 @@ namespace kortex {
     inline float  l2norm3( const float * a ) { return sqrt(dot3(a,a)); }
     inline double l2norm3( const double* a ) { return sqrt(dot3(a,a)); }
 
+    float l2norm_128( const float* a );
+    float normalize_l2norm_128(float* arr);
+
     inline double l2norm( const double& u, const double& v ) {
         return sqrt( u*u + v*v );
     }

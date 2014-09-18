@@ -186,6 +186,36 @@ namespace kortex {
 #endif
     }
 
+    float l2norm_128( const float* a ) {
+        assert_pointer( a );
+#ifdef WITH_SSE
+        switch( is_16_byte_aligned(a) ) {
+        case true:  return sqrt( sse_sq_sum_128a(a) ); break;
+        case false: return sqrt( sse_sq_sum_128u(a) ); break;
+        }
+#else
+        float nrm = 0.0f;
+        for( int k=0; k<128; k++ ) {
+            nrm += *a * *a;
+            a++;
+        }
+        return sqrt(nrm);
+#endif
+    }
+
+    float normalize_l2norm_128(float* arr) {
+        assert_pointer( arr );
+        float nrm = l2norm_128(arr);
+        if( nrm < NRM_EPS ) {
+            memset( arr, 0, sizeof(*arr)*128 );
+            return nrm;
+        }
+        float inrm = 1.0f/nrm;
+        for(int p=0; p<128; p++ )
+            arr[p] *= inrm;
+        return nrm;
+    }
+
     float  normalize_l2norm( float* arr, int asz ) {
         float nrm = l2norm( arr, asz );
         if( nrm < NRM_EPS ) {
