@@ -40,6 +40,12 @@ namespace kortex {
     void rotation_matrix_frame_error( const double* R_ref, const double* R_obs,
                                       double& e_boresight, double& e_inplain );
 
+    /// constructs the rotation matrix looking at z_dir - applies an in plane rotation as well.
+    void rotation_matrix( const double z_dir[3], const double& in_plane_in_degrees, double R[9] );
+    /// front_az, front_el sets the z-direction of the camera frame.
+    /// up_az, up_el specify up vector (y-direction)'s azimuth and elevation
+    void rotation_matrix( double front_az, double front_el, double up_az, double up_el, double R[9] );
+
 }
 
 #endif

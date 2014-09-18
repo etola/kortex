@@ -226,6 +226,51 @@ namespace kortex {
         e_inplain   = acos( eid ) * DEGREES;
     }
 
+    /// front_az, front_el sets the z-direction of the camera frame.
+    /// up_az, up_el specify up vector (y-direction)'s azimuth and elevation
+    void rotation_matrix( double front_az, double front_el,
+                          double up_az,    double up_el,
+                          double R[9] ) {
+        double* nx = R;
+        double* ny = R+3;
+        double* nz = R+6;
+
+        azel_to_cartesian( front_az, front_el, nz );
+        normalize_l2norm3( nz );
+
+        double n_up[3];
+        azel_to_cartesian( up_az, up_el, n_up );
+        normalize_l2norm3( n_up );
+        n_up[0] = -n_up[0];
+        n_up[1] = -n_up[1];
+        n_up[2] = -n_up[2];
+
+        cross3_normalized( n_up, nz, nx );
+        cross3_normalized( nz, nx, ny );
+    }
+
+    /// constructs the rotation matrix looking at z_dir - applies an in plane rotation as well.
+    void rotation_matrix( const double z_dir[3], const double& in_plane_in_degrees, double R[9] ) {
+        double nz[3];
+        vec_copy_3( z_dir, nz );
+        normalize_l2norm3( nz );
+
+        double nx[3], ny[3];
+        // upside down coordinate frame
+        construct_local_coordinate_frame( nz, nx, ny );
+
+        double Rtmp[9];
+        Rtmp[0] = nx[0]; Rtmp[1] = nx[1]; Rtmp[2] = nx[2];
+        Rtmp[3] = ny[0]; Rtmp[4] = ny[1]; Rtmp[5] = ny[2];
+        Rtmp[6] = nz[0]; Rtmp[7] = nz[1]; Rtmp[8] = nz[2];
+
+        double Rz[9];
+        rotation_matrix_around_z( in_plane_in_degrees, Rz );
+
+        mat_mat_3( Rz, Rtmp, R );
+    }
+
+
 
 }
 
