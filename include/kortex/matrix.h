@@ -148,6 +148,9 @@ namespace kortex {
                    double* dst, int nrd, int ncd,
                    int dr, int dc );
 
+    /// B = A
+    void mat_copy( const double* A, int asz, double* B, int bsz );
+
     bool mat_is_upper_hessenberg( const double* A, int nra, int nca );
 
     /// AtA = A' * A : computes only upper part
@@ -224,6 +227,20 @@ namespace kortex {
         assert_noalias_p( A, At );
         memcpy( At, A, sizeof(*A)*9 );
         mat_transpose_3( At );
+    }
+
+    inline void vec_negate( const double* a, int asz, double* b, int bsz ) {
+        assert_pointer( a );
+        assert_pointer( b );
+        assert_pointer_size( asz );
+        assert_pointer_size( bsz );
+        assert_statement( asz == bsz, "size mismatch" );
+        for( int i=0; i<asz; i++ )
+            b[i] = -a[i];
+    }
+
+    inline void vec_negate( double* a, int asz ) {
+        vec_negate( a, asz, a, asz );
     }
 
     inline void vec_minus_vec_3( const double a[3], const double b[3], double c[3] ) {

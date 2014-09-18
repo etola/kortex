@@ -520,6 +520,15 @@ namespace kortex {
         deallocate(T);
     }
 
+    /// B = A
+    void mat_copy( const double* A, int asz, double* B, int bsz ) {
+        assert_pointer( A && B );
+        assert_pointer_size( asz );
+        assert_pointer_size( bsz );
+        assert_statement( asz == bsz, "matrix size mismatch" );
+        memcpy( (void*)B, (const void*)A, sizeof(*A)*asz );
+    }
+
     /// dst[ dr:dr+srsz, dc:dc+scsz ] = src[ sr:sr+srsz, sc:sc+scsz ]
     void mat_copy( const double* src, int nrs, int ncs,
                    int sr, int sc, int srsz, int scsz,
