@@ -100,6 +100,11 @@ namespace kortex {
 
     int absmax( const double* arr, int narr, double &mn );
 
+    // fits a second order polynomial to the point pairs (xp,yp), (xc,yc),
+    // (xa,ya) points and returns the value of the x-coordinate where the (min
+    // or max) peak occurs.
+    double optimize_peak( double xp, double xc, double xa, double yp, double yc, double ya );
+
 }
 
 #endif

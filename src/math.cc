@@ -11,7 +11,9 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
+
 #include <kortex/math.h>
+#include <kortex/matrix.h>
 #include <kortex/check.h>
 #include <kortex/defs.h>
 #include <kortex/sse_extensions.h>
@@ -270,6 +272,26 @@ namespace kortex {
         return maxi;
     }
 
+    // fits a second order polynomial to the point pairs (xp,yp), (xc,yc),
+    // (xa,ya) points and returns the value of the x-coordinate where the (min
+    // or max) peak occurs.
+    double optimize_peak( double xp, double xc, double xa, double yp, double yc, double ya ) {
+        if( fabs(yp-yc)<1e-10 && fabs(ya-yc)<1e-10 ) {
+            return (xp+xc+xa)/3.0;
+        } else {
+            double A[] = {xp*xp, xp, 1, xc*xc, xc, 1, xa*xa, xa, 1};
+            double m[] = {yp, yc, ya};
+            double iA[9];
+            if( !mat_inv_3(A,3,iA,3,1e-30) ) {
+                return xc;
+            } else {
+                double a = dot3(iA,   m);
+                double b = dot3(iA+3, m);
+                if( fabs(a)>1e-10 ) return -b/(2.0*a);
+                else                return xc;
+            }
+        }
+    }
 
 
 
