@@ -42,7 +42,8 @@ matrix.cc \
 kmatrix.cc \
 rotation.cc \
 svd.cc \
-sorting.cc
+sorting.cc \
+timer.cc
 
 headers := \
 log_manager.h \
