@@ -14,7 +14,6 @@
 #ifndef KORTEX_MEM_UNIT_H
 #define KORTEX_MEM_UNIT_H
 
-#include <fstream>
 #include <kortex/types.h>
 
 using std::ofstream;
@@ -27,6 +26,11 @@ namespace kortex {
         MemUnit();
         MemUnit( const size_t& init_cap );
         ~MemUnit();
+
+        MemUnit( const MemUnit& m );
+        MemUnit& operator=( const MemUnit& mem );
+
+        void copy( const MemUnit& m );
 
         /// content can be destroyed - if you want to keep the content unchanged
         /// use expand

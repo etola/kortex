@@ -34,6 +34,20 @@ namespace kortex {
         deallocate();
     }
 
+    MemUnit::MemUnit( const MemUnit& mem ) {
+        copy( mem );
+    }
+    MemUnit& MemUnit::operator=( const MemUnit& mem ) {
+        copy( mem );
+        return *this;
+    }
+
+    void MemUnit::copy( const MemUnit& mem ) {
+        init_();
+        resize( mem.capacity() );
+        memcpy( m_buffer, mem.get_buffer(), sizeof(*m_buffer)*m_cap );
+    }
+
     void MemUnit::init_() {
         m_buffer = NULL;
         m_cap    = 0;
