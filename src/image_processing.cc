@@ -538,6 +538,33 @@ namespace kortex {
         }
     }
 
+    void resize_image_coarse( const Image& img, int max_img_dim, Image& rimg ) {
+        int nw = img.w();
+        int nh = img.h();
+        double scr = 1.0;
+        if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
+            if( nw >= nh ) scr = img.w() / double(max_img_dim);
+            else           scr = img.h() / double(max_img_dim);
+            nw  = img.w() / scr;
+            nh  = img.h() / scr;
+        }
+        image_resize_coarse( img, nw, nh, rimg );
+    }
+
+    void resize_image_fine  ( const Image& img, int max_img_dim, Image& rimg ) {
+        int nw = img.w();
+        int nh = img.h();
+        double scr = 1.0;
+        if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
+            if( nw >= nh ) scr = img.w() / double(max_img_dim);
+            else           scr = img.h() / double(max_img_dim);
+            nw  = img.w() / scr;
+            nh  = img.h() / scr;
+        }
+        image_resize_fine( img, nw, nh, rimg );
+    }
+
+
     void image_to_gradient( const Image& img, Image& dx, Image& dy ) {
         img.passert_type( IT_F_GRAY );
         int w = img.w();

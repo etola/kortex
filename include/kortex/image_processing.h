@@ -92,6 +92,9 @@ namespace kortex {
     void image_resize_coarse( const Image& src, const int& nw, const int& nh, Image& dst );
     void image_resize_fine  ( const Image& src, const int& nw, const int& nh, Image& dst );
 
+    void resize_image_coarse( const Image& src, int max_img_dim, Image& dst );
+    void resize_image_fine  ( const Image& src, int max_img_dim, Image& dst );
+
     void image_subtract    ( const Image& im0, const Image& im1, Image& out );
     void image_subtract_par( const Image& im0, const Image& im1, Image& out );
     inline void image_subtract( const Image& im0, const Image& im1, bool run_parallel, Image& out ) {
