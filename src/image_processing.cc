@@ -408,8 +408,10 @@ namespace kortex {
         float r, g, b;
         for( int y=0; y<nh; y++ ) {
             float ny = y*ratioy;
+            if( ny >= src.h()-1 ) ny = src.h()-1;
             for( int x=0; x<nw; x++ ) {
                 float nx = x*ratiox;
+                if( nx >= src.w()-1 ) nx = src.w()-1;
                 src.get_bilinear(nx, ny, r, g, b);
                 switch( dtype ) {
                 case TYPE_FLOAT: dst.set(x, y, r, g, b); break;
@@ -481,7 +483,7 @@ namespace kortex {
             if( ny >= src.h()-1 ) ny = src.h()-1;
             for( int x=0; x<nw; x++ ) {
                 float nx = x*ratiox;
-                // if( nx >= src->w()-1 ) nx = src->w()-1;
+                if( nx >= src.w()-1 ) nx = src.w()-1;
                 if( !src.is_inside_margin(nx, ny, 2) ) continue;
                 float v = src.get_bicubic(nx, ny);
                 switch( dtype ) {

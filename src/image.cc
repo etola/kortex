@@ -389,16 +389,16 @@ namespace kortex {
     }
     void Image::get_bilinear_up( const float& x0, const float& y0, float& r, float& g, float& b ) const {
         assert_type( IT_U_PRGB );
-        passert_statement_g( x0>=0 && x0<m_w-1, "pixel oob [%f %f]", x0, y0 );
-        passert_statement_g( y0>=0 && y0<m_h-1, "pixel oob [%f %f]", x0, y0 );
+        passert_statement_g( x0>=0 && x0<=m_w-1, "pixel oob [%f %f]", x0, y0 );
+        passert_statement_g( y0>=0 && y0<=m_h-1, "pixel oob [%f %f]", x0, y0 );
         r = bilinear_interpolation( m_data_u, m_w, m_h, 3, 0, x0, y0 );
         g = bilinear_interpolation( m_data_u, m_w, m_h, 3, 1, x0, y0 );
         b = bilinear_interpolation( m_data_u, m_w, m_h, 3, 2, x0, y0 );
     }
     void Image::get_bilinear_ui( const float& x0, const float& y0, float& r, float& g, float& b ) const {
         assert_type( IT_U_IRGB );
-        passert_statement_g( x0>=0 && x0<m_w-1, "pixel oob [%f %f]", x0, y0 );
-        passert_statement_g( y0>=0 && y0<m_h-1, "pixel oob [%f %f]", x0, y0 );
+        passert_statement_g( x0>=0 && x0<=m_w-1, "pixel oob [%f %f]", x0, y0 );
+        passert_statement_g( y0>=0 && y0<=m_h-1, "pixel oob [%f %f]", x0, y0 );
         const uchar* channel = NULL;
         channel = get_channel_u(0); r = bilinear_interpolation( channel, m_w, m_h, 1, 0, x0, y0 );
         channel = get_channel_u(1); g = bilinear_interpolation( channel, m_w, m_h, 1, 0, x0, y0 );
@@ -406,16 +406,16 @@ namespace kortex {
     }
     void Image::get_bilinear_fp( const float& x0, const float& y0, float& r, float& g, float& b ) const {
         assert_type( IT_F_PRGB );
-        passert_statement_g( x0>=0 && x0<m_w-1, "pixel oob [%f %f]", x0, y0 );
-        passert_statement_g( y0>=0 && y0<m_h-1, "pixel oob [%f %f]", x0, y0 );
+        passert_statement_g( x0>=0 && x0<=m_w-1, "pixel oob [%f %f]", x0, y0 );
+        passert_statement_g( y0>=0 && y0<=m_h-1, "pixel oob [%f %f]", x0, y0 );
         r = bilinear_interpolation( m_data_f, m_w, m_h, 3, 0, x0, y0 );
         g = bilinear_interpolation( m_data_f, m_w, m_h, 3, 1, x0, y0 );
         b = bilinear_interpolation( m_data_f, m_w, m_h, 3, 2, x0, y0 );
     }
     void Image::get_bilinear_fi( const float& x0, const float& y0, float& r, float& g, float& b ) const {
         assert_type( IT_F_IRGB );
-        passert_statement_g( x0>=0 && x0<m_w-1, "pixel oob [%f %f]", x0, y0 );
-        passert_statement_g( y0>=0 && y0<m_h-1, "pixel oob [%f %f]", x0, y0 );
+        passert_statement_g( x0>=0 && x0<=m_w-1, "pixel oob [%f %f]", x0, y0 );
+        passert_statement_g( y0>=0 && y0<=m_h-1, "pixel oob [%f %f]", x0, y0 );
         const float* channel = NULL;
         channel = get_channel_f(0); r = bilinear_interpolation( channel, m_w, m_h, 1, 0, x0, y0 );
         channel = get_channel_f(1); g = bilinear_interpolation( channel, m_w, m_h, 1, 0, x0, y0 );
