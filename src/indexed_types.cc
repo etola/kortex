@@ -41,5 +41,30 @@ namespace kortex {
         }
     }
 
+//
+//
+//
+
+    inline bool iint_cmp_l(const iint& l, const iint& r) { return l.val > r.val; }
+    inline bool iint_cmp_s(const iint& l, const iint& r) { return l.val < r.val; }
+
+    void sort_ascending( vector<iint>& arr) {
+        sort( arr.begin(), arr.end(), iint_cmp_s );
+    }
+
+    void sort_descending( vector<iint>& arr ) {
+        sort( arr.begin(), arr.end(), iint_cmp_l );
+    }
+
+    void init( const vector<int>& inds, const vector<int>& vals, vector<iint>& ifarr ) {
+        assert_statement( inds.size() == vals.size(), "size mismatch" );
+        ifarr.resize( inds.size() );
+        for( unsigned i=0; i<inds.size(); i++ ) {
+            ifarr[i].id  = inds[i];
+            ifarr[i].val = vals[i];
+        }
+    }
+
+
 }
 

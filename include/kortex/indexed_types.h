@@ -32,6 +32,20 @@ namespace kortex {
     void sort_ascending( vector<ifloat>& arr );
     void sort_descending( vector<ifloat>& arr );
 
+
+
+    struct iint {
+        int id;
+        int val;
+        iint() : id(0), val(0) {}
+        iint(int i, int v) : id(i), val(v) {}
+    };
+
+    void init( const vector<int>& inds, const vector<int>& vals, vector<iint>& ifarr );
+
+    void sort_ascending ( vector<iint>& arr );
+    void sort_descending( vector<iint>& arr );
+
 }
 
 #endif
