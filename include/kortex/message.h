@@ -16,6 +16,9 @@
 
 #include <iostream>
 #include <iomanip>
+#include <vector>
+
+using std::vector;
 
 namespace kortex {
 
@@ -37,6 +40,10 @@ namespace kortex {
 
     template<typename T>
     void matrix_print(const char* str, const T* A, int ar, int ac, bool legend, bool print_zeros);
+
+    void print_separator( int nsz, const char* ch=NULL );
+    void print_arr( const vector<int>& var, const char* pretag=NULL, const char* posttag=NULL );
+    void print_mat( const vector<float>& mat, int nr, int nc, const char* pretag=NULL  );
 
 }
 
