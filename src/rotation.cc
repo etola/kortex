@@ -203,6 +203,26 @@ namespace kortex {
         zeta *= sign( nx0[1] );
     }
 
+    /// az, el, zeta given in degrees
+    void az_el_zeta_to_rotation( const double& az, const double& el, const double& zeta,
+                                 double R[9] ) {
+        double nz[3];
+        azel_to_cartesian( az, el, nz );
+
+        double nx[3], ny[3];
+        // upside down coordinate frame
+        construct_local_coordinate_frame( nz, nx, ny );
+        double Rtmp[9];
+        Rtmp[0] = nx[0]; Rtmp[1] = nx[1]; Rtmp[2] = nx[2];
+        Rtmp[3] = ny[0]; Rtmp[4] = ny[1]; Rtmp[5] = ny[2];
+        Rtmp[6] = nz[0]; Rtmp[7] = nz[1]; Rtmp[8] = nz[2];
+
+        double Rz[9];
+        rotation_matrix_around_z( zeta, Rz );
+
+        mat_mat_3( Rz, Rtmp, R );
+    }
+
     void rotation_matrix_frame_error( const double* R_ref, const double* R_obs,
                                       double& e_boresight, double& e_inplain ) {
         assert_pointer( R_ref );
