@@ -35,10 +35,18 @@ namespace kortex {
                         float& min_v, float& max_v ) {
         img.passert_type( IT_F_GRAY | IT_U_GRAY );
 
-        int xs = std::max( std::min( xmin, xmax ), 0        );
-        int xe = std::min( std::max( xmin, xmax ), img.w() );
-        int ys = std::max( std::min( ymin, ymax ), 0        );
-        int ye = std::min( std::max( ymin, ymax ), img.h() );
+        int xs, xe, ys, ye;
+        if( xmin == xmax && ymin == ymax && xmin == xmax && xmin == -1 ) {
+            xs = 0;
+            ys = 0;
+            xe = img.w();
+            ye = img.h();
+        } else {
+            xs = std::max( std::min( xmin, xmax ), 0        );
+            xe = std::min( std::max( xmin, xmax ), img.w() );
+            ys = std::max( std::min( ymin, ymax ), 0        );
+            ye = std::min( std::max( ymin, ymax ), img.h() );
+        }
 
         min_v =  std::numeric_limits<float>::max();
         max_v = -std::numeric_limits<float>::max();
@@ -77,6 +85,46 @@ namespace kortex {
         }
         return true;
     }
+
+    bool abs_image_min_max( const Image& img,
+                            const int& xmin, const int& ymin,
+                            const int& xmax, const int& ymax,
+                            float& min_v, float& max_v ) {
+        img.passert_type( IT_F_GRAY );
+
+        int xs, xe, ys, ye;
+        if( xmin == xmax && ymin == ymax && xmin == xmax && xmin == -1 ) {
+            xs = 0;
+            ys = 0;
+            xe = img.w();
+            ye = img.h();
+        } else {
+            xs = std::max( std::min( xmin, xmax ), 0        );
+            xe = std::min( std::max( xmin, xmax ), img.w() );
+            ys = std::max( std::min( ymin, ymax ), 0        );
+            ye = std::min( std::max( ymin, ymax ), img.h() );
+        }
+
+        min_v =  std::numeric_limits<float>::max();
+        max_v = -std::numeric_limits<float>::max();
+
+        for( int y=ys; y<ye; y++ ) {
+            const float* row = img.get_row_f(y);
+            for( int x=xs; x<xe; x++ ) {
+                const float& v = fabs(row[x]);
+                if( is_a_number(v) ) {
+                    min_v = std::min(v,min_v);
+                    max_v = std::max(v,max_v);
+                }
+            }
+        }
+        if( (min_v ==  std::numeric_limits<float>::max())  ||
+            (max_v == -std::numeric_limits<float>::max()) ) {
+            return false;
+        }
+        return true;
+    }
+
 
     // allows img out to be point to the same mem location -> therefore passerts
     // that out image is mem-allocated.

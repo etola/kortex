@@ -25,6 +25,20 @@ namespace kortex {
                         const int& xmax, const int& ymax,
                         float& min_v, float& max_v );
 
+    inline bool image_min_max( const Image& img, float& min_v, float& max_v ) {
+        return image_min_max( img, -1, -1, -1, -1, min_v, max_v );
+    }
+
+    bool abs_image_min_max( const Image& img,
+                            const int& xmin, const int& ymin,
+                            const int& xmax, const int& ymax,
+                            float& min_v, float& max_v );
+
+    inline bool abs_image_min_max( const Image& img, float& min_v, float& max_v ) {
+        return abs_image_min_max( img, -1, -1, -1, -1, min_v, max_v );
+    }
+
+
     void        filter_hv( const Image& img, const float* kernel, const int& ksz, Image& out );
     inline void filter_hv( Image& img, const float* kernel, const int& ksz ) {
         filter_hv( img, kernel, ksz, img );
