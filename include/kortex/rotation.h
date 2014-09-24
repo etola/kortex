@@ -46,6 +46,14 @@ namespace kortex {
     /// up_az, up_el specify up vector (y-direction)'s azimuth and elevation
     void rotation_matrix( double front_az, double front_el, double up_az, double up_el, double R[9] );
 
+    /// computes the normal that is looking back towards an observer
+    ///
+    ///                            |
+    ///      ref o------------<-n--X-->n_front (az,el)
+    ///                         -  |
+    ///
+    void compute_reverse_normal( double az, double el, double n[3] );
+
 }
 
 #endif

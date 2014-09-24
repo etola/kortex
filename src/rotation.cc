@@ -270,6 +270,16 @@ namespace kortex {
         mat_mat_3( Rz, Rtmp, R );
     }
 
+    void compute_reverse_normal( double az, double el, double n[3] ) {
+        double n_front[3];
+        azel_to_cartesian( az, el, n_front );
+        double na[] = { 0.0, 0.0,  1.0 };
+        double nb[] = { 0.0, 0.0, -1.0 };
+        double R_invert[9];
+        rotate_normal_to_normal( na, nb, R_invert );
+        mat_vec_3( R_invert, n_front, n );
+    }
+
 
 
 }
