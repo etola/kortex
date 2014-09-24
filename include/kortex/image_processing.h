@@ -100,9 +100,6 @@ namespace kortex {
     /// er_size : how many pixels to erode
     void erode_mask( Image& mask, int er_size );
 
-    void image_to_gradient(const float* im, int w, int h, float* dx, float* dy);
-    void image_to_gradient( const Image& img, Image& dx, Image& dy );
-
     void image_resize_coarse( const Image& src, const int& nw, const int& nh, Image& dst );
     void image_resize_fine  ( const Image& src, const int& nw, const int& nh, Image& dst );
 
@@ -116,6 +113,12 @@ namespace kortex {
         case false: image_subtract    ( im0, im1, out ); break;
         case true : image_subtract_par( im0, im1, out ); break;
         }
+    }
+
+    /// adds v to every pixel
+    void image_add( const Image& img, float v, Image& out );
+    inline void image_add( Image& img, float v ) {
+        image_add( img, v, img );
     }
 
     void image_add    ( const Image& im0, const Image& im1, Image& out );
@@ -196,10 +199,14 @@ namespace kortex {
         image_linearize( img, img );
     }
 
-    void image_normalize( const Image& src, Image& dst );
-    inline void image_normalize( Image& img ) {
-        image_normalize( img, img );
+    void image_normalize( const Image& src, bool standard, Image& dst );
+    inline void image_normalize( Image& img, bool standard ) {
+        image_normalize( img, standard, img );
     }
+    inline void image_normalize( Image& img ) {
+        image_normalize( img, true, img );
+    }
+
 
     void image_unnormalize( const Image& src, Image& dst );
     inline void image_unnormalize( Image& img ) {
@@ -219,6 +226,11 @@ namespace kortex {
         image_abs( img, run_parallel, img );
     }
 
+    void image_negate( const Image& img, Image& out );
+    inline void image_negate( Image& img ) {
+        image_negate( img, img );
+    }
+
     void image_clip_lower( const Image& src, float min_v, bool run_parallel, Image& out );
     inline void image_clip_lower( Image& src, float min_v, bool run_parallel ) {
         image_clip_lower( src, min_v, run_parallel, src );
@@ -234,6 +246,18 @@ namespace kortex {
     inline void image_clip_par( Image& src, float min_v, float max_v ) {
         image_clip( src, min_v, max_v, true, src );
     }
+
+
+    // gtype can be one of [ "simple", "sobel", "prewitt" ]
+    void image_gradient( const Image& img, const char* gtype, Image& gx, Image& gy );
+
+    void image_gradient_prewitt( const Image& img, Image& gx, Image& gy );
+    void image_gradient_sobel  ( const Image& img, Image& gx, Image& gy );
+    void image_gradient_simple (const float* im, int w, int h, float* dx, float* dy);
+    void image_gradient_simple ( const Image& img, Image& gx, Image& gy );
+
+    // set nb pixels of the boundary to 0.0f
+    void image_reset_boundary( Image& img, int nb );
 
 
 }

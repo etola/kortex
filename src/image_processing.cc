@@ -11,6 +11,10 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
+
+#include <limits>
+#include <cstring>
+
 #include <kortex/image_processing.h>
 #include <kortex/types.h>
 #include <kortex/image.h>
@@ -20,7 +24,7 @@
 #include <kortex/color.h>
 
 #include "image_processing.tcc"
-#include <limits>
+
 
 namespace kortex {
 
@@ -614,75 +618,6 @@ namespace kortex {
         image_resize_fine( img, nw, nh, rimg );
     }
 
-
-    void image_to_gradient( const Image& img, Image& dx, Image& dy ) {
-        img.passert_type( IT_F_GRAY );
-        int w = img.w();
-        int h = img.h();
-        dx.create( w, h, IT_F_GRAY );
-        dy.create( w, h, IT_F_GRAY );
-        image_to_gradient( img.get_row_f(0), w, h, dx.get_row_f(0), dy.get_row_f(0) );
-    }
-
-    void image_to_gradient(const float* im, int w, int h, float* dx, float* dy) {
-        assert_pointer( im && dx && dy );
-        passert_statement_g( is_positive_number(w), "[w %d] should be positive", w );
-        passert_statement_g( is_positive_number(h), "[h %d] should be positive", h );
-
-        // x=1:w-1; y=1:h-1
-        for( int y=1; y<h-1; y++ ) {
-            const float* imy  = im + y*w;
-            const float* imyn = im + (y+1)*w;
-            const float* imyp = im + (y-1)*w;
-            float* dxr = dx + y*w;
-            float* dyr = dy + y*w;
-            for( int x=1; x<w-1; x++ ) {
-                dxr[x] = imy [x+1] - imy [x-1];
-                dyr[x] = imyp[x  ] - imyn[x  ];
-            }
-        }
-
-        // x=0; y=1:h-1
-        for( int y=1; y<h-1; y++ ) {
-            dx[ y*w ] = 2.0 * ( im[y*w+1]-im[y*w] );
-            dy[ y*w ] = im[ (y-1)*w ] - im[ (y+1)*w ];
-        }
-
-        // x=w-1; y=1:h-1
-        for( int y=1; y<h-1; y++ ) {
-            dx[ y*w+w-1 ] = 2.0 * ( im[y*w+w-1]-im[y*w+w-2] );
-            dy[ y*w+w-1 ] =       ( im[(y-1)*w+w-1]-im[(y+1)*w+w-1] );
-        }
-
-        // x=1:w-1; y=0
-        for( int x=1; x<w-1; x++ ) {
-            dx[x] = ( im[x+1] - im[x-1] );
-            dy[x] = 2.0 * ( im[x] - im[w+x] );
-        }
-
-        // x=1:w-1; y=h-1
-        for( int x=1; x<w-1; x++ ) {
-            dx[ (h-1)*w + x ] = im[ x+1 ] - im[ x-1 ];
-            dy[ (h-1)*w + x ] = 2.0 * ( im[ (h-2)*w + x ] - im[ (h-1)*w + x ] );
-        }
-
-        // x=0 y=0
-        dx[0] = 2.0 * ( im[1] - im[0] );
-        dy[0] = 2.0 * ( im[0] - im[w] );
-
-        // x=0 y=h-1
-        dx[ (h-1)*w ] = 2.0 * ( im[ (h-1)*w+1 ] - im[ (h-1)*w ] );
-        dy[ (h-1)*w ] = 2.0 * ( im[ (h-2)*w   ] - im[ (h-1)*w ] );
-
-        // x=w-1 y=0
-        dx[ w-1 ] = 2.0 * ( im[ w-1 ] - im[   w-2 ] );
-        dx[ w-1 ] = 2.0 * ( im[ w-1 ] - im[ 2*w-1 ] );
-
-        // x=w-1 y=h-1
-        dx[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-1)*w + w-1 ] - im[ (h-1)*w + w-2 ] );
-        dy[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-2)*w + w-1 ] - im[ (h-1)*w + w-1 ] );
-    }
-
     void image_subtract( const Image& im0, const Image& im1, Image& out ) {
         passert_statement( check_dimensions(im0,im1), "dimension mismatch" );
         passert_statement( check_dimensions(im0,out), "dimension mismatch" );
@@ -722,6 +657,21 @@ namespace kortex {
         }
     }
 
+    void image_add( const Image& img, float v, Image& out ) {
+        img.passert_type( IT_F_GRAY );
+        out.passert_type( IT_F_GRAY );
+        assert_statement( check_dimensions(img,out), "dimension mismatch" );
+
+        int h = img.h();
+        int w = img.w();
+
+        for( int y=0; y<h; y++ ) {
+            const float* irow = img.get_row_f(y);
+            float      * orow = out.get_row_f(y);
+            for( int x=0; x<w; x++ )
+                orow[x] = irow[x] + v;
+        }
+    }
 
     void image_add( const Image& im0, const Image& im1, Image& out ) {
         passert_statement( check_dimensions(im0,im1), "dimension mismatch" );
@@ -761,7 +711,6 @@ namespace kortex {
             }
         }
     }
-
 
     /// r = p/q for q(i,j) > 1e-6
     void image_divide( const Image& p, const Image& q, Image& r ) {
@@ -1069,11 +1018,20 @@ namespace kortex {
         }
     }
 
-    void image_normalize( const Image& src, Image& dst ) {
+    void image_normalize( const Image& src, bool standard, Image& dst ) {
         src.assert_type( IT_F_GRAY );
         dst.assert_type( IT_F_GRAY );
         assert_statement( check_dimensions(src,dst), "dimension mismatch" );
-        image_scale( src, 1.0f/255.0f, dst );
+
+        float nrm = 1.0f/255.0f;
+        if( !standard ) {
+            float minv, maxv;
+            image_min_max( src, minv, maxv );
+            nrm = std::max( fabs(minv), fabs(maxv) );
+            assert_statement( nrm > 1e-16, "nrm is dangerously close to 0" );
+            nrm = 1.0f/nrm;
+        }
+        image_scale( src, nrm, dst );
     }
 
     void image_unnormalize( const Image& src, Image& dst ) {
@@ -1093,7 +1051,7 @@ namespace kortex {
         mag.zero();
 
         Image dx, dy;
-        image_to_gradient( src, dx, dy );
+        image_gradient( src, "simple", dx, dy );
 
         const float* xptr = dx.get_row_f(0);
         const float* yptr = dy.get_row_f(0);
@@ -1212,5 +1170,182 @@ namespace kortex {
         } break;
         }
     }
+
+    void image_negate( const Image& img, Image& out ) {
+        img.passert_type( IT_F_GRAY );
+        out.passert_type( IT_F_GRAY );
+        assert_statement( check_dimensions(img,out), "dimension mismatch" );
+
+        int h = img.h();
+        int w = img.w();
+
+        for( int y=0; y<h; y++ ) {
+            const float* irow = img.get_row_f(y);
+            float      * orow = out.get_row_f(y);
+            for( int x=0; x<w; x++ ) {
+                orow[x] = -irow[x];
+            }
+        }
+    }
+
+    void image_gradient( const Image& img, const char* gtype, Image& gx, Image& gy ) {
+        if( !strcmp(gtype,"simple") ) {
+            image_gradient_simple( img, gx, gy );
+        } else if( !strcmp(gtype,"prewitt") ) {
+            image_gradient_prewitt( img, gx, gy );
+        } else if( !strcmp(gtype,"sobel") ) {
+            image_gradient_sobel( img, gx, gy );
+        } else {
+            logman_fatal_g( "unknown gradient type [%s]", gtype );
+        }
+    }
+
+    void image_gradient_prewitt( const Image& img, Image& gx, Image& gy ) {
+        img.passert_type( IT_F_GRAY );
+        int h = img.h();
+        int w = img.w();
+
+        gx.create( w, h, IT_F_GRAY ); gx.zero();
+        gy.create( w, h, IT_F_GRAY ); gy.zero();
+
+        float filter1[] = { -1.0f/2.0f, 0.0f,      1.0f/2.0f };
+        float filter2[] = {  1.0f/3.0f, 1.0f/3.0f, 1.0f/3.0f };
+
+        Image timg(w, h, IT_F_GRAY);
+
+        filter_hor( img,  filter1, 3, gx );
+        filter_ver( gx,   filter2, 3      );
+
+        filter_hor( img,  filter2, 3, gy );
+        filter_ver( gy,   filter1, 3      );
+
+        image_reset_boundary( gx, 1 );
+        image_reset_boundary( gy, 1 );
+    }
+
+    void image_gradient_sobel( const Image& img, Image& gx, Image& gy ) {
+        img.passert_type( IT_F_GRAY );
+        int h = img.h();
+        int w = img.w();
+
+        gx.create( w, h, IT_F_GRAY ); gx.zero();
+        gy.create( w, h, IT_F_GRAY ); gy.zero();
+
+        float filter1[] = { -1.0f/2.0f, 0.0f,      1.0f/2.0f };
+        float filter2[] = {  1.0f/4.0f, 2.0f/4.0f, 1.0f/4.0f };
+
+        Image timg(w, h, IT_F_GRAY);
+
+        filter_hor( img,  filter1, 3, gx );
+        filter_ver( gx,   filter2, 3      );
+
+        filter_hor( img,  filter2, 3, gy );
+        filter_ver( gy,   filter1, 3      );
+
+        image_reset_boundary( gx, 1 );
+        image_reset_boundary( gy, 1 );
+    }
+
+    void image_gradient_simple(const float* im, int w, int h, float* dx, float* dy) {
+
+        assert_pointer( im && dx && dy );
+        passert_statement_g( is_positive_number(w), "[w %d] should be positive", w );
+        passert_statement_g( is_positive_number(h), "[h %d] should be positive", h );
+
+        // x=1:w-1; y=1:h-1
+        for( int y=1; y<h-1; y++ ) {
+            const float* imy  = im + y*w;
+            const float* imyn = im + (y+1)*w;
+            const float* imyp = im + (y-1)*w;
+            float* dxr = dx + y*w;
+            float* dyr = dy + y*w;
+            for( int x=1; x<w-1; x++ ) {
+                dxr[x] = imy [x+1] - imy [x-1];
+                dyr[x] = imyp[x  ] - imyn[x  ];
+            }
+        }
+
+        // x=0; y=1:h-1
+        for( int y=1; y<h-1; y++ ) {
+            dx[ y*w ] = 2.0 * ( im[y*w+1]-im[y*w] );
+            dy[ y*w ] = im[ (y-1)*w ] - im[ (y+1)*w ];
+        }
+
+        // x=w-1; y=1:h-1
+        for( int y=1; y<h-1; y++ ) {
+            dx[ y*w+w-1 ] = 2.0 * ( im[y*w+w-1]-im[y*w+w-2] );
+            dy[ y*w+w-1 ] =       ( im[(y-1)*w+w-1]-im[(y+1)*w+w-1] );
+        }
+
+        // x=1:w-1; y=0
+        for( int x=1; x<w-1; x++ ) {
+            dx[x] = ( im[x+1] - im[x-1] );
+            dy[x] = 2.0 * ( im[x] - im[w+x] );
+        }
+
+        // x=1:w-1; y=h-1
+        for( int x=1; x<w-1; x++ ) {
+            dx[ (h-1)*w + x ] = im[ x+1 ] - im[ x-1 ];
+            dy[ (h-1)*w + x ] = 2.0 * ( im[ (h-2)*w + x ] - im[ (h-1)*w + x ] );
+        }
+
+        // x=0 y=0
+        dx[0] = 2.0 * ( im[1] - im[0] );
+        dy[0] = 2.0 * ( im[0] - im[w] );
+
+        // x=0 y=h-1
+        dx[ (h-1)*w ] = 2.0 * ( im[ (h-1)*w+1 ] - im[ (h-1)*w ] );
+        dy[ (h-1)*w ] = 2.0 * ( im[ (h-2)*w   ] - im[ (h-1)*w ] );
+
+        // x=w-1 y=0
+        dx[ w-1 ] = 2.0 * ( im[ w-1 ] - im[   w-2 ] );
+        dx[ w-1 ] = 2.0 * ( im[ w-1 ] - im[ 2*w-1 ] );
+
+        // x=w-1 y=h-1
+        dx[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-1)*w + w-1 ] - im[ (h-1)*w + w-2 ] );
+        dy[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-2)*w + w-1 ] - im[ (h-1)*w + w-1 ] );
+    }
+
+    void image_gradient_simple( const Image& img, Image& gx, Image& gy ) {
+        img.passert_type( IT_F_GRAY );
+        int w = img.w();
+        int h = img.h();
+        gx.create( w, h, IT_F_GRAY );
+        gy.create( w, h, IT_F_GRAY );
+        image_gradient_simple( img.get_row_f(0), w, h, gx.get_row_f(0), gy.get_row_f(0) );
+    }
+
+    void image_reset_boundary( Image& img, int nb ) {
+        passert_statement( nb > 0, "invalid bounary size" );
+        img.passert_type( IT_F_GRAY );
+
+        int w = img.w();
+        int h = img.h();
+
+        for( int y=0; y<nb; y++ ) {
+            float* row = img.get_row_f(y);
+            for( int x=0; x<w; x++ )
+                row[x] = 0.0f;
+        }
+        for( int y=h-nb; y<h; y++ ) {
+            float* row = img.get_row_f(y);
+            for( int x=0; x<w; x++ )
+                row[x] = 0.0f;
+        }
+
+        for( int y=0; y<h; y++ ) {
+            float* row = img.get_row_f(y);
+            for( int x=0; x<nb; x++ ) {
+                row[x] = 0.0f;
+            }
+            for( int x=w-nb; x<w; x++ ) {
+                row[x] = 0.0f;
+            }
+        }
+
+    }
+
+
+
 
 }
