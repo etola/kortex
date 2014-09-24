@@ -1114,6 +1114,51 @@ namespace kortex {
         }
     }
 
+    void image_clip_lower( const Image& src, float min_v, bool run_parallel, Image& out ) {
+        src.assert_type( IT_F_GRAY );
+        passert_statement( check_dimensions(src,out), "image dimension mismatch" );
+
+        const float* sptr = src.get_row_f(0);
+        float*       optr = out.get_row_f(0);
+
+        switch( run_parallel ) {
+        case false:
+            for( int i=0; i<src.pixel_count(); i++ ) {
+                optr[i] = std::max( min_v, sptr[i] );
+            }
+            break;
+        case true:
+#pragma omp parallel for
+            for( int i=0; i<src.pixel_count(); i++ ) {
+                optr[i] = std::max( min_v, sptr[i] );
+            }
+            break;
+        }
+    }
+
+
+    void image_clip( const Image& src, float min_v, float max_v, bool run_parallel, Image& out ) {
+        src.assert_type( IT_F_GRAY );
+        passert_statement( check_dimensions(src,out), "image dimension mismatch" );
+
+        const float* sptr = src.get_row_f(0);
+        float*       optr = out.get_row_f(0);
+
+        switch( run_parallel ) {
+        case false:
+            for( int i=0; i<src.pixel_count(); i++ ) {
+                optr[i] = std::max( min_v, std::min( sptr[i], max_v ) );
+            }
+            break;
+        case true:
+#pragma omp parallel for
+            for( int i=0; i<src.pixel_count(); i++ ) {
+                optr[i] = std::max( min_v, std::min( sptr[i], max_v ) );
+            }
+            break;
+        }
+    }
+
     void image_stretch( const Image& src, float minv, float maxv, Image& out ) {
         src.assert_type( IT_F_GRAY );
 
@@ -1143,9 +1188,29 @@ namespace kortex {
                     orow[x] = cast_to_gray_range( (v-minv)*scale );
             }
         }
-
-
     }
 
+    void image_abs( const Image& img, bool run_parallel, Image& out ) {
+        img.passert_type( IT_F_GRAY | IT_F_IRGB | IT_F_PRGB );
+        passert_statement( check_dimensions( img, out ), "dimension mismatch" );
+        passert_statement( img.type() == out.type(), "image types do not agree" );
+
+        size_t psz = img.pixel_count();
+        const float* iptr = img.get_fptr();
+        float      * optr = out.get_fptr();
+
+        switch( run_parallel ) {
+        case false: {
+            for( size_t i=0; i<psz; i++ )
+                optr[i] = fabs( iptr[i] );
+        } break;
+        case true: {
+#pragma omp parallel for
+            for( size_t i=0; i<psz; i++ ) {
+                optr[i] = fabs( iptr[i] );
+            }
+        } break;
+        }
+    }
 
 }

@@ -213,6 +213,29 @@ namespace kortex {
     /// specified as 0.0f 0.0f range is extracted from the source image.
     void image_stretch( const Image& src, float minv, float maxv, Image& out );
 
+    /// computes the absolute value image
+    void image_abs( const Image& img, bool run_parallel, Image& out );
+    inline void image_abs( Image& img, bool run_parallel ) {
+        image_abs( img, run_parallel, img );
+    }
+
+    void image_clip_lower( const Image& src, float min_v, bool run_parallel, Image& out );
+    inline void image_clip_lower( Image& src, float min_v, bool run_parallel ) {
+        image_clip_lower( src, min_v, run_parallel, src );
+    }
+    inline void image_clip_lower_par( Image& src, float min_v ) {
+        image_clip_lower( src, min_v, true, src );
+    }
+
+    void image_clip( const Image& src, float min_v, float max_v, bool run_parallel, Image& out );
+    inline void image_clip( Image& src, float min_v, float max_v, bool run_parallel ) {
+        image_clip( src, min_v, max_v, run_parallel, src );
+    }
+    inline void image_clip_par( Image& src, float min_v, float max_v ) {
+        image_clip( src, min_v, max_v, true, src );
+    }
+
+
 }
 
 #endif
