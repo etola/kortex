@@ -199,6 +199,7 @@ namespace kortex {
         image_linearize( img, img );
     }
 
+    /// standard = true normalizes with 255 -> false normalizes according to the max value
     void image_normalize( const Image& src, bool standard, Image& dst );
     inline void image_normalize( Image& img, bool standard ) {
         image_normalize( img, standard, img );
