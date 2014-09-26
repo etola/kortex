@@ -203,6 +203,22 @@ namespace kortex {
 #endif
     }
 
+    float l2norm( const float* a, const float* b, int asz ) {
+        assert_pointer( a && b );
+        assert_pointer_size( asz );
+#ifdef WITH_SSE
+        return sqrt( sse_sq_sum(a,b,asz) );
+#else
+        float nrm = 0.0f;
+        for( int k=0; k<asz; k++ ) {
+            nrm += sq( *a - *b );
+            a++;
+            b++;
+        }
+        return sqrt(nrm);
+#endif
+    }
+
     float normalize_l2norm_128(float* arr) {
         assert_pointer( arr );
         float nrm = l2norm_128(arr);

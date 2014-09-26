@@ -85,6 +85,7 @@ namespace kortex {
     float  l2norm( const float * a, int asz );
     double l2norm( const double* a, int asz );
 
+    float l2norm( const float* a, const float* b, int asz );
     float normalize_l2norm( float * arr, int asz );
 
     float  normalize_l2norm3( float * arr );
