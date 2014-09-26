@@ -592,7 +592,7 @@ namespace kortex {
         }
     }
 
-    void resize_image_coarse( const Image& img, int max_img_dim, Image& rimg ) {
+    void image_resize_coarse( const Image& img, int max_img_dim, Image& rimg ) {
         int nw = img.w();
         int nh = img.h();
         double scr = 1.0;
@@ -605,7 +605,7 @@ namespace kortex {
         image_resize_coarse( img, nw, nh, rimg );
     }
 
-    void resize_image_fine  ( const Image& img, int max_img_dim, Image& rimg ) {
+    void image_resize_fine  ( const Image& img, int max_img_dim, Image& rimg ) {
         int nw = img.w();
         int nh = img.h();
         double scr = 1.0;
