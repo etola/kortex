@@ -1119,6 +1119,7 @@ namespace kortex {
 
     void image_stretch( const Image& src, float minv, float maxv, Image& out ) {
         src.assert_type( IT_F_GRAY );
+        assert_noalias( src, out );
 
         float scale = 1.0f;
         if( minv == 0.0f && maxv == 0.0f ) {
