@@ -17,6 +17,16 @@
 
 namespace kortex {
 
+    /// returns 0 if strings are identical disregarding case
+    int compare_string_nc( const string& str1, const string& str2 ) {
+        return strncasecmp( str1.c_str(), str2.c_str(), str2.size() );
+    }
+
+    /// returns 0 if strings are identical disregarding case
+    int compare_string_nc( const char* str1, const char* str2 ) {
+        return strncasecmp(str1,str2,strlen(str2));
+    }
+
     string get_file_extension( const string& file ) {
         size_t found = file.find_last_of(".");
         return file.substr(found+1);
@@ -48,6 +58,11 @@ namespace kortex {
         assert_pointer( str2 );
         if( !strcmp(str1,str2) ) return true;
         else                     return false;
+    }
+
+    bool is_exact_match( const string& str1, const string& str2 ) {
+        if( !strcmp(str1.c_str(),str2.c_str()) ) return true;
+        else                                     return false;
     }
 
     string num2str(const int& v) {
@@ -84,6 +99,7 @@ namespace kortex {
         return retval;
     }
 
+    /// removes leading and trailing spaces (remove_str)
     string trim_string(const string& str, const string& remove_str) {
         const size_t begin_str = str.find_first_not_of(remove_str);
         if (begin_str == std::string::npos) {
@@ -130,6 +146,22 @@ namespace kortex {
         }
     }
 
+    /// replaces all the white_space chars with the fill string. check tst_string for examples.
+    string replace_whitespace( const string& str, const string& white_space, const string& fill_str ) {
+        string result = trim_string(str);
+
+        // replace sub ranges
+        size_t begin_space = result.find_first_of(white_space);
+
+        while( begin_space != std::string::npos ) {
+            size_t end_space = result.find_first_not_of(white_space, begin_space);
+            size_t range     = end_space - begin_space;
+            result.replace(begin_space, range, fill_str);
+            size_t new_start = begin_space + fill_str.length();
+            begin_space = result.find_first_of(white_space, new_start);
+        }
+        return result;
+    }
 
 }
 

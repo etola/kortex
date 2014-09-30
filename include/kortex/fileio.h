@@ -51,8 +51,10 @@ namespace kortex {
     bool file_exists(const char* file);
     bool file_create( const string& file );
 
+    void write_string( ofstream& fout, const string& str );
     void write_param(ofstream& fout, const string& param_name, const string& val );
     void write_param(ofstream& fout, const string& param_name, const int& val );
+    void write_param(ofstream& fout, const string& param_name, const unsigned int& val );
     void write_param(ofstream& fout, const string& param_name, const double& val );
     void write_param(ofstream& fout, const string& param_name, const bool& val );
     void write_param(ofstream& fout, const string& param_name, const vector<int>& arr );

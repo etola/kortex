@@ -105,11 +105,20 @@ namespace kortex {
         }
     }
 
+    void write_string( ofstream& fout, const string& str ) {
+        fout << str << endl;
+        check_file_stream_error( fout );
+    }
+
     void write_param(ofstream& fout, const string& param_name, const string& val ) {
         fout << param_name << " " << val << endl;
         check_file_stream_error( fout );
     }
     void write_param(ofstream& fout, const string& param_name, const int& val ) {
+        fout << param_name << " " << val << endl;
+        check_file_stream_error( fout );
+    }
+    void write_param(ofstream& fout, const string& param_name, const unsigned int& val ) {
         fout << param_name << " " << val << endl;
         check_file_stream_error( fout );
     }
