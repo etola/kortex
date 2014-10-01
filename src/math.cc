@@ -168,7 +168,7 @@ namespace kortex {
 
     double l2norm( const double* a, int asz ) {
         double nrm = 0.0;
-        for( int k=0; k<asz; a++ )
+        for( int k=0; k<asz; k++ )
             nrm += sq(a[k]);
         return sqrt(nrm);
     }
