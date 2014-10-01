@@ -664,6 +664,12 @@ namespace kortex {
         return mat_inv_mat_3( A, BC, D );
     }
 
+    bool mat_mat_mat_inv_3( const double A[9], const double B[9], const double C[9], double D[9] ) {
+        double AB[9];
+        mat_mat_3( A, B, AB );
+        return mat_mat_inv_3( AB, C, D );
+    }
+
     bool mat_is_upper_hessenberg( const double* A, int nra, int nca ) {
         assert_pointer( A );
         assert_pointer_size( nra*nca );
