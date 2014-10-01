@@ -16,6 +16,7 @@
 #include <kortex/math.h>
 #include <kortex/defs.h>
 #include <kortex/check.h>
+#include <kortex/svd.h>
 
 namespace kortex {
 
@@ -300,6 +301,20 @@ namespace kortex {
         mat_vec_3( R_invert, n_front, n );
     }
 
+    double enforce_rotation_matrix( double r[9] ) {
+        SVD svd;
+        svd.decompose( r, 3, 3, true, true );
+        double s0 = svd.Sd()[0];
+        double s1 = svd.Sd()[1];
+        double s2 = svd.Sd()[2];
+        double uncertainty = std::max( s0/s1, s0/s2 );
+        uncertainty = std::max( uncertainty, s1/s2 );
+        svd.set_Sd(0, 1.0);
+        svd.set_Sd(1, 1.0);
+        svd.set_Sd(2, 1.0);
+        svd.combine( r, 3 );
+        return uncertainty;
+    }
 
 
 }

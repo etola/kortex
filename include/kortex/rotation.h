@@ -58,6 +58,9 @@ namespace kortex {
     ///
     void compute_reverse_normal( double az, double el, double n[3] );
 
+    /// casts the r matrix to the closest rotation matrix - returns uncertainty.
+    double enforce_rotation_matrix( double r[9] );
+
 }
 
 #endif
