@@ -41,11 +41,14 @@ namespace kortex {
         void update() { dx=ux-lx; dy=uy-ly; }
 
         void update(float x, float y) {
+            insert( x, y );
+            update();
+        }
+        void insert( float x, float y ) {
             if( x<lx ) lx = x;
             if( x>ux ) ux = x;
             if( y<ly ) ly = y;
             if( y>uy ) uy = y;
-            update();
         }
 
         bool is_inside(float x, float y) const;
@@ -87,11 +90,15 @@ namespace kortex {
         void update() { dx=ux-lx; dy=uy-ly; }
 
         void update(int x, int y) {
+            insert( x, y );
+            update();
+        }
+
+        void insert(int x, int y) {
             if( x<lx ) lx = x;
             if( x>ux ) ux = x;
             if( y<ly ) ly = y;
             if( y>uy ) uy = y;
-            update();
         }
 
         bool is_inside(int x, int y) const;
