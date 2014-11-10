@@ -877,9 +877,22 @@ namespace kortex {
         }
     }
 
+    /// checks whether p has values of either 0 or 1
+    bool is_binarized_u( const Image& p ) {
+        assert_statement( !p.is_empty(), "passed empty image" );
+        p.assert_type( IT_U_GRAY );
+        int sz = p.pixel_count();
+        const uchar* row = p.get_row_u(0);
+        for( int i=0; i<sz; i++ ) {
+            if( row[i] == 0 ) continue;
+            if( row[i] == 1 ) continue;
+            return false;
+        }
+        return true;
+    }
 
     /// checks whether p has values of either 0.0f or 1.0f
-    bool is_binarized( const Image& p ) {
+    bool is_binarized_f( const Image& p ) {
         assert_statement( !p.is_empty(), "passed empty image" );
         p.assert_type( IT_F_GRAY );
         int sz = p.pixel_count();
@@ -890,6 +903,17 @@ namespace kortex {
             return false;
         }
         return true;
+    }
+
+    /// checks whether p has values of either 0.0f or 1.0f
+    bool is_binarized( const Image& p ) {
+        assert_statement( !p.is_empty(), "passed empty image" );
+        p.assert_type( IT_F_GRAY | IT_U_GRAY );
+        switch( p.type() ) {
+        case IT_U_GRAY: return is_binarized_u(p);
+        case IT_F_GRAY: return is_binarized_f(p);
+        default       : logman_fatal_g( "invalid image type [%d]", p.type() );
+        }
     }
 
     /// checks whether p has values in the range [0.0f 1.0f]
