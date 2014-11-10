@@ -14,6 +14,8 @@
 #ifndef KORTEX_IMAGE_PROCESSING_H
 #define KORTEX_IMAGE_PROCESSING_H
 
+#include <kortex/types.h>
+
 namespace kortex {
 
     class Image;
@@ -259,6 +261,28 @@ namespace kortex {
 
     // set nb pixels of the boundary to 0.0f
     void image_reset_boundary( Image& img, int nb );
+
+    // inverts a binary uchar image - allows aliasing
+    void mask_invert( const Image& img, Image& out );
+
+    inline void mask_invert( Image& img ) {
+        mask_invert( img, img );
+    }
+
+    // labels pixels with color v as 1, 0 otherwise. allows aliasing
+    void pick_pixels_with_color( const Image& img, const uchar& v, Image& out );
+    inline void pick_pixels_with_color( Image& img, const uchar& v ) {
+        pick_pixels_with_color( img, v, img );
+    }
+
+    /// binarize a uchar image ( src(x,y)>0 -> dst(x,y)=1 ). allows aliasing.
+    void binarize_image( const Image& src, Image& dst );
+    inline void binarize_image( Image& img ) {
+        binarize_image( img, img );
+    }
+
+    typedef float (*PixelOperator)(float);
+    void apply_pixelwise_operation( const Image& p, PixelOperator op, bool run_parallel, Image& q );
 
 
 }

@@ -1370,6 +1370,80 @@ namespace kortex {
 
     }
 
+//
+//
+//
+
+    // inverts a binary uchar image - allows aliasing
+    void mask_invert( const Image& img, Image& out ) {
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
+        img.assert_type( IT_U_GRAY );
+        out.assert_type( IT_U_GRAY );
+        assert_statement( is_binarized(img), "image needs to be binarized" );
+
+        const uchar* src = img.get_row_u(0);
+        uchar      * dst = out.get_row_u(0);
+
+        int sz  = img.pixel_count();
+        for( int i=0; i<sz; i++ ) {
+            if( src[i] ) dst[i] = 0;
+            else         dst[i] = 1;
+        }
+    }
+
+    // labels pixels with color v as 1, 0 otherwise. allows aliasing
+    void pick_pixels_with_color( const Image& img, const uchar& v, Image& out ) {
+        passert_statement( check_dimensions(img, out), "dimension mismatch" );
+        img.assert_type( IT_U_GRAY );
+        out.assert_type( IT_U_GRAY );
+
+        const uchar* src = img.get_row_u(0);
+        uchar      * dst = out.get_row_u(0);
+
+        int sz  = img.pixel_count();
+        for( int i=0; i<sz; i++ ) {
+            if( src[i] == v ) dst[i] = 1;
+            else              dst[i] = 0;
+        }
+    }
+
+
+    void apply_pixelwise_operation( const Image& p, PixelOperator op, bool run_parallel, Image& q ) {
+        p.assert_type( IT_F_GRAY );
+        q.assert_type( IT_F_GRAY );
+        passert_statement( check_dimensions(p,q), "dimension mismatch" );
+
+        int sz = p.pixel_count();
+        const float* src = p.get_row_f(0);
+        float      * dst = q.get_row_f(0);
+
+        switch( run_parallel ) {
+        case true:
+#pragma omp parallel for
+            for( int i=0; i<sz; i++ ) {
+                dst[i] = op( src[i] );
+            }
+            break;
+        case false:
+            for( int i=0; i<sz; i++ ) {
+                dst[i] = op( src[i] );
+            }
+            break;
+        }
+    }
+
+    void binarize_image( const Image& src, Image& dst ) {
+        src.passert_type( IT_U_GRAY );
+        dst.passert_type( IT_U_GRAY );
+        passert_statement( check_dimensions(src,dst), "dimension mismatch" );
+        int sz = src.pixel_count();
+        const uchar* srow = src.get_row_u(0);
+        uchar      * drow = dst.get_row_u(0);
+        for( int i=0; i<sz; i++ ) {
+            if( srow[i] > 0 ) drow[i] = 1;
+            else              drow[i] = 0;
+        }
+    }
 
 
 
