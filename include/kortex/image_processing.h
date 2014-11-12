@@ -102,11 +102,12 @@ namespace kortex {
     /// er_size : how many pixels to erode
     void erode_mask( Image& mask, int er_size );
 
-    void image_resize_coarse( const Image& src, const int& nw, const int& nh, Image& dst );
-    void image_resize_fine  ( const Image& src, const int& nw, const int& nh, Image& dst );
 
-    void image_resize_coarse( const Image& src, int max_img_dim, Image& dst );
-    void image_resize_fine  ( const Image& src, int max_img_dim, Image& dst );
+    void image_resize_coarse( const Image& src, const int& nw, const int& nh, bool run_parallel, Image& dst );
+    void image_resize_fine  ( const Image& src, const int& nw, const int& nh, bool run_parallel, Image& dst );
+
+    void image_resize_coarse( const Image& img, int max_img_dim, bool run_parallel, Image& rimg );
+    void image_resize_fine  ( const Image& src, int max_img_dim, bool run_parallel, Image& dst  );
 
     void image_subtract    ( const Image& im0, const Image& im1, Image& out );
     void image_subtract_par( const Image& im0, const Image& im1, Image& out );
@@ -202,18 +203,19 @@ namespace kortex {
     }
 
     /// standard = true normalizes with 255 -> false normalizes according to the max value
-    void image_normalize( const Image& src, bool standard, Image& dst );
-    inline void image_normalize( Image& img, bool standard ) {
-        image_normalize( img, standard, img );
+    void image_normalize( const Image& src, bool standard, bool parallel, Image& dst );
+
+    inline void image_normalize( Image& img, bool standard, bool parallel ) {
+        image_normalize( img, standard, parallel, img );
     }
     inline void image_normalize( Image& img ) {
-        image_normalize( img, true, img );
+        image_normalize( img, true, true, img );
     }
 
 
-    void image_unnormalize( const Image& src, Image& dst );
-    inline void image_unnormalize( Image& img ) {
-        image_unnormalize( img, img );
+    void image_unnormalize( const Image& src, bool parallel, Image& dst );
+    inline void image_unnormalize( Image& img, bool parallel ) {
+        image_unnormalize( img, parallel, img );
     }
 
     /// computes per pixel image gradient magnitude

@@ -444,7 +444,7 @@ namespace kortex {
         }
     }
 
-    void image_resize_coarse_rgb( const Image& src, const int& nw, const int& nh, Image& dst ) {
+    void image_resize_coarse_rgb    ( const Image& src, const int& nw, const int& nh, Image& dst ) {
 
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
         src.passert_type( IT_U_PRGB | IT_U_IRGB | IT_F_IRGB | IT_F_PRGB );
@@ -478,8 +478,42 @@ namespace kortex {
             }
         }
     }
+    void image_resize_coarse_rgb_par( const Image& src, const int& nw, const int& nh, Image& dst ) {
 
-    void image_resize_coarse_g( const Image& src, const int& nw, const int& nh, Image& dst ) {
+        passert_statement( nw > 0 && nh > 0, "invalid new image size" );
+        src.passert_type( IT_U_PRGB | IT_U_IRGB | IT_F_IRGB | IT_F_PRGB );
+
+        dst.create( nw, nh, src.type() );
+        dst.zero();
+
+        float ratioy = src.h() / (float)nh;
+        float ratiox = src.w() / (float)nw;
+
+        DataType dtype = image_precision( src.type() );
+
+#pragma omp parallel for
+        for( int y=0; y<nh; y++ ) {
+            float ny = y*ratioy;
+            if( ny >= src.h()-1 ) ny = src.h()-1;
+            for( int x=0; x<nw; x++ ) {
+                float nx = x*ratiox;
+                if( nx >= src.w()-1 ) nx = src.w()-1;
+                float r, g, b;
+                src.get_bilinear(nx, ny, r, g, b);
+                switch( dtype ) {
+                case TYPE_FLOAT: dst.set(x, y, r, g, b); break;
+                case TYPE_UCHAR: {
+                    uchar ur = cast_to_gray_range( r );
+                    uchar ug = cast_to_gray_range( g );
+                    uchar ub = cast_to_gray_range( b );
+                    dst.set(x, y, ur, ug, ub);
+                } break;
+                default: switch_fatality();
+                }
+            }
+        }
+    }
+    void image_resize_coarse_g    ( const Image& src, const int& nw, const int& nh, Image& dst ) {
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
         src.passert_type( IT_U_GRAY | IT_F_GRAY );
 
@@ -509,14 +543,70 @@ namespace kortex {
             }
         }
     }
+    void image_resize_coarse_g_par( const Image& src, const int& nw, const int& nh, Image& dst ) {
+        passert_statement( nw > 0 && nh > 0, "invalid new image size" );
+        src.passert_type( IT_U_GRAY | IT_F_GRAY );
 
-    void image_resize_coarse( const Image& src, const int& nw, const int& nh, Image& dst ) {
-        switch( src.ch() ) {
-        case 1: image_resize_coarse_g  ( src, nw, nh, dst ); break;
-        case 3: image_resize_coarse_rgb( src, nw, nh, dst ); break;
-        default: switch_fatality();
+        dst.create( nw, nh, src.type() );
+        dst.zero();
+
+        float ratioy = src.h() / (float)nh;
+        float ratiox = src.w() / (float)nw;
+
+        DataType dtype = image_precision( src.type() );
+
+#pragma omp parallel for
+        for( int y=0; y<nh; y++ ) {
+            float ny = y*ratioy;
+            if( ny >= src.h()-1 ) ny = src.h()-1;
+            for( int x=0; x<nw; x++ ) {
+                float nx = x*ratiox;
+                if( nx >= src.w()-1 ) nx = src.w()-1;
+                float v = src.get_bilinear(nx, ny);
+                switch( dtype ) {
+                case TYPE_FLOAT: dst.set(x, y, v); break;
+                case TYPE_UCHAR: {
+                    uchar uv = cast_to_gray_range( v );
+                    dst.set(x, y, uv);
+                } break;
+                default: switch_fatality();
+                }
+            }
         }
     }
+
+    void image_resize_coarse( const Image& src, const int& nw, const int& nh, bool run_parallel, Image& dst ) {
+        switch( run_parallel ) {
+        case true: {
+            switch( src.ch() ) {
+            case 1: image_resize_coarse_g_par  ( src, nw, nh, dst ); break;
+            case 3: image_resize_coarse_rgb_par( src, nw, nh, dst ); break;
+            default: switch_fatality();
+            }
+        } break;
+        case false: {
+            switch( src.ch() ) {
+            case 1: image_resize_coarse_g  ( src, nw, nh, dst ); break;
+            case 3: image_resize_coarse_rgb( src, nw, nh, dst ); break;
+            default: switch_fatality();
+            }
+        } break;
+        }
+    }
+    void image_resize_coarse( const Image& img, int max_img_dim, bool run_parallel, Image& rimg ) {
+        int nw = img.w();
+        int nh = img.h();
+        if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
+            double scr = 1.0;
+            if( nw >= nh ) scr = img.w() / double(max_img_dim);
+            else           scr = img.h() / double(max_img_dim);
+            nw  = img.w() / scr;
+            nh  = img.h() / scr;
+        }
+        image_resize_coarse( img, nw, nh, run_parallel, rimg );
+    }
+
+
 
     void image_resize_fine_g( const Image& src, const int& nw, const int& nh, Image& dst ) {
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
@@ -549,6 +639,38 @@ namespace kortex {
             }
         }
     }
+    void image_resize_fine_g_par( const Image& src, const int& nw, const int& nh, Image& dst ) {
+        passert_statement( nw > 0 && nh > 0, "invalid new image size" );
+        src.passert_type( IT_U_GRAY | IT_F_GRAY );
+
+        dst.create( nw, nh, src.type() );
+        dst.zero();
+
+        float ratioy = src.h() / (float)nh;
+        float ratiox = src.w() / (float)nw;
+
+        DataType dtype = image_precision( src.type() );
+
+#pragma omp parallel for
+        for( int y=0; y<nh; y++ ) {
+            float ny = y*ratioy;
+            if( ny >= src.h()-1 ) ny = src.h()-1;
+            for( int x=0; x<nw; x++ ) {
+                float nx = x*ratiox;
+                if( nx >= src.w()-1 ) nx = src.w()-1;
+                if( !src.is_inside_margin(nx, ny, 2) ) continue;
+                float v = src.get_bicubic(nx, ny);
+                switch( dtype ) {
+                case TYPE_FLOAT: dst.set(x, y, v); break;
+                case TYPE_UCHAR: {
+                    uchar uv = cast_to_gray_range( v );
+                    dst.set(x, y, uv);
+                } break;
+                default: switch_fatality();
+                }
+            }
+        }
+    }
 
     void image_resize_fine_rgb( const Image& src, const int& nw, const int& nh, Image& dst ) {
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
@@ -562,12 +684,46 @@ namespace kortex {
 
         DataType dtype = image_precision( src.type() );
 
-        float r, g, b;
         for( int y=0; y<nh; y++ ) {
             float ny = y*ratioy;
             for( int x=0; x<nw; x++ ) {
                 float nx = x*ratiox;
                 if( !src.is_inside_margin(nx, ny, 2) ) continue;
+                float r, g, b;
+                src.get_bicubic(nx, ny, r, g, b);
+                switch( dtype ) {
+                case TYPE_FLOAT: dst.set(x, y, r, g, b); break;
+                case TYPE_UCHAR: {
+                    uchar ur = cast_to_gray_range( r );
+                    uchar ug = cast_to_gray_range( g );
+                    uchar ub = cast_to_gray_range( b );
+                    dst.set(x, y, ur, ug, ub);
+                } break;
+                default: switch_fatality();
+                }
+            }
+        }
+    }
+
+    void image_resize_fine_rgb_par( const Image& src, const int& nw, const int& nh, Image& dst ) {
+        passert_statement( nw > 0 && nh > 0, "invalid new image size" );
+        src.passert_type( IT_U_PRGB | IT_U_IRGB | IT_F_IRGB | IT_F_PRGB );
+
+        dst.create( nw, nh, src.type() );
+        dst.zero();
+
+        float ratioy = src.h() / (float)nh;
+        float ratiox = src.w() / (float)nw;
+
+        DataType dtype = image_precision( src.type() );
+
+#pragma omp parallel for
+        for( int y=0; y<nh; y++ ) {
+            float ny = y*ratioy;
+            for( int x=0; x<nw; x++ ) {
+                float nx = x*ratiox;
+                if( !src.is_inside_margin(nx, ny, 2) ) continue;
+                float r, g, b;
                 src.get_bicubic(nx, ny, r, g, b);
                 switch( dtype ) {
                 case TYPE_FLOAT: dst.set(x, y, r, g, b); break;
@@ -584,15 +740,26 @@ namespace kortex {
     }
 
 
-    void image_resize_fine( const Image& src, const int& nw, const int& nh, Image& dst ) {
-        switch( src.ch() ) {
-        case 1: image_resize_fine_g  ( src, nw, nh, dst ); break;
-        case 3: image_resize_fine_rgb( src, nw, nh, dst ); break;
-        default: switch_fatality();
+    void image_resize_fine( const Image& src, const int& nw, const int& nh, bool run_parallel, Image& dst ) {
+        switch( run_parallel ) {
+        case true: {
+            switch( src.ch() ) {
+            case 1: image_resize_fine_g_par  ( src, nw, nh, dst ); break;
+            case 3: image_resize_fine_rgb_par( src, nw, nh, dst ); break;
+            default: switch_fatality();
+            }
+        } break;
+        case false: {
+            switch( src.ch() ) {
+            case 1: image_resize_fine_g  ( src, nw, nh, dst ); break;
+            case 3: image_resize_fine_rgb( src, nw, nh, dst ); break;
+            default: switch_fatality();
+            }
+        } break;
         }
     }
 
-    void image_resize_coarse( const Image& img, int max_img_dim, Image& rimg ) {
+    void image_resize_fine  ( const Image& img, int max_img_dim, bool run_parallel, Image& rimg ) {
         int nw = img.w();
         int nh = img.h();
         if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
@@ -602,20 +769,7 @@ namespace kortex {
             nw  = img.w() / scr;
             nh  = img.h() / scr;
         }
-        image_resize_coarse( img, nw, nh, rimg );
-    }
-
-    void image_resize_fine  ( const Image& img, int max_img_dim, Image& rimg ) {
-        int nw = img.w();
-        int nh = img.h();
-        if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
-            double scr = 1.0;
-            if( nw >= nh ) scr = img.w() / double(max_img_dim);
-            else           scr = img.h() / double(max_img_dim);
-            nw  = img.w() / scr;
-            nh  = img.h() / scr;
-        }
-        image_resize_fine( img, nw, nh, rimg );
+        image_resize_fine( img, nw, nh, run_parallel, rimg );
     }
 
     void image_subtract( const Image& im0, const Image& im1, Image& out ) {
@@ -1042,7 +1196,7 @@ namespace kortex {
         }
     }
 
-    void image_normalize( const Image& src, bool standard, Image& dst ) {
+    void image_normalize( const Image& src, bool standard, bool parallel, Image& dst ) {
         src.assert_type( IT_F_GRAY );
         dst.assert_type( IT_F_GRAY );
         assert_statement( check_dimensions(src,dst), "dimension mismatch" );
@@ -1055,14 +1209,14 @@ namespace kortex {
             assert_statement( nrm > 1e-16, "nrm is dangerously close to 0" );
             nrm = 1.0f/nrm;
         }
-        image_scale( src, nrm, dst );
+        image_scale( src, nrm, parallel, dst );
     }
 
-    void image_unnormalize( const Image& src, Image& dst ) {
+    void image_unnormalize( const Image& src, bool parallel, Image& dst ) {
         src.assert_type( IT_F_GRAY );
         dst.assert_type( IT_F_GRAY );
         assert_statement( check_dimensions(src,dst), "dimension mismatch" );
-        image_scale( src, 255.0f, dst );
+        image_scale( src, 255.0f, parallel, dst );
     }
 
     /// computes per pixel image gradient magnitude
