@@ -262,10 +262,9 @@ namespace kortex {
             xmm_s.pack = _mm_add_ps(xmm_s.pack, _mm_mul_ps(xmm_c,xmm_c));
         }
         float sum = xmm_s.f[0]+xmm_s.f[1]+xmm_s.f[2]+xmm_s.f[3];
-        float d;
         for(; j<sz; j++ ) {
-            d=a[j]-b[j];
-            sum+=d*d;
+            float d = a[j]-b[j];
+            sum += d*d;
         }
         return sum;
     }
@@ -287,10 +286,9 @@ namespace kortex {
             xmm_s.pack = _mm_add_ps(xmm_s.pack, _mm_mul_ps(xmm_c,xmm_c));
         }
         float sum = xmm_s.f[0]+xmm_s.f[1]+xmm_s.f[2]+xmm_s.f[3];
-        float d;
         for(; j<sz; j++ ) {
-            d=a[j]-b[j];
-            sum+=d*d;
+            float d = a[j] - b[j];
+            sum += d*d;
         }
         return sum;
     }

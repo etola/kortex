@@ -529,7 +529,7 @@ namespace kortex {
         vector<int>::const_iterator it = arr.begin();
         while( it != arr.end() ) {
             write_bparam(fout, (*it) );
-            it++;
+            ++it;
         }
         check_file_stream_error(fout);
     }
@@ -540,7 +540,7 @@ namespace kortex {
         vector<bool>::const_iterator it = arr.begin();
         while( it != arr.end() ) {
             write_bparam(fout, (*it) );
-            it++;
+            ++it;
         }
         check_file_stream_error(fout);
     }

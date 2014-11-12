@@ -26,12 +26,11 @@ namespace kortex {
     /// taken from
     /// http://mykospark.net/2009/09/runtime-backtrace-in-c-with-name-demangling/
     string demangle(const char* symbol) {
-        size_t size;
-        int status;
         char temp[128];
-        char* demangled = NULL;
-
         if( sscanf(symbol, "%*[^(]%*[^_]%127[^)+]", temp) == 1 ) {
+            char* demangled = NULL;
+            size_t size;
+            int status;
             if( (demangled = abi::__cxa_demangle(temp, NULL, &size, &status)) != NULL ) {
                 string result(demangled);
                 free(demangled);
@@ -48,7 +47,7 @@ namespace kortex {
         void *array[50];
         size_t size    = backtrace (array, 50);
         char** strings = backtrace_symbols (array, size);
-        fprintf(stderr, "\nObtained %zd stack frames.\n", size);
+        fprintf( stderr, "\nObtained %zu stack frames.\n", size );
         for(size_t i = 0; i<size; i++) {
             fprintf(stderr, "[ %04d ] [ %s ]\n", int(size-i), demangle(strings[i]).c_str() );
         }

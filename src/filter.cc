@@ -91,13 +91,11 @@ namespace kortex {
         }
     }
     void filter_buffer_g_basic (float* buffer, const int& bsz, const float* kernel, const int& ksize) {
-        int i, j;
-        float sum;
-        float* bij = NULL;
-        for( i=0; i<bsz; i++ ) {
-            sum = 0.0;
+        for( int i=0; i<bsz; ++i ) {
+            float sum = 0.0f;
+            int j;
             for( j=0; j<ksize-5; j+=5 ) {
-                bij = buffer+i+j;
+                float* bij = buffer+i+j;
                 sum += bij[0]*kernel[j  ] + bij[1]*kernel[j+1] + bij[2]*kernel[j+2]
                     +   bij[3]*kernel[j+3] + bij[4]*kernel[j+4];
             }
@@ -124,11 +122,10 @@ namespace kortex {
 
 #ifdef KORTEX_WITH_SSE
     void filter_buffer_05_sse_u(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             xmm_a = _mm_loadu_ps(bi);
             xmm_b = _mm_loadu_ps(kernel);
@@ -137,11 +134,10 @@ namespace kortex {
         }
     }
     void filter_buffer_05_sse_a(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             xmm_a = _mm_loadu_ps(bi);
             xmm_b = _mm_load_ps(kernel);
@@ -150,11 +146,10 @@ namespace kortex {
         }
     }
     void filter_buffer_07_sse_u(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             xmm_a = _mm_loadu_ps(bi);
             xmm_b = _mm_loadu_ps(kernel);
@@ -164,11 +159,10 @@ namespace kortex {
         }
     }
     void filter_buffer_07_sse_a(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             xmm_a = _mm_loadu_ps(bi);
             xmm_b = _mm_load_ps(kernel);
@@ -178,11 +172,10 @@ namespace kortex {
         }
     }
     void filter_buffer_09_sse_u(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             for( int j=0; j<8; j+=4 ) {
                 xmm_a = _mm_loadu_ps(bi+j);
@@ -193,11 +186,10 @@ namespace kortex {
         }
     }
     void filter_buffer_09_sse_a(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             for( int j=0; j<8; j+=4 ) {
                 xmm_a = _mm_loadu_ps(bi+j);
@@ -208,11 +200,10 @@ namespace kortex {
         }
     }
     void filter_buffer_11_sse_u(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             for( int j=0; j<8; j+=4 ) {
                 xmm_a = _mm_loadu_ps(bi+j);
@@ -224,11 +215,10 @@ namespace kortex {
         }
     }
     void filter_buffer_11_sse_a(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             for( int j=0; j<8; j+=4 ) {
                 xmm_a = _mm_loadu_ps(bi+j);
@@ -240,11 +230,10 @@ namespace kortex {
         }
     }
     void filter_buffer_13_sse_u(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             for( int j=0; j<12; j+=4 ) {
                 xmm_a = _mm_loadu_ps(bi+j);
@@ -256,11 +245,10 @@ namespace kortex {
         }
     }
     void filter_buffer_13_sse_a(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             for( int j=0; j<12; j+=4 ) {
                 xmm_a = _mm_loadu_ps(bi+j);
@@ -272,11 +260,10 @@ namespace kortex {
         }
     }
     void filter_buffer_15_sse_u(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             for( int j=0; j<12; j+=4 ) {
                 xmm_a = _mm_loadu_ps(bi+j    );
@@ -288,11 +275,10 @@ namespace kortex {
         }
     }
     void filter_buffer_15_sse_a(float* buffer, const int& bsz, const float* kernel) {
-        float* bi = NULL;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
         for( int i=0; i<bsz; i++ ) {
-            bi = buffer+i;
+            float* bi = buffer+i;
             xmm_s.pack = _mm_set1_ps(0.0);
             for( int j=0; j<12; j+=4 ) {
                 xmm_a = _mm_loadu_ps(bi+j    );
@@ -307,16 +293,15 @@ namespace kortex {
         int ksimdlen = ksize/4*4;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
-        float sum;
-        int i, j;
-        for(i=0; i<bsz; i++ ) {
+        for( int i=0; i<bsz; ++i ) {
             xmm_s.pack = _mm_set1_ps(0.0);
-            for(j=0; j<ksimdlen; j+=4 ) {
+            int j;
+            for( j=0; j<ksimdlen; j+=4 ) {
                 xmm_a = _mm_loadu_ps(buffer+i+j);
                 xmm_b = _mm_loadu_ps(kernel+j  );
                 xmm_s.pack = _mm_add_ps(xmm_s.pack, _mm_mul_ps(xmm_a, xmm_b));
             }
-            sum = xmm_s.f[0] + xmm_s.f[1] + xmm_s.f[2] + xmm_s.f[3];
+            float sum = xmm_s.f[0] + xmm_s.f[1] + xmm_s.f[2] + xmm_s.f[3];
             for(; j<ksize; j++) sum += buffer[i+j] * kernel[j];
             buffer[i] = sum;
         }
@@ -325,16 +310,15 @@ namespace kortex {
         int ksimdlen = ksize/4*4;
         __m128 xmm_a, xmm_b;
         F128 xmm_s;
-        float sum;
-        int i, j;
-        for( i=0; i<bsz; i++ ) {
+        for( int i=0; i<bsz; i++ ) {
             xmm_s.pack = _mm_set1_ps(0.0);
-            for(j=0; j<ksimdlen; j+=4 ) {
+            int j;
+            for( j=0; j<ksimdlen; j+=4 ) {
                 xmm_a = _mm_loadu_ps(buffer+i+j);
                 xmm_b = _mm_load_ps (kernel+j  );
                 xmm_s.pack = _mm_add_ps(xmm_s.pack, _mm_mul_ps(xmm_a, xmm_b));
             }
-            sum = xmm_s.f[0] + xmm_s.f[1] + xmm_s.f[2] + xmm_s.f[3];
+            float sum = xmm_s.f[0] + xmm_s.f[1] + xmm_s.f[2] + xmm_s.f[3];
             for(; j<ksize; j++) sum += buffer[i+j] * kernel[j];
             buffer[i] = sum;
         }

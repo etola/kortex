@@ -595,8 +595,8 @@ namespace kortex {
     void image_resize_coarse( const Image& img, int max_img_dim, Image& rimg ) {
         int nw = img.w();
         int nh = img.h();
-        double scr = 1.0;
         if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
+            double scr = 1.0;
             if( nw >= nh ) scr = img.w() / double(max_img_dim);
             else           scr = img.h() / double(max_img_dim);
             nw  = img.w() / scr;
@@ -608,8 +608,8 @@ namespace kortex {
     void image_resize_fine  ( const Image& img, int max_img_dim, Image& rimg ) {
         int nw = img.w();
         int nh = img.h();
-        double scr = 1.0;
         if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
+            double scr = 1.0;
             if( nw >= nh ) scr = img.w() / double(max_img_dim);
             else           scr = img.h() / double(max_img_dim);
             nw  = img.w() / scr;

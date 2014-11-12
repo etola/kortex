@@ -48,10 +48,10 @@ namespace kortex {
     }
 
     float  dot128( const float* a, const float* b ) {
-        float s = 0.0f;
 #ifdef WITH_SSE
-        s = sse_dot_128(a,b);
+        float s = sse_dot_128(a,b);
 #else
+        float s = 0.0f;
         for( int i=0; i<asz; i++ )
             s += a[i]*b[i];
 #endif
@@ -326,11 +326,11 @@ namespace kortex {
             return (xp+xc+xa)/3.0;
         } else {
             double A[] = {xp*xp, xp, 1, xc*xc, xc, 1, xa*xa, xa, 1};
-            double m[] = {yp, yc, ya};
             double iA[9];
             if( !mat_inv_3(A,3,iA,3,1e-30) ) {
                 return xc;
             } else {
+                double m[] = {yp, yc, ya};
                 double a = dot3(iA,   m);
                 double b = dot3(iA+3, m);
                 if( fabs(a)>1e-10 ) return -b/(2.0*a);
