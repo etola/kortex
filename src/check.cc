@@ -32,7 +32,7 @@ namespace kortex {
 #ifdef DEBUG
         assert_statement_g( is_positive_number(asz), "[%s] array size is weird [asz %d]", name, asz );
         for(int i=0; i<asz; i++) {
-            assert_statement_g( is_a_number(arr[i]), "[%s] array contains NaN", name );
+            assert_statement_g( is_a_number(arr[i]), "[%s] array contains NaN [idx %d]", name, i );
         }
 #endif
     }

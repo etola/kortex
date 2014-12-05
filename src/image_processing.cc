@@ -1297,7 +1297,7 @@ namespace kortex {
 
     void image_stretch( const Image& src, float minv, float maxv, Image& out ) {
         src.assert_type( IT_F_GRAY );
-        assert_noalias( src, out );
+        passert_noalias( src, out );
 
         float scale = 1.0f;
         if( minv == 0.0f && maxv == 0.0f ) {
@@ -1478,11 +1478,14 @@ namespace kortex {
 
         // x=w-1 y=0
         dx[ w-1 ] = 2.0 * ( im[ w-1 ] - im[   w-2 ] );
-        dx[ w-1 ] = 2.0 * ( im[ w-1 ] - im[ 2*w-1 ] );
+        dy[ w-1 ] = 2.0 * ( im[ w-1 ] - im[ 2*w-1 ] );
 
         // x=w-1 y=h-1
         dx[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-1)*w + w-1 ] - im[ (h-1)*w + w-2 ] );
         dy[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-2)*w + w-1 ] - im[ (h-1)*w + w-1 ] );
+
+        assert_array( "dx", dx, w*h );
+        assert_array( "dy", dy, w*h );
     }
 
     void image_gradient_simple( const Image& img, Image& gx, Image& gy ) {
