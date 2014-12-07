@@ -601,7 +601,7 @@ namespace kortex {
         write_bparam( fout, m_h );
         int imt = int( m_type );
         write_bparam( fout, imt );
-        write_bparam( fout, m_memory.get_buffer(), m_memory.capacity() );
+        write_bparam( fout, m_memory.get_buffer(), req_mem( m_w, m_h, m_type ) );
         insert_binary_stream_end_tag( fout );
     }
 
@@ -613,7 +613,7 @@ namespace kortex {
         read_bparam( fin, imt );
         ImageType type = ImageType(imt);
         this->create( w, h, type );
-        read_bparam( fin, m_memory.get_buffer(), m_memory.capacity() );
+        read_bparam( fin, m_memory.get_buffer(), req_mem( w, h, type ) );
         check_binary_stream_end_tag( fin );
     }
 
