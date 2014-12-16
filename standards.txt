@@ -30,6 +30,7 @@ different applications.
 to be efficient, explain thoroughly.
 
 10. assert/passert ALL inputs for ALL functions.
+    (passert: persistent assert -> see kortex/check.h )
 
 11. all 2d related inputs use x, y order to access - Image::get_pixel(int x0, int y0);
 
@@ -55,9 +56,19 @@ style:
 
 0. do not waste vertical space
 
-1. if(a) -> if( a )
+   function declarations are like
 
-1.b: if one part of if-statement needs {} then put {} to the other part as well
+   void do_something( int params ) {
+   }
+
+   i.e.  '{' is at the same line as the function prototype
+
+1. use a sane editor - no tabs in the code - use spaces instead
+   a tab indentation should equal 4 spaces.
+
+2. if(a) -> if( a )
+
+3.b: if one part of if-statement needs {} then put {} to the other part as well
      i.e.
      do not use
 
@@ -74,23 +85,23 @@ style:
             d = 3;
          }
 
-2. all class/struct words start with capital letters: i.e. class StarCluster
+4. all class/struct words start with capital letters: i.e. class StarCluster
 
-3. all function and variable names are lowercase and use underscore to separate
+5. all function and variable names are lowercase and use underscore to separate
 words. i.e. do not use extractStars() -> use extract_stars() instead.
 
-4. enumerations, definitions are all caps.
+6. enumerations, definitions are all caps.
 
-5. use MemUnit and allocate/deallocate functions when playing with memory - do
+7. use MemUnit and allocate/deallocate functions when playing with memory - do
 not use new/delete alloc/free directly.
 
-6. use logman_* instead of printf
+8. use logman_* instead of printf
 
-7. place debug code between {} to indicate that braced code could be removed w/o
+9. place debug code between {} to indicate that braced code could be removed w/o
 operational problems.
 
-8. write full names for floating point numbers. for example,
+10. write full names for floating point numbers. for example,
      float v = 5; -> float v = 5.0f;
 
-9. never test equality for float/double numbers: test with less-than instead:
+11. never test equality for float/double numbers: test with less-than instead:
      if( v == 0.05f ) --> if( fabs(v-0.05f) < 1e-6 ) // 1e-6: precision
