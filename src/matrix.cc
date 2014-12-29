@@ -21,19 +21,6 @@
 
 #define MAT_EPS 1e-36
 
-#ifdef DEBUG
-#define assert_matrix_compat(op,ra,ca,rb,cb)   { assert_statement_g( matrix_compatibility(op,ra,ca,rb,cb), "incompatible matrices [op %s] [A: %d %d] [B: %d %d]", mat_op_string(op).c_str(), ra, ca, rb, cb ); }
-#define assert_matrix_size(op,ra,ca,rb,cb,csz) { assert_statement_g( mat_out_size(op,ra,ca,rb,cb) == csz, "insufficient matrix size for [op %s] [A: %d %d] [B: %d %d] [Csz %d]", mat_op_string(op).c_str(), ra, ca, rb, cb, csz ); }
-#define assert_matrix_init(A,ra,ca) { assert_matrix_init_(A,ra,ca); }
-#else
-#define assert_matrix_compat(op,ra,ca,rb,cb) { }
-#define assert_matrix_size(op,ra,ca,rb,cb,csz) {  }
-#define assert_matrix_init(A,ra,ca) { }
-#endif
-
-#define passert_matrix_compat(op,ra,ca,rb,cb)   { passert_statement_g( matrix_compatibility(op,ra,ca,rb,cb), "incompatible matrices [op %s] [%d %d] [%d %d]", mat_op_string(op).c_str(), ra, ca, rb, cb ); }
-#define passert_matrix_size(op,ra,ca,rb,cb,csz) { passert_statement_g( mat_out_size(op,ra,ca,rb,cb) == csz, "insufficient matrix size for [op %s] [A: %d %d] [B: %d %d] [Csz %d]", mat_op_string(op).c_str(), ra, ca, rb, cb, csz ); }
-
 namespace kortex {
 
     bool matrix_compatibility( const MatrixOperation& op,

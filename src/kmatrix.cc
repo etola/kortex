@@ -67,6 +67,10 @@ namespace kortex {
         init( h, w );
     }
 
+    bool KMatrix::is_initialized() const {
+        return ( nr != 0 ) && ( nc != 0 );
+    }
+
     void KMatrix::copy( const KMatrix& rhs ) {
         passert_statement( !is_const(), "cannot copy onto const matrix" );
         if( rhs.size() ) {

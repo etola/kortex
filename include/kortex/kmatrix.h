@@ -42,6 +42,8 @@ namespace kortex {
 
         ~KMatrix();
 
+        bool is_initialized() const;
+
         /// sets the state of the matrix to init_  and deallocates any memory. see reset()
         void release();
         /// sets the state of the matrix to init_ but does not deallocate memory. see release()
@@ -287,6 +289,13 @@ namespace kortex {
     inline double mat_pseudo_inv( const KMatrix& A, KMatrix& iA ) {
         iA.resize( A.w(), A.h() );
         return mat_pseudo_inv( A(), A.h(), A.w(), iA.get_pointer(), iA.h(), iA.w() );
+    }
+
+    /// makes matrix symmetric by copying keep_upper [true: upper->lower, false:
+    /// lower->upper];
+    inline void mat_sym( KMatrix& A, bool keep_upper ) {
+        assert_statement( A.is_square(), "matrix need to be symmetric" );
+        mat_sym( A.get_pointer(), A.h(), A.w(), keep_upper );
     }
 
     void mat_row_add( const KMatrix& A, int arid, double alpha,
