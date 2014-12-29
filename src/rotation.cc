@@ -262,6 +262,9 @@ namespace kortex {
         double n_up[3];
         azel_to_cartesian( up_az, up_el, n_up );
         normalize_l2norm3( n_up );
+
+        assert_statement( fabs(dot3(nz,n_up)-1.0) > 1e-2, "z and up vectors too close to each other" );
+
         n_up[0] = -n_up[0];
         n_up[1] = -n_up[1];
         n_up[2] = -n_up[2];
