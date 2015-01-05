@@ -138,6 +138,25 @@ namespace kortex {
         return false;
     }
 
+    inline bool is_ascending( const vector<int>& arr ) {
+        int asz = arr.size();
+        for( int i=1; i<asz; i++ )
+            if( arr[i] < arr[i-1] )
+                return false;
+        return true;
+    }
+
+    inline bool is_descending( const vector<int>& arr ) {
+        int asz = arr.size();
+        for( int i=1; i<asz; i++ )
+            if( arr[i] > arr[i-1] )
+                return false;
+        return true;
+    }
+
+    template <typename T>
+    inline bool is_finite( const T& v ) { return std::isfinite(v); }
+
     inline bool is_a_number(const int&    v) { return ( std::isnan(v) ) ? false : true; }
     inline bool is_a_number(const float&  v) { return ( std::isnan(v) ) ? false : true; }
     inline bool is_a_number(const double& v) { return ( std::isnan(v) ) ? false : true; }
