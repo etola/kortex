@@ -233,6 +233,18 @@ namespace kortex {
         }
     }
 
+
+    void KMatrix::subtract( const KMatrix& rhs, int dr, int dc ) {
+        assert_statement( dr+rhs.h() <= h(), "size oob" );
+        assert_statement( dc+rhs.w() <= w(), "size oob" );
+        for( int r=0; r<rhs.h(); r++ ) {
+            const double* srow =   rhs.get_row( r    );
+            double      * drow = this->get_row( dr+r );
+            for( int c=0; c<rhs.w(); c++ )
+                drow[ dc+c ] -= srow[c];
+        }
+    }
+
     void KMatrix::identity() {
         passert_statement( !is_const(), "cannot modify const matrix" );
         assert_statement( size() != 0, "matrix has not been initialized" );
@@ -524,7 +536,28 @@ namespace kortex {
         return true;
     }
 
+    /// returns the value of the maximum diagonal element
+    double diag_max( const KMatrix& A ) {
+        assert_statement( A.is_square(), "invalid matrix - must be symmetric" );
+        int n = A.h();
+        assert_statement( n>0, "empty matrix" );
+        const double* aptr = A();
+        double dmax = aptr[0];
+        for( int i=1; i<n; i++ )
+            dmax = std::max( dmax, aptr[ i*n+i ] );
+        return dmax;
+    }
 
+    /// retuns max( abs( a_ij ) )
+    double abs_max( const KMatrix& A ) {
+        const double* aptr = A();
+        int asz = A.size();
+        assert_statement( asz >= 1, "invalid matrix" );
+        double max_val = fabs(aptr[0]);
+        for( int i=1; i<asz; i++ )
+            max_val = std::max( max_val, fabs( aptr[i] ) );
+        return max_val;
+    }
 
 
 }

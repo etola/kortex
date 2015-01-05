@@ -51,7 +51,7 @@ namespace kortex {
         allocate( ipiv, ar );
         dgetrf_(&ar, &ar, iA, &ar, ipiv, &info );
         if( info != 0 ) {
-            logman_warning("LU Decomposition failed");
+            logman_info("LU Decomposition failed");
             return 1;
         }
         dgetri_(&ar, iA, &ar, ipiv, workspace, &lwork, &info );

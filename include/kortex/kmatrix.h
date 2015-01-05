@@ -123,6 +123,9 @@ namespace kortex {
         void copy( const KMatrix& rhs, int sr, int sc, int srsz, int scsz, int dr, int dc );
         void copy( const KMatrix& rhs, int dr, int dc );
 
+        /// this[ dr:dr+bh, dc:dc+bw ] -= B
+        void subtract( const KMatrix& B, int dr, int dc );
+
         void   transpose();
 
         void   identity();
@@ -247,6 +250,10 @@ namespace kortex {
         mat_ABAt( A(), A.h(), A.w(), B(), B.h(), B.w(), C.get_pointer(), C.size() );
     }
 
+    inline void mat_AtA( const KMatrix& A, KMatrix& U ) {
+        mat_trans_mat( A, A, U );
+    }
+
     inline bool mat_inv_3( const KMatrix& A, KMatrix& iA, double inversion_threshold ) {
         assert_statement( A.is_square() && A.h() == 3, "invalid matrix" );
         iA.resize( 3, 3 );
@@ -297,6 +304,12 @@ namespace kortex {
         assert_statement( A.is_square(), "matrix need to be symmetric" );
         mat_sym( A.get_pointer(), A.h(), A.w(), keep_upper );
     }
+
+    /// returns the value of the maximum diagonal element
+    double diag_max( const KMatrix& A );
+
+    /// retuns max( abs( a_ij ) )
+    double abs_max( const KMatrix& A );
 
     void mat_row_add( const KMatrix& A, int arid, double alpha,
                       const KMatrix& B, int brid, double beta,
