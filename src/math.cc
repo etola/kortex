@@ -52,7 +52,7 @@ namespace kortex {
         float s = sse_dot_128(a,b);
 #else
         float s = 0.0f;
-        for( int i=0; i<asz; i++ )
+        for( int i=0; i<128; i++ )
             s += a[i]*b[i];
 #endif
         return s;

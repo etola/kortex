@@ -253,7 +253,7 @@ namespace kortex {
     }
 
 
-    // gtype can be one of [ "simple", "sobel", "prewitt" ]
+    /// gtype can be one of [ "simple", "sobel", "prewitt" ]
     void image_gradient( const Image& img, const char* gtype, Image& gx, Image& gy );
 
     void image_gradient_prewitt( const Image& img, Image& gx, Image& gy );
