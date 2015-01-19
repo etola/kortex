@@ -102,21 +102,32 @@ namespace kortex {
                 && kortex::is_inside(y,margin,m_h-margin);
         }
 
-        bool is_non_zero( const int& x0, const int& y0, const int& rad ) const;
-        bool does_contain_zero( const int& x0, const int& y0, const int& rad ) const;
+        /// checks if image is non zero in a  ( 2*rsz+1 )^2 window. only FGRAY is implemented
+        bool is_non_zero( const int& x0, const int& y0, const int& rsz ) const;
 
+        /// checks if there is a zero in a (2*rsz+1)^2 window. only FGRAY is implemented
+        bool does_contain_zero( const int& x0, const int& y0, const int& rsz ) const;
+
+        /// converts image between all the defined types
         void convert( ImageType im_type );
+
+        /// swaps the content completely including the memory
         void swap(       Image* img );
+
+        /// copies image content - cannot copy itself.
         void copy( const Image* img );
 
+        /// sets image data to zero
         void zero();
+
+        /// sets image pixels to v
         void set( const float& v );
         void set( const uchar& v );
         void set( const int  & v );
 
-        //
-        // get raw pointers
-        //
+        ///
+        /// get raw pointers
+        ///
         const float* get_fptr() const { return m_data_f; }
         const uchar* get_uptr() const { return m_data_u; }
         const int  * get_iptr() const { return m_data_i; }
@@ -125,9 +136,9 @@ namespace kortex {
         int        * get_iptr()       { return m_data_i; }
 
 
-        //
-        // get image channels
-        //
+        ///
+        /// get image channels
+        ///
         uchar      * get_channel_u( int cid );
         const uchar* get_channel_u( int cid ) const;
         float      * get_channel_f( int cid );
@@ -135,23 +146,25 @@ namespace kortex {
         int        * get_channel_i( int cid );
         const int  * get_channel_i( int cid ) const;
 
-        //
-        // easy access get/set functions - use the row pointers for performance
-        // critical stuff
-        //
+        /// 1-channel get
 
-        // 1-channel get
+        ///
+        /// easy access get/set functions - use the row pointers for performance
+        /// critical stuff
+        ///
         int   geti( int x0, int y0 ) const;
         float getf( int x0, int y0 ) const;
         uchar getu( int x0, int y0 ) const;
-        float get ( int x0, int y0 ) const; // accesses the pixel val of
-                                            // whatever type. use for
-                                            // convenience - not efficient at
-                                            // all.
 
+        /// accesses the pixel val of whatever type. use for convenience - not
+        /// efficient at all.
+        float get ( int x0, int y0 ) const;
+
+        /// gets bilinearly interpolated values - image needs to be single channel
         float get_bilinear  (const float& x0, const float& y0) const;
         float get_bilinear_u(const float& x0, const float& y0) const;
         float get_bilinear_f(const float& x0, const float& y0) const;
+        /// gets bicubic interpolated values - image needs to be single channel
         float get_bicubic   (const float& x0, const float& y0) const;
         float get_bicubic_u (const float& x0, const float& y0) const;
         float get_bicubic_f (const float& x0, const float& y0) const;
@@ -160,35 +173,43 @@ namespace kortex {
         void  get ( int x0, int y0, float& r, float& g, float& b ) const;
         void  get ( int x0, int y0, uchar& r, uchar& g, uchar& b ) const;
 
+        /// gets bilinearly interpolated values - image needs to be 3-channel
         void  get_bilinear   (const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bilinear_up(const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bilinear_ui(const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bilinear_fp(const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bilinear_fi(const float& x0, const float& y0, float& r, float& g, float& b) const;
 
+        /// gets bicubic interpolated values - image needs to be 3-channel
         void  get_bicubic    (const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bicubic_up (const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bicubic_ui (const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bicubic_fp (const float& x0, const float& y0, float& r, float& g, float& b) const;
         void  get_bicubic_fi (const float& x0, const float& y0, float& r, float& g, float& b) const;
 
-        //
+        /// returns a simple 2-point gradient. for full image gradient check the
+        /// image_processing.h for a more efficient version
         float get_grad_x( const int& x0, const int &y0 ) const;
         float get_grad_y( const int& x0, const int &y0 ) const;
 
 
         // 1-channel set
+
+        /// single channel set functions - not access efficient - use for convenience
         void  set( const int& x0, const int& y0, const float& v );
         void  set( const int& x0, const int& y0, const uchar& v );
         void  set( const int& x0, const int& y0, const int  & v );
+
+        /// sets a (2*hsz+1)^2 patch with value v
         void  set( const int& x0, const int& y0, const int& hsz, const uchar& v );
         void  set( const int& x0, const int& y0, const int& hsz, const float& v );
         void  set( const int& x0, const int& y0, const int& hsz, const int  & v );
 
-        // 3-channel set
+        /// 3-channel set functions - not access efficient - use for convenience
         void  set ( const int& x0, const int& y0, const float& r, const float& g, const float& b );
         void  set ( const int& x0, const int& y0, const uchar& r, const uchar& g, const uchar& b );
 
+        /// sets a (2*hsz+1)^2 patch with value [r,g,b]
         void  set ( const int& x0, const int& y0, const int& hsz, const uchar& r, const uchar& g, const uchar& b );
         void  set ( const int& x0, const int& y0, const int& hsz, const float& r, const float& g, const float& b );
 
@@ -202,50 +223,56 @@ namespace kortex {
         //
         // row pointers
         //
-        uchar* get_row_u ( int y0 ); // use for u gray, prgb
-        float* get_row_f ( int y0 ); // use for f gray, prgb
-        int  * get_row_i ( int y0 ); // use for i gray
 
-        uchar* get_row_ui( int y0, int cid ); // cid'th channel y0'th row
-        float* get_row_fi( int y0, int cid ); // cid'th channel y0'th row
+        /// uchar data row pointer - use for u gray, prgb
+        uchar* get_row_u ( int y0 );
+        /// float data row pointer - use for f gray, prgb
+        float* get_row_f ( int y0 );
+        /// int data row pointer - use for i gray
+        int  * get_row_i ( int y0 );
 
+        /// cid'th channel y0'th row - u gray/prgb
+        uchar* get_row_ui( int y0, int cid );
+        /// cid'th channel y0'th row - f gray/prgb
+        float* get_row_fi( int y0, int cid );
+
+        /// const versions
         const uchar* get_row_u ( int y0 ) const; // use for u gray, prgb
         const float* get_row_f ( int y0 ) const; // use for f gray, prgb
         const int  * get_row_i ( int y0 ) const; // use for i gray
 
+        /// const versions
         const uchar* get_row_ui( int y0, int cid ) const; // cid'th channel y0'th row
         const float* get_row_fi( int y0, int cid ) const; // cid'th channel y0'th row
 
 
-        //
-        // do not forget to delete the pointer!
+        /// generates a wrapper image for the cid'th channel - does not copy
+        /// content but caller needs to delete the pointer to get rid of
+        /// boilerplate mems
         Image      * get_channel_wrapper( int cid );
         const Image* get_channel_wrapper( int cid ) const;
 
-        //
-        // io
-        //
+        ///
+        /// io
+        ///
         void save( const string& file ) const;
         void load( const string& file );
-
         void save( ofstream& fout ) const;
         void load( ifstream& fin  );
 
-        //
-        //
-        //
+        /// is the v0 value the maximum within a square patch - wnd_rad is the half-width.
         bool is_maximum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const;
         bool is_maximum( const int& x0, const int& y0, const int& wnd_rad, const int  & v0 ) const;
+        /// is the v0 value the minimum within a square patch - wnd_rad is the half-width.
         bool is_minimum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const;
         bool is_minimum( const int& x0, const int& y0, const int& wnd_rad, const int  & v0 ) const;
 
 
-        //
-        // assertions
-        //
+        /// asserts the image type - disables in RELEASE mode
         void assert_type( int type ) const {
             assert_statement( m_type & type, "invalid image type" );
         }
+        /// asserts the image type - persistent in DEBUG/RELEASE mode
         void passert_type( int type, const char* msg = NULL ) const {
             if( msg ) {
                 passert_statement_g( m_type & type, "invalid image type [%s]", msg );
