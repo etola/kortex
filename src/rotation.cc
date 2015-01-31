@@ -149,9 +149,6 @@ namespace kortex {
             az = 0.0;
     }
 
-    static const double  canonical_xd[] = { 1.0, 0.0, 0.0 };
-    static const double  canonical_yd[] = { 0.0, 1.0, 0.0 };
-    static const double  canonical_zd[] = { 0.0, 0.0, 1.0 };
     void construct_local_coordinate_frame(const double* z_normal, double* new_u, double* new_v) {
         assert_pointer( z_normal && new_u && new_v );
         passert_statement( (z_normal != new_u) && (z_normal != new_v) && (new_u != new_v),

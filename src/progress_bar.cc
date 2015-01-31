@@ -15,6 +15,7 @@
 
 #include <ostream>
 #include <iostream>
+// #include <ctime>
 
 using std::string;
 using std::ostream;
@@ -33,14 +34,16 @@ namespace kortex {
           m_not_done(" "),
           m_limit("|") {
         m_divisions = std::min(divisions,end);
-        time(&m_starting_time);
+        timer.reset();
+        // time(&m_starting_time);
         m_lock = 0;
     }
 
     void progress_bar::reset() {
         m_current = m_start;
         m_progress = 0;
-        time(&m_starting_time);
+        timer.reset();
+        // time(&m_starting_time);
         m_lock = 0;
     }
 
@@ -51,7 +54,8 @@ namespace kortex {
         m_divisions = divisions;
         m_progress = 0;
         m_lock = 0;
-        time(&m_starting_time);
+        // time(&m_starting_time);
+        timer.reset();
     }
 
     std::ostream& progress_bar::operator>>( std::ostream& os ) {
@@ -60,7 +64,10 @@ namespace kortex {
 
     void progress_bar::report(int current) {
         m_current = current;
+        if( m_lock ) return;
+        m_lock = 1;
         out(std::cout);
+        m_lock = 0;
     }
 
     void progress_bar::finalize() {
@@ -68,10 +75,9 @@ namespace kortex {
     }
 
     std::ostream& progress_bar::out(std::ostream& os) {
-        if(m_current > (m_progress * (m_end - m_start) / m_divisions) || m_current == m_end) {
-            if( m_lock ) return os;
-            m_lock = 1;
-            ++m_progress;
+        if( m_current > (m_progress * (m_end - m_start) / m_divisions) ||
+            m_current == m_end ) {
+            m_progress++;
             os << m_message << m_limit;
             for(int c = 1; c <= m_divisions; ++c) {
                 if(c < m_progress || m_current == m_end) {
@@ -84,11 +90,10 @@ namespace kortex {
             }
             os << m_limit;
 
-            time_t now; time(&now);
-            double percent = double(m_current-m_start)/double(m_end-m_start);
-            double elapsed = difftime( now, m_starting_time );
-            double eta = elapsed / percent;
-            double remaining = eta - elapsed;
+            double duration  = timer.duration();
+            double percent   = double(m_current-m_start)/double(m_end-m_start);
+            double eta       = duration / percent;
+            double remaining = eta - duration;
 
             int rem_day  = (int)(remaining/86400); remaining -= rem_day*86400;
             int rem_hour = (int)(remaining/3600);  remaining -= rem_hour*3600;
@@ -113,7 +118,6 @@ namespace kortex {
             os << m_end_message;
             if(m_current == m_end) { os << "\n" << std::flush; }
             else                   { os << "\r" << std::flush; }
-            m_lock = 0;
         }
         return os;
     }

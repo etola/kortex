@@ -31,6 +31,12 @@ namespace kortex {
         std::chrono::duration<double> elapsed_seconds = en-st;
         return elapsed_seconds.count();
     }
+    double Timer::duration() {
+        en = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed_seconds = en-st;
+        return elapsed_seconds.count();
+    }
+
     void Timer::reset() {
         st = std::chrono::high_resolution_clock::now();
     }

@@ -15,6 +15,13 @@
 
 namespace kortex {
 
+    static const double  canonical_xd  [] = {  1.0,  0.0,  0.0 };
+    static const double  canonical_yd  [] = {  0.0,  1.0,  0.0 };
+    static const double  canonical_zd  [] = {  0.0,  0.0,  1.0 };
+    static const double  canonical_xd_r[] = { -1.0,  0.0,  0.0 };
+    static const double  canonical_yd_r[] = {  0.0, -1.0,  0.0 };
+    static const double  canonical_zd_r[] = {  0.0,  0.0, -1.0 };
+
     /// computes the rotation matrix that rotates na to nb
     void rotate_normal_to_normal( const double* na, const double* nb, double* Rab );
 

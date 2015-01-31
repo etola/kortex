@@ -21,9 +21,11 @@ namespace kortex {
     class Timer {
     public:
         Timer();
-        double elapsed(); // returns the time from the last call to elapsed()
-        double end();     // returns the time from the initialization of the timer
-        void reset();
+        double elapsed();  // returns the time from the last call to elapsed()
+        double end();      // returns the time from the initialization of the
+                           // timer and resets it.
+        double duration(); // returns the time from the initialization of the timer
+        void   reset();
     private:
         std::chrono::time_point<std::chrono::high_resolution_clock> st, en, el;
     };
