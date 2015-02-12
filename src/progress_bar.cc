@@ -105,6 +105,15 @@ namespace kortex {
             int eta_min  = (int) (eta/60);    eta -= eta_min*60;
             int eta_sec  = (int) (eta);
 
+            if( rem_sec  < 0 ) return os;
+            if( rem_min  < 0 ) return os;
+            if( rem_hour < 0 ) return os;
+            if( rem_day  < 0 ) return os;
+            if( eta_sec  < 0 ) return os;
+            if( eta_min  < 0 ) return os;
+            if( eta_hour < 0 ) return os;
+            if( eta_day  < 0 ) return os;
+
             os<<" ";
             if( rem_day != 0 ) { os.width(2); os.fill('0'); os<<rem_day<<":"; }
             os.width(2); os.fill('0'); os<<rem_hour<<":";

@@ -22,6 +22,10 @@
 typedef unsigned char uchar;
 #endif
 
+#ifndef uint
+typedef unsigned int uint;
+#endif
+
 namespace kortex {
 
     enum DataType { TYPE_CHAR,  TYPE_FLOAT, TYPE_DOUBLE, TYPE_INT,
