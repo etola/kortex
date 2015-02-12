@@ -1,0 +1,4 @@
+
+- get rid of rand() : use a better random number generator SFMT ?
+
+- integrate kvector with kmatrix
