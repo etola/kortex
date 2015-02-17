@@ -29,6 +29,12 @@ using std::ofstream;
 
 namespace kortex {
 
+    class KMatrix;
+    inline void mat_minus_mat( const KMatrix& A, const KMatrix& B, KMatrix& C );
+    inline void mat_plus_mat( const KMatrix& A, const KMatrix& B, KMatrix& C );
+    inline void mat_mat( const KMatrix& A, const KMatrix& B, KMatrix& C );
+    inline bool mat_inv( const KMatrix& A, KMatrix& iA );
+
     class KMatrix {
     public:
         KMatrix();
@@ -109,9 +115,47 @@ namespace kortex {
             assert_boundary( x0, 0, nc );
             return get_const_pointer()[ y0*nc+x0 ];
         }
+        double& operator() (int y0, int x0) {
+            assert_boundary( y0, 0, nr );
+            assert_boundary( x0, 0, nc );
+            return get_pointer()[ y0*nc+x0 ];
+        }
+
         const double& operator[] (int k) const {
             assert_boundary( k, 0, size() );
             return get_const_pointer()[k];
+        }
+        double& operator[] (int k) {
+            assert_boundary( k, 0, size() );
+            return get_pointer()[k];
+        }
+
+
+        KMatrix operator-( const KMatrix& rhs ) const {
+            KMatrix res;
+            mat_minus_mat( *this, rhs, res );
+            return res;
+        }
+
+        KMatrix operator+( const KMatrix& rhs ) const {
+            KMatrix res;
+            mat_plus_mat( *this, rhs, res );
+            return res;
+        }
+
+        KMatrix operator*( const KMatrix& rhs ) const {
+            KMatrix res;
+            mat_mat( *this, rhs, res );
+            return res;
+        }
+
+        KMatrix inv() const {
+            KMatrix res;
+            if( !mat_inv( *this, res ) ) {
+                logman_warning("could not invert matrix - setting to identity");
+                res.identity();
+            }
+            return res;
         }
 
         void set( int y0, int x0, double v ) {

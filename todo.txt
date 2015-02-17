@@ -1,4 +1,5 @@
 
 - get rid of rand() : use a better random number generator SFMT ?
+  some tips about using the C++11 <random>  http://cpp.indi.frih.net/blog/2014/12/the-bell-has-tolled-for-rand/
 
 - integrate kvector with kmatrix
