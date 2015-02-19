@@ -275,8 +275,11 @@ namespace kortex {
         int nv = 0;
         read_bparam( fin, nv );
         varr.resize(nv);
-        for( int i=0; i<nv; i++ )
-            read_bparam( fin, varr[i] );
+        for( int i=0; i<nv; i++ ) {
+            T b;
+            read_bparam( fin, b ); // otherwise compiler complains for bool
+            varr[i] = b;
+        }
         check_file_stream_error(fin);
     }
 
