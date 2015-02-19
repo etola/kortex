@@ -173,6 +173,7 @@ namespace kortex {
         int asz;
         read_param( fin, param_name, asz );
         passert_statement_g( asz == n_arr, "array sizes do not match [%d - %d]", asz, n_arr );
+        if( n_arr == 0 ) return;
         for( int i=0; i<n_arr; i++ )
             fin >> arr[i];
         char buf[8];
@@ -182,8 +183,10 @@ namespace kortex {
 
     template<typename T>
     void read_array( ifstream& fin, const char* param_name, vector<T>& arr ) {
+        arr.clear();
         int n_arr;
         read_param( fin, param_name, n_arr );
+        if( n_arr == 0 ) return;
         arr.resize(n_arr);
         T rv;
         for( int i=0; i<n_arr; i++ ) {
