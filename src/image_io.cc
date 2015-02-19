@@ -33,12 +33,12 @@ namespace kortex {
         write_bparam( fout, (int)img->type() );
         size_t imsz = img->element_count();
         switch( img->type() ) {
-        case IT_U_GRAY: write_bparam( fout, img->get_row_u (0  ), imsz ); break;
-        case IT_U_PRGB: write_bparam( fout, img->get_row_u (0  ), imsz ); break;
-        case IT_U_IRGB: write_bparam( fout, img->get_row_ui(0,0), imsz ); break;
-        case IT_F_GRAY: write_bparam( fout, img->get_row_f (0  ), imsz ); break;
-        case IT_F_PRGB: write_bparam( fout, img->get_row_f (0  ), imsz ); break;
-        case IT_F_IRGB: write_bparam( fout, img->get_row_fi(0,0), imsz ); break;
+        case IT_U_GRAY: write_barray( fout, img->get_row_u (0  ), imsz ); break;
+        case IT_U_PRGB: write_barray( fout, img->get_row_u (0  ), imsz ); break;
+        case IT_U_IRGB: write_barray( fout, img->get_row_ui(0,0), imsz ); break;
+        case IT_F_GRAY: write_barray( fout, img->get_row_f (0  ), imsz ); break;
+        case IT_F_PRGB: write_barray( fout, img->get_row_f (0  ), imsz ); break;
+        case IT_F_IRGB: write_barray( fout, img->get_row_fi(0,0), imsz ); break;
         default: switch_fatality();
         }
         insert_binary_stream_end_tag( fout );
@@ -58,12 +58,12 @@ namespace kortex {
         img->create( w, h, get_image_type(type) );
         size_t imsz = img->element_count();
         switch( img->type() ) {
-        case IT_U_GRAY: read_bparam( fin, img->get_row_u (0  ), imsz ); break;
-        case IT_U_PRGB: read_bparam( fin, img->get_row_u (0  ), imsz ); break;
-        case IT_U_IRGB: read_bparam( fin, img->get_row_ui(0,0), imsz ); break;
-        case IT_F_GRAY: read_bparam( fin, img->get_row_f (0  ), imsz ); break;
-        case IT_F_PRGB: read_bparam( fin, img->get_row_f (0  ), imsz ); break;
-        case IT_F_IRGB: read_bparam( fin, img->get_row_fi(0,0), imsz ); break;
+        case IT_U_GRAY: read_barray( fin, img->get_row_u (0  ), imsz ); break;
+        case IT_U_PRGB: read_barray( fin, img->get_row_u (0  ), imsz ); break;
+        case IT_U_IRGB: read_barray( fin, img->get_row_ui(0,0), imsz ); break;
+        case IT_F_GRAY: read_barray( fin, img->get_row_f (0  ), imsz ); break;
+        case IT_F_PRGB: read_barray( fin, img->get_row_f (0  ), imsz ); break;
+        case IT_F_IRGB: read_barray( fin, img->get_row_fi(0,0), imsz ); break;
         default: switch_fatality();
         }
         check_binary_stream_end_tag( fin );

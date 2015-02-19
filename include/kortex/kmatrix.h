@@ -115,20 +115,20 @@ namespace kortex {
             assert_boundary( x0, 0, nc );
             return get_const_pointer()[ y0*nc+x0 ];
         }
-        double& operator() (int y0, int x0) {
-            assert_boundary( y0, 0, nr );
-            assert_boundary( x0, 0, nc );
-            return get_pointer()[ y0*nc+x0 ];
-        }
+        // double& operator() (int y0, int x0) {
+            // assert_boundary( y0, 0, nr );
+            // assert_boundary( x0, 0, nc );
+            // return get_pointer()[ y0*nc+x0 ];
+        // }
 
         const double& operator[] (int k) const {
             assert_boundary( k, 0, size() );
             return get_const_pointer()[k];
         }
-        double& operator[] (int k) {
-            assert_boundary( k, 0, size() );
-            return get_pointer()[k];
-        }
+        // double& operator[] (int k) {
+            // assert_boundary( k, 0, size() );
+            // return get_pointer()[k];
+        // }
 
 
         KMatrix operator-( const KMatrix& rhs ) const {

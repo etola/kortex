@@ -13,8 +13,6 @@
 #ifndef KORTEX_FILEIO_H
 #define KORTEX_FILEIO_H
 
-#include <kortex/types.h>
-
 #include <vector>
 #include <string>
 #include <fstream>
@@ -25,6 +23,20 @@ using std::ofstream;
 using std::ifstream;
 using std::ostream;
 
+#include <kortex/check.h>
+#include <kortex/string.h>
+
+#include <cfloat>
+
+#ifdef DBL_DECIMAL_DIG
+#define OP_DBL_Digs (DBL_DECIMAL_DIG)
+#else
+#ifdef DECIMAL_DIG
+#define OP_DBL_Digs (DECIMAL_DIG)
+#else
+#define OP_DBL_Digs (DBL_DIG + 3)
+#endif
+#endif
 
 namespace kortex {
 
@@ -51,83 +63,224 @@ namespace kortex {
     bool file_exists(const char* file);
     bool file_create( const string& file );
 
-    void write_string( ofstream& fout, const string& str );
-    void write_param(ofstream& fout, const string& param_name, const string& val );
-    void write_param(ofstream& fout, const string& param_name, const int& val );
-    void write_param(ofstream& fout, const string& param_name, const unsigned int& val );
-    void write_param(ofstream& fout, const string& param_name, const double& val );
-    void write_param(ofstream& fout, const string& param_name, const bool& val );
-    void write_param(ofstream& fout, const string& param_name, const vector<int>& arr );
-    void write_param(ofstream& fout, const vector<int>& arr );
+//
+//
+//
+    inline string in_str( const int   & v ) {
+        char buffer[1024];
+        sprintf( buffer, "%d", v );
+        return string(buffer);
+    }
+    inline string in_str( const float & v ) {
+        char buffer[1024];
+        sprintf( buffer, "%.*e", OP_DBL_Digs-1, v );
+        return string(buffer);
+    }
+    inline string in_str( const double& v ) {
+        char buffer[1024];
+        sprintf( buffer, "%.*e", OP_DBL_Digs-1, v );
+        return string(buffer);
+    }
+    inline string in_str( const size_t& v ) {
+        char buffer[1024];
+        sprintf( buffer, "%zd", v );
+        return string(buffer);
+    }
+    inline string in_str( const uint  & v ) {
+        char buffer[1024];
+        sprintf( buffer, "%ud", v );
+        return string(buffer);
+    }
+    inline string in_str( const bool  & v ) {
+        char buffer[1024];
+        sprintf( buffer, "%d", v );
+        return string(buffer);
+    }
+    inline string in_str( const char  & v ) {
+        char buffer[1024];
+        sprintf( buffer, "%c", v );
+        return string(buffer);
+    }
+    inline string in_str( const string& v ) {
+        return v;
+    }
 
-    void write_param(ofstream& fout,                           const int   * arr, const int& narr );
-    void write_param(ofstream& fout,                           const float * arr, const int& narr );
-    void write_param(ofstream& fout, const string& param_name, const float * arr, const int& narr );
-    void write_param(ofstream& fout,                           const double* arr, const int& narr );
-    void write_param(ofstream& fout, const string& param_name, const double* arr, const int& narr );
+    template<typename T>
+    void write_param( ofstream& fout, const char* param_name, const T& param ) {
+        if( param_name ) fout << param_name << " ";
+        fout << in_str( param ) << "\n";
+    }
+
+    template<typename T>
+    void write_array( ofstream& fout, const char* param_name, const vector<T>& arr ) {
+        write_param( fout, param_name, (int)arr.size() );
+        int n_arr = arr.size();
+        if( n_arr == 0 ) return;
+        for( int i=0; i<n_arr-1; i++ )
+            fout << in_str(arr[i]) << " ";
+        fout << in_str( arr[n_arr-1] ) << "\n";
+        check_file_stream_error( fout );
+    }
+
+    template<typename T>
+    void write_array( ofstream& fout, const char* param_name, const T* arr, const int& n_arr ) {
+        assert_pointer( arr );
+        write_param( fout, param_name, (int)n_arr );
+        if( n_arr == 0 ) return;
+        for( int i=0; i<n_arr-1; i++ )
+            fout << in_str(arr[i]) << " ";
+        fout << in_str( arr[n_arr-1] ) << "\n";
+        check_file_stream_error( fout );
+    }
+
+
+//
+//
+
+    inline void in_value( const char* str, float  & v ) { v = atof(str);       }
+    inline void in_value( const char* str, double & v ) { v = atof(str);       }
+    inline void in_value( const char* str, int    & v ) { v = atoi(str);       }
+    inline void in_value( const char* str, size_t & v ) { v = atoi(str);       }
+    inline void in_value( const char* str, uint   & v ) { v = atoi(str);       }
+    inline void in_value( const char* str, bool   & v ) { v = (bool)atoi(str); }
+    inline void in_value( const char* str, char   & v ) { v = str[0];          }
+    inline void in_value( const char* str, string & v ) { v = string(str);     }
+
+    template<typename T>
+    void read_param( ifstream& fin, const char* param_name, T& param ) {
+        char buffer[1024];
+        fin.getline( buffer, 1024 );
+        check_file_stream_error(fin, param_name);
+        string format;
+        if( param_name ) {
+            format = string(param_name)+" %s";
+            if( compare_string_nc( buffer, param_name ) ) {
+                logman_fatal_g("param name [%s] does not match what is read [%s]", param_name, buffer );
+            }
+        } else {
+            format = "%s";
+        }
+
+        char stmp[1024];
+        sscanf( buffer, format.c_str(), &stmp );
+        in_value(stmp, param);
+    }
+
+    template<typename T>
+    void read_array( ifstream& fin, const char* param_name, T* arr, const int& n_arr ) {
+        passert_pointer( arr );
+        passert_pointer_size( n_arr );
+        int asz;
+        read_param( fin, param_name, asz );
+        passert_statement_g( asz == n_arr, "array sizes do not match [%d - %d]", asz, n_arr );
+        for( int i=0; i<n_arr; i++ )
+            fin >> arr[i];
+        char buf[8];
+        fin.getline(buf,8); // get rid of the newline character at the end.
+        check_file_stream_error( fin );
+    }
+
+    template<typename T>
+    void read_array( ifstream& fin, const char* param_name, vector<T>& arr ) {
+        int n_arr;
+        read_param( fin, param_name, n_arr );
+        arr.resize(n_arr);
+        T rv;
+        for( int i=0; i<n_arr; i++ ) {
+            fin >> rv;
+            arr[i] = rv;
+        }
+        char buf[8];
+        fin.getline(buf,8); // get rid of the newline character at the end.
+        check_file_stream_error( fin );
+    }
 
     void read_string(ifstream& fin, string& param, const char* check_against);
-
-    void read_param (ifstream& fin,                         int   * arr, const int& n_arr );
-    void read_param (ifstream& fin,                         float * arr, const int& n_arr );
-    void read_param (ifstream& fin, const char* param_name, float * arr, const int& n_arr );
-    void read_param (ifstream& fin,                         double* arr, const int& n_arr );
-    void read_param (ifstream& fin, const char* param_name, double* arr, const int& n_arr );
-
-    void read_param (ifstream& fin, const char* param_name, string& param);
-    void read_param (ifstream& fin, const char* param_name, int& param, const int& param_min, const int& param_max);
-    void read_param (ifstream& fin, const char* param_name, uint& param, const uint& param_min, const uint& param_max);
-    void read_param (ifstream& fin, const char* param_name, double& param, const double& param_min, const double& param_max);
-    void read_param (ifstream& fin, const char* param_name, bool& param);
-    void read_param (ifstream& fin, const char* param_name, vector<int>& varr);
-    void read_param (ifstream& fin, vector<int>& varr);
 
 //
 //  binary
 //
 
     void check_binary_stream_begin_tag(ifstream& fin);
-    void check_binary_stream_end_tag(ifstream& fin);
+    void check_binary_stream_end_tag  (ifstream& fin);
 
     void insert_binary_stream_begin_tag(ofstream& fout);
-    void insert_binary_stream_end_tag(ofstream& fout);
+    void insert_binary_stream_end_tag  (ofstream& fout);
 
-    void read_bparam(ifstream& fin, int& v);
-    void read_bparam(ifstream& fin, float& v);
-    void read_bparam(ifstream& fin, double& v);
-    void read_bparam(ifstream& fin, uint& v);
-    void read_bparam(ifstream& fin, bool& v);
-    void read_bparam(ifstream& fin, uchar& v);
-    void read_bparam(ifstream& fin, size_t& v);
+//
+    template<typename T>
+    void write_bparam( ofstream& fout, const T& v ) {
+        fout.write( (const char*)&v, sizeof(v) );
+        check_file_stream_error(fout);
+    }
 
-    void read_bparam(ifstream& fin, int* varr, const int& nv);
-    void read_bparam(ifstream& fin, bool* varr, const int& nv);
-    void read_bparam(ifstream& fin, float * varr, const int& nv);
-    void read_bparam(ifstream& fin, double* varr, const int& nv);
-    void read_bparam(ifstream& fin, uchar* varr, const int& nv);
-    void read_bparam(ifstream& fin, string& str);
-    void read_bparam(ifstream& fin, vector<int>& arr);
-    void read_bparam(ifstream& fin, vector<bool>& arr);
+    template<> inline
+    void write_bparam( ofstream& fout, const string& v ) {
+        int nsz = v.size();
+        write_bparam( fout, nsz );
+        fout.write( (const char*)v.c_str(), sizeof(char)*nsz );
+        check_file_stream_error(fout);
+    }
+    template<typename T>
+    void write_barray( ofstream& fout, const T* varr, const int& nv ) {
+        write_bparam( fout, nv );
+        fout.write( (const char*)varr, sizeof(*varr)*nv );
+        check_file_stream_error(fout);
+    }
 
-    void write_bparam(ofstream& fout, const string& str);
-    void write_bparam(ofstream& fout, const int& v);
-    void write_bparam(ofstream& fout, const float& v);
-    void write_bparam(ofstream& fout, const double& v);
-    void write_bparam(ofstream& fout, const uint& v);
-    void write_bparam(ofstream& fout, const bool& v);
-    void write_bparam(ofstream& fout, const uchar& v);
-    void write_bparam(ofstream& fout, const size_t& v);
+    template<typename T>
+    void write_barray( ofstream& fout, const vector<T>& varr ) {
+        int nv = varr.size();
+        write_bparam( fout, nv );
+        for( int i=0; i<nv; i++ )
+            write_bparam( fout, varr[i] );
+        check_file_stream_error(fout);
+    }
 
-    void write_bparam(ofstream& fout, const uchar* varr, const int& nv);
-    void write_bparam(ofstream& fout, const bool* varr, const int& nv);
-    void write_bparam(ofstream& fout, const float * varr, const int& nv);
-    void write_bparam(ofstream& fout, const double* varr, const int& nv);
-    void write_bparam(ofstream& fout, const int* varr, const int& nv);
-    void write_bparam(ofstream& fout, const vector<int>& arr);
-    void write_bparam(ofstream& fout, const vector<bool>& arr);
 
-    void save_ascii(const string& file, const vector<bool>& array);
-    void load_ascii(const string& file, vector<bool>& array);
+//
+    template<typename T>
+    void read_bparam( ifstream& fin, T& v ) {
+        fin.read( (char*)&v, sizeof(v) );
+        check_file_stream_error(fin);
+    }
+    template<> inline
+    void read_bparam( ifstream& fin, string& v ) {
+        int nsz = 0;
+        read_bparam( fin, nsz );
+        char buffer[2049];
+        passert_statement( nsz < 2048, "buffer overflow" );
+        fin.read( buffer, sizeof(*buffer)*nsz );
+        buffer[nsz] = '\0';
+        v = buffer;
+        check_file_stream_error(fin);
+    }
+
+    template<typename T>
+    void read_barray( ifstream& fin, T* varr, const int& nv ) {
+        passert_pointer( varr );
+        passert_pointer_size( nv );
+        int asz = 0;
+        read_bparam( fin, asz );
+        passert_statement( asz == nv, "array size mismatch" );
+        fin.read( (char*)varr, sizeof(*varr)*nv );
+        check_file_stream_error(fin);
+    }
+
+    template<typename T>
+    void read_barray( ifstream& fin, vector<T>& varr ) {
+        int nv = 0;
+        read_bparam( fin, nv );
+        varr.resize(nv);
+        for( int i=0; i<nv; i++ )
+            read_bparam( fin, varr[i] );
+        check_file_stream_error(fin);
+    }
+
+//
+
+    void save_ascii( const string& file, const vector<bool>& array );
+    void load_ascii( const string& file,       vector<bool>& array );
 
 }
 

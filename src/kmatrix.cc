@@ -356,7 +356,7 @@ namespace kortex {
     void KMatrix::save_binary( ofstream& fout ) const {
         write_bparam( fout, nr );
         write_bparam( fout, nc );
-        write_bparam( fout, get_const_pointer(), size() );
+        write_barray( fout, get_const_pointer(), size() );
     }
 
     void KMatrix::load_binary( ifstream& fin ) {
@@ -371,11 +371,10 @@ namespace kortex {
                 logman_fatal( "wrapped matrix has an invalid size" );
             nr = th;
             nc = tw;
-            read_bparam( fin, get_pointer(), th*tw );
         } else {
             init( th, tw );
-            read_bparam( fin, get_pointer(), th*tw );
         }
+        read_barray( fin, get_pointer(), th*tw );
     }
 
     void KMatrix::load( const string& file ) {

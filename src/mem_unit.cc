@@ -102,14 +102,14 @@ namespace kortex {
 
     void MemUnit::save( ofstream& fout ) const {
         write_bparam( fout, m_cap );
-        write_bparam( fout, m_buffer, m_cap );
+        write_barray( fout, m_buffer, m_cap );
     }
 
     void MemUnit::load( ifstream& fin  ) {
         size_t cap;
         read_bparam( fin, cap );
         this->resize( cap );
-        read_bparam( fin, m_buffer, cap );
+        read_barray( fin, m_buffer, cap );
     }
 
 
