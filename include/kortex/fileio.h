@@ -226,7 +226,6 @@ namespace kortex {
     }
     template<typename T>
     void write_barray( ofstream& fout, const T* varr, const int& nv ) {
-        write_bparam( fout, nv );
         fout.write( (const char*)varr, sizeof(*varr)*nv );
         check_file_stream_error(fout);
     }
@@ -263,9 +262,6 @@ namespace kortex {
     void read_barray( ifstream& fin, T* varr, const int& nv ) {
         passert_pointer( varr );
         passert_pointer_size( nv );
-        int asz = 0;
-        read_bparam( fin, asz );
-        passert_statement( asz == nv, "array size mismatch" );
         fin.read( (char*)varr, sizeof(*varr)*nv );
         check_file_stream_error(fin);
     }
