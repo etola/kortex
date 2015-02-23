@@ -16,14 +16,13 @@
 #include <kortex/math.h>
 #include <kortex/check.h>
 #include <kortex/fileio.h>
-#include <kortex/lapack_externs.h>
 #include <kortex/kmatrix.h>
-
-#include <cstring>
+#include <kortex/lapack_externs.h>
 
 namespace kortex {
 
-    size_t SVD::req_mem(int nr, int nc, bool compute_U, bool compute_VT) {
+    size_t SVD::req_mem( int nr, int nc, bool compute_U, bool compute_VT ) {
+
         double work;
         char jobu  = 'N'; if( compute_U  ) jobu  = 'A';
         char jobvt = 'N'; if( compute_VT ) jobvt = 'A';
@@ -32,12 +31,8 @@ namespace kortex {
         int m = nr;
         int n = nc;
         dgesvd_(&jobvt, &jobu, &m, &n, 0,  &m, 0, 0, &m, 0, &n, &work, &lwork, &info);
-        size_t mat_sz = 0;
-        mat_sz += (nr>nc) ? nr : nc;
-        if( compute_U  ) mat_sz += nr*nr;
-        if( compute_VT ) mat_sz += nc*nc;
-        mat_sz += nr*nc;
-        return (work + mat_sz)*sizeof(double);
+
+        return int(work)*sizeof(double);
     }
 
     SVD::SVD() {
@@ -53,7 +48,6 @@ namespace kortex {
         m_c = 0;
         m_compute_u  = false;
         m_compute_vt = false;
-        m_A = m_U = m_Sd = m_Vt = NULL;
         m_work = NULL;
         m_lwork = 0;
     }
@@ -61,7 +55,7 @@ namespace kortex {
     void SVD::set_params(int nr, int nc, bool compute_U, bool compute_VT) {
         m_r = nr;
         m_c = nc;
-        m_d = (m_r>m_c ) ? m_r : m_c;
+        m_d = (m_r<m_c) ? m_r : m_c;
         m_compute_u  = compute_U;
         m_compute_vt = compute_VT;
         allocate();
@@ -70,38 +64,25 @@ namespace kortex {
     void SVD::allocate() {
         size_t rm = req_mem(m_r, m_c, m_compute_u, m_compute_vt);
         m_memory.resize(rm);
+        m_work  = (double*)m_memory.get_buffer();
+        m_lwork = m_memory.capacity()/sizeof(double);
 
-        double* buffer = (double*)m_memory.get_buffer();
+        m_A.init (m_r, m_c);
+        m_Sd.init(m_d, 1);
+        if( m_compute_u  ) m_U.init( m_r, m_r );
+        if( m_compute_vt ) m_Vt.init( m_c, m_c );
 
-        int sz = m_memory.capacity()/sizeof(double);
-
-        int asz = 0;
-        m_Sd  = buffer;
-        asz += m_d;
-        if( m_compute_u ) {
-            m_U = buffer + asz;
-            asz += m_r*m_r;
-        }
-        if( m_compute_vt ) {
-            m_Vt = buffer + asz;
-            asz += m_c*m_c;
-        }
-        m_A = buffer + asz;
-        asz += m_r*m_c;
-
-        m_work  = buffer + asz;
-        m_lwork = int( sz - asz );
-        passert_statement( m_lwork > 0, "memory allocation failure" );
+        assert_statement( m_lwork > 0, "memory allocation failure" );
     }
 
-    void SVD::set_mem(MemUnit* mem) {
+    void SVD::set_mem( MemUnit* mem ) {
         m_memory.deallocate();
         m_memory.swap(mem);
     }
 
-    void SVD::set_Sd(int d, double val) {
+    void SVD::set_Sd( int d, double val ) {
         passert_boundary(d,0,m_d);
-        m_Sd[d] = val;
+        m_Sd.set(d,0,val);
     }
 
     void SVD::release() {
@@ -110,9 +91,10 @@ namespace kortex {
     }
 
     void SVD::decompose(const double* A, int nr, int nc, int nld, bool compute_u, bool compute_vt) {
+
         set_params(nr, nc, compute_u, compute_vt);
         for(int y=0; y<nr; y++)
-            memcpy( m_A+y*nc, A+y*nld, sizeof(*m_A)*nc );
+            m_A.set_row( y, A + y*nld, nc );
 
         char jobu  = 'N'; if( m_compute_u  ) jobu  = 'A';
         char jobvt = 'N'; if( m_compute_vt ) jobvt = 'A';
@@ -123,70 +105,81 @@ namespace kortex {
         int m = nr;
         int n = nc;
 
-        // last element of m_Sd might be uninitialized even after a call to
-        // _sgesvd/_dgesvd
-        std::memset(m_Sd, 0, m_d*sizeof(*m_Sd));
-        dgesvd_(&jobvt, &jobu, &n, &m, m_A, &proxy_ld, m_Sd, m_Vt, &n, m_U, &m, m_work, &work_sz, &info);
+        // dont forget - contents of m_A is destroyed here...
+        dgesvd_( &jobvt, &jobu, &n, &m, m_A.get_pointer(), &proxy_ld,
+                 m_Sd.get_pointer(), m_Vt.get_pointer(), &n, m_U.get_pointer(), &m, m_work, &work_sz,
+                 &info );
     }
 
-    void SVD::combine(double* A, int lda) const {
+    void SVD::combine( double* A, int lda ) const {
         if( !( m_compute_u && m_compute_vt ) )
             logman_fatal("U or Vt is not computed. cannot combine back.");
-
-        for( int i=0; i<m_r; i++ ) {
-            const double* Ui = m_U+i*m_r;
-            for( int j=0; j<m_c; j++ ) {
-                double s = 0.0f;
-                for( int k=0; k<m_r; k++ )
-                    s += Ui[k] * m_Sd[k] * m_Vt[k*m_c+j];
-                A[i*lda+j] = s;
-            }
-        }
+        combine( m_U, m_Sd, m_Vt, A, m_r, m_c, lda );
     }
 
-    double SVD::pseudo_inverse(double* iA, int ldia) {
+    // U is rxr,  Vt is cxc, Sd is max(r,c) x 1, A is rxc
+    void SVD::combine( const KMatrix& U, const KMatrix& Sd, const KMatrix& Vt,
+                        double* A, int r, int c, int lda ) const {
+
+        assert_statement( U.h () == r, "invalid U" );
+        assert_statement( Vt.h() == c, "invalid U" );
+        assert_statement( Sd.w() == 1 && Sd.h() == std::min(r,c), "invalid Sd" );
+        assert_statement( lda >= c, "invalid lda" );
+
+        const double* sd = Sd();
+        const double* vt = Vt();
+
+        int d = (r<c) ? r : c;
+        for( int i=0; i<r; i++ ) {
+            const double* Ui = U.get_row(i);
+            double* ai = A+i*lda;
+            for( int j=0; j<c; j++ ) {
+                double s = 0.0;
+                for( int k=0; k<d; k++ )
+                    s += Ui[k] * sd[k] * vt[k*c+j];
+                ai[j] = s;
+            }
+        }
+
+    }
+
+    double SVD::pseudo_inverse( double* iA, int ldia ) const {
         passert_statement( m_compute_u && m_compute_vt, "U or Vt is not computed. cannot combine back.");
         passert_statement( ldia>=m_r, "pseudo_inverse memory not enough");
 
-        KMatrix Uw( m_U,  m_r, m_r ); Uw.transpose();
-        KMatrix Vw( m_Vt, m_c, m_c ); Vw.transpose();
-
-        int d = (m_r<m_c) ? m_r : m_c;
+        KMatrix Uw, Vw;
+        mat_transpose( m_U,  Uw );
+        mat_transpose( m_Vt, Vw );
 
         static const double tolerance = 1e-24;
-
-        double sd_max = m_Sd[0];
-        double sd_min = m_Sd[d-1];
+        double sd_max = m_Sd[    0];
+        double sd_min = m_Sd[m_d-1];
         double cond = ( sd_min<tolerance ) ? sd_max/tolerance : sd_max/sd_min;
 
-        for(int i=0; i<d; i++ ) {
-            if( m_Sd[i] > tolerance ) m_Sd[i] = 1.0/m_Sd[i];
-            else                      m_Sd[i] = 0.0;
+        assert_number( cond );
+
+        KMatrix Sw = m_Sd;
+        for(int i=0; i<m_d; i++ ) {
+            if( Sw[i] > tolerance ) Sw.set(i, 0, 1.0/Sw[i]);
+            else                    Sw.set(i, 0, 0.0 );
         }
-        std::swap(m_U, m_Vt);
-        std::swap(m_r, m_c);
-        combine(iA, ldia);
+
+        combine( Vw, Sw, Uw, iA, m_c, m_r, ldia );
         return cond;
     }
 
     void SVD::print() const {
         if( m_compute_u ) {
-            KMatrix Uw( (const double*)m_U, m_r, m_r );
-            Uw.print( "U" );
+            m_U.print( "U" );
         } else {
             printf("U is not computed\n");
         }
-        KMatrix Sw( (const double*)m_Sd, m_d, 1 );
-        Sw.print("Sd");
+        m_Sd.print( "Sd" );
 
         if( m_compute_vt ) {
-            KMatrix Vtw( (const double*)m_Vt, m_c, m_c );
-            Vtw.print( "Vt" );
-            // matrix_print("Vt", m_Vt, m_c, m_c, false, false);
+            m_Vt.print( "Vt" );
         } else {
             printf("Vt is not computed\n");
         }
     }
-
-
 }

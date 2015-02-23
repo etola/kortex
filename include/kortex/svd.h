@@ -14,6 +14,7 @@
 #define KORTEX_SVD_H
 
 #include <kortex/mem_unit.h>
+#include <kortex/kmatrix.h>
 
 namespace kortex {
 
@@ -34,17 +35,19 @@ namespace kortex {
         void decompose(const double* A, int nr, int nc, bool compute_u, bool compute_vt) {
             decompose(A, nr, nc, nc, compute_u, compute_vt);
         }
+        void decompose( const KMatrix& A, bool compute_u, bool compute_vt ) {
+            decompose( A(), A.h(), A.w(), A.w(), compute_u, compute_vt );
+        }
 
-        void combine(double* A, int lda) const;
+        void combine( double* A, int lda ) const;
 
-        double pseudo_inverse(double* iA, int ldia); // destroys svd temp
-                                                     // content -> cannot call
-                                                     // combine afterwards
+        double pseudo_inverse(double* iA, int ldia) const;
+
+        const double* Sd() const { return m_Sd(); }
+        const double* Vt() const { return m_Vt(); }
+        const double* U () const { return m_U();  }
+
         void print() const;
-
-        const double* Sd() const { return m_Sd; }
-        const double* Vt() const { return m_Vt; }
-        const double* U () const { return m_U;  }
 
     private:
         void init();
@@ -52,18 +55,22 @@ namespace kortex {
 
         MemUnit m_memory;
 
-        int m_r;
-        int m_c;
-        int m_d;
+        int  m_r;
+        int  m_c;
+        int  m_d;
         bool m_compute_u;
         bool m_compute_vt;
 
-        double* m_A;
-        double* m_U;
-        double* m_Sd;
-        double* m_Vt;
+        KMatrix m_A;
+        KMatrix m_U;
+        KMatrix m_Sd;
+        KMatrix m_Vt;
+
         double* m_work;
         int     m_lwork;
+
+        void combine( const KMatrix& U, const KMatrix& Sd, const KMatrix& Vt,
+                      double* A, int r, int c, int lda ) const;
     };
 
 }

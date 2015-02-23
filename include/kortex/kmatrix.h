@@ -223,6 +223,11 @@ namespace kortex {
 /// mat-ops
 ///
 
+    inline void mat_transpose( const KMatrix& A, KMatrix& At ) {
+        At.init( A.w(), A.h() );
+        mat_transpose( A(), A.h(), A.w(), At.get_pointer(), At.size() );
+    }
+
     inline bool mat_inv( const KMatrix& A, KMatrix& iA ) {
         assert_statement( A.h() == A.w(), "matrix must be square - call pseudo_inv instead" );
         iA.resize( A.h(), A.w() );
