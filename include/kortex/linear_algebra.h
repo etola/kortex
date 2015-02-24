@@ -47,8 +47,8 @@ namespace kortex {
     /// Solve the symmetric positive definite system Ax = b for each column of
     /// B, A ~ (n x n), B ~ (n x nrhs). If 'upper' is true then the upper
     /// triangular part of A is used, otherwise the lower triangular part.
-    int lsq_solver_cholesky(double* A, int n, int lda,
-                            double* B, int nrhs, int ldb, bool upper);
+    int lsq_solver_cholesky( double* A, int n, int lda,
+                             double* B, int nrhs, int ldb, bool upper );
 
     /// Solve the symmetric indefinite system Ax = b for each column of B, A ~
     /// (n x n), B ~ (n x nrhs), pivot_info (output) ~ (n x 1). If 'upper' is

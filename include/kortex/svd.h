@@ -23,10 +23,6 @@ namespace kortex {
         SVD();
         ~SVD();
 
-        static size_t req_mem(int nr, int nc, bool compute_U, bool compute_VT);
-
-        void set_params(int nr, int nc, bool compute_U, bool compute_VT);
-        void set_mem(MemUnit* mem);
         void set_Sd(int d, double val);
 
         void release();
@@ -51,7 +47,6 @@ namespace kortex {
 
     private:
         void init();
-        void allocate();
 
         MemUnit m_memory;
 
@@ -66,11 +61,11 @@ namespace kortex {
         KMatrix m_Sd;
         KMatrix m_Vt;
 
-        double* m_work;
-        int     m_lwork;
-
-        void combine( const KMatrix& U, const KMatrix& Sd, const KMatrix& Vt,
-                      double* A, int r, int c, int lda ) const;
+        void   allocate();
+        void   set_params(int nr, int nc, bool compute_U, bool compute_VT);
+        size_t req_mem( int nr, int nc, bool compute_U, bool compute_VT ) const;
+        void   combine( const KMatrix& U, const KMatrix& Sd, const KMatrix& Vt,
+                        double* A, int r, int c, int lda ) const;
     };
 
 }

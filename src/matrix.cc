@@ -723,5 +723,33 @@ namespace kortex {
             sA[i] += A[i];
     }
 
+    bool is_symmetric( const double* A, int ar, int ac, const double& eps ) {
+        assert_statement( ar == ac, "matrix need to be square" );
+        for( int r=0; r<ar; r++ ) {
+            for( int c=r+1; c<ar; c++ ) {
+                if( fabs(A[r*ar+c]-A[c*ar+r]) > eps )
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    bool is_equal( const double* A, int ar, int ac,
+                   const double* B, int br, int bc,
+                   const double& eps ) {
+        assert_pointer( A );
+        assert_pointer( B );
+        assert_pointer_size( ar*ac );
+        assert_pointer_size( br*bc );
+        assert_statement( eps > 0.0, "invalid epsilon" );
+        if( (ar != ac) || (br != bc) ) return false;
+        int asz = ar*ac;
+        for( int i=0; i<asz; i++ ) {
+            if( fabs( A[i] - B[i] ) > eps )
+                return false;
+        }
+        return true;
+    }
+
 
 }

@@ -306,6 +306,14 @@ namespace kortex {
 
     void mat_add_3( const double* A, double* sA );
 
+    /// checks if matrix A is symmetric with eps
+    bool is_symmetric( const double* A, int ar, int ac, const double& eps=1e-12 );
+
+    /// checks equality element-wise
+    bool is_equal( const double* A, int ar, int ac,
+                   const double* B, int br, int bc,
+                   const double& eps=1e-12 );
+
 }
 
 #endif

@@ -558,5 +558,56 @@ namespace kortex {
         return max_val;
     }
 
+    //
+    void initialize( const double* A, int nr, int nc, int lda, KMatrix& mA ) {
+        assert_pointer( A );
+        assert_statement( nr*nc > 0, "invalid matrix dims" );
+        assert_statement( lda >= nc, "invalid matrix dims" );
+        mA.init( nr, nc );
+        for( int r=0; r<nr; r++ ) {
+            const double* ar = A + r*lda;
+            memcpy( mA.get_row(r), ar, sizeof(*A)*nc );
+        }
+    }
+    void initialize( const KMatrix& mA, double* A, int asz ) {
+        assert_pointer( A );
+        assert_pointer_size( asz );
+        assert_statement( asz == mA.size(), "buffer overflow" );
+        memcpy( A, mA(), sizeof(*A)*asz );
+    }
+
+    void row_to_column_order( const KMatrix& A, KMatrix& A_co ) {
+        assert_statement( A.size() > 0, "empty matrix" );
+        assert_statement( A_co.h() >= A.h(), "invalid matrix" );
+        assert_statement( A_co.w() >= A.w(), "invalid matrix" );
+
+        int nr = A_co.h();
+        int nc = A_co.w();
+
+        A_co.zero();
+        double* aco = A_co.get_pointer();
+        for( int r=0; r<nr; r++ ) {
+            if( !is_inside(r,0,A.h() ) ) continue;
+            for( int c=0; c<nc; c++ ) {
+                if( !is_inside(c,0,A.w() ) ) continue;
+                aco[ c*nr + r ] = A(r,c);
+            }
+        }
+    }
+    void column_to_row_order( const KMatrix& A_co, KMatrix& A ) {
+        assert_statement( A_co.size() > 0, "empty matrix" );
+        assert_statement( A_co.size() == A.size(), "invalid matrices" );
+        int nr = A.h();
+        int nc = A.w();
+        double* a = A.get_pointer();
+        int     cnt = 0;
+        for( int c=0; c<nc; c++ ) {
+            for( int r=0; r<nr; r++ ) {
+                a[ r*nc+c ] = A_co[ cnt ];
+                cnt++;
+            }
+        }
+    }
+
 
 }

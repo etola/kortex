@@ -11,29 +11,13 @@
 //
 // -----------------------------------------------------------
 
+#include <kortex/check.h>
+#include <kortex/kmatrix.h>
 #include <kortex/svd.h>
 
-#include <kortex/math.h>
-#include <kortex/check.h>
-#include <kortex/fileio.h>
-#include <kortex/kmatrix.h>
-#include <kortex/lapack_externs.h>
+#define WITH_EIGEN
 
 namespace kortex {
-
-    size_t SVD::req_mem( int nr, int nc, bool compute_U, bool compute_VT ) {
-
-        double work;
-        char jobu  = 'N'; if( compute_U  ) jobu  = 'A';
-        char jobvt = 'N'; if( compute_VT ) jobvt = 'A';
-        int lwork = -1;
-        int info;
-        int m = nr;
-        int n = nc;
-        dgesvd_(&jobvt, &jobu, &m, &n, 0,  &m, 0, 0, &m, 0, &n, &work, &lwork, &info);
-
-        return int(work)*sizeof(double);
-    }
 
     SVD::SVD() {
         init();
@@ -48,8 +32,6 @@ namespace kortex {
         m_c = 0;
         m_compute_u  = false;
         m_compute_vt = false;
-        m_work = NULL;
-        m_lwork = 0;
     }
 
     void SVD::set_params(int nr, int nc, bool compute_U, bool compute_VT) {
@@ -64,20 +46,11 @@ namespace kortex {
     void SVD::allocate() {
         size_t rm = req_mem(m_r, m_c, m_compute_u, m_compute_vt);
         m_memory.resize(rm);
-        m_work  = (double*)m_memory.get_buffer();
-        m_lwork = m_memory.capacity()/sizeof(double);
 
         m_A.init (m_r, m_c);
         m_Sd.init(m_d, 1);
         if( m_compute_u  ) m_U.init( m_r, m_r );
         if( m_compute_vt ) m_Vt.init( m_c, m_c );
-
-        assert_statement( m_lwork > 0, "memory allocation failure" );
-    }
-
-    void SVD::set_mem( MemUnit* mem ) {
-        m_memory.deallocate();
-        m_memory.swap(mem);
     }
 
     void SVD::set_Sd( int d, double val ) {
@@ -88,27 +61,6 @@ namespace kortex {
     void SVD::release() {
         m_memory.deallocate();
         init();
-    }
-
-    void SVD::decompose(const double* A, int nr, int nc, int nld, bool compute_u, bool compute_vt) {
-
-        set_params(nr, nc, compute_u, compute_vt);
-        for(int y=0; y<nr; y++)
-            m_A.set_row( y, A + y*nld, nc );
-
-        char jobu  = 'N'; if( m_compute_u  ) jobu  = 'A';
-        char jobvt = 'N'; if( m_compute_vt ) jobvt = 'A';
-
-        int proxy_ld = nc;
-        int work_sz = m_lwork;
-        int info;
-        int m = nr;
-        int n = nc;
-
-        // dont forget - contents of m_A is destroyed here...
-        dgesvd_( &jobvt, &jobu, &n, &m, m_A.get_pointer(), &proxy_ld,
-                 m_Sd.get_pointer(), m_Vt.get_pointer(), &n, m_U.get_pointer(), &m, m_work, &work_sz,
-                 &info );
     }
 
     void SVD::combine( double* A, int lda ) const {
@@ -183,3 +135,103 @@ namespace kortex {
         }
     }
 }
+
+#ifdef WITH_EIGEN
+
+#define EIGEN_DEFAULT_TO_ROW_MAJOR
+#include <Eigen/Dense>
+#include <Eigen/SVD>
+
+namespace kortex {
+
+    size_t SVD::req_mem( int nr, int nc, bool compute_U, bool compute_VT ) const {
+        return 0;
+    }
+
+    void convert( const Eigen::MatrixXd& m, KMatrix& km ) {
+        assert_statement( m.IsRowMajor, "eigen matrix should be row major" );
+        km.init( m.rows(), m.cols() );
+        int sz = km.size();
+        const double*  m_ =  m.data();
+        double      * km_ = km.get_pointer();
+        for( int i=0; i<sz; i++ )
+            km_[i] = m_[i];
+    }
+    void convert( const double* A, int nr, int nc, int nld, Eigen::MatrixXd& m ) {
+        assert_statement( m.IsRowMajor, "eigen matrix should be row major" );
+
+        m.resize( nr, nc );
+        double* m_ = m.data();
+        for( int y=0; y<nr; y++ ) {
+            const double* ar = A  + y*nld;
+            double      * mr = m_ + y*nc ;
+            for( int x=0; x<nc; x++ )
+                mr[x] = ar[x];
+        }
+    }
+
+    void SVD::decompose(const double* A, int nr, int nc, int nld, bool compute_u, bool compute_vt) {
+
+        set_params(nr, nc, compute_u, compute_vt);
+
+        Eigen::MatrixXd tA;
+        convert( A, nr, nc, nld, tA );
+
+        unsigned int svd_opts = 0;
+        if( compute_u  ) svd_opts = svd_opts | Eigen::ComputeFullU;
+        if( compute_vt ) svd_opts = svd_opts | Eigen::ComputeFullV;
+
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd( tA, svd_opts );
+        if( compute_u ) {
+            convert( svd.matrixU(), m_U  );
+        }
+        if( compute_vt ) {
+            convert( svd.matrixV(), m_Vt );
+            m_Vt.transpose();
+        }
+
+        for( int i=0; i<m_d; i++ )
+            m_Sd.set( i, 0, svd.singularValues()[i] );
+    }
+
+}
+
+#else
+
+#include <kortex/lapack_externs.h>
+namespace kortex {
+    size_t SVD::req_mem( int nr, int nc, bool compute_U, bool compute_VT ) const {
+        double work;
+        char jobu  = 'N'; if( compute_U  ) jobu  = 'A';
+        char jobvt = 'N'; if( compute_VT ) jobvt = 'A';
+        int lwork = -1;
+        int info;
+        int m = nr;
+        int n = nc;
+        dgesvd_(&jobvt, &jobu, &m, &n, 0,  &m, 0, 0, &m, 0, &n, &work, &lwork, &info);
+        return int(work)*sizeof(double);
+    }
+
+    void SVD::decompose(const double* A, int nr, int nc, int nld, bool compute_u, bool compute_vt) {
+
+        set_params(nr, nc, compute_u, compute_vt);
+        for(int y=0; y<nr; y++)
+            m_A.set_row( y, A + y*nld, nc );
+
+        char jobu  = 'N'; if( m_compute_u  ) jobu  = 'A';
+        char jobvt = 'N'; if( m_compute_vt ) jobvt = 'A';
+
+        double* work     = (double*)m_memory.get_buffer();
+        int     work_sz  = m_memory.capacity()/sizeof(double);
+        int     proxy_ld = nc;
+        int     m = nr;
+        int     n = nc;
+        int     info;
+
+        // dont forget - contents of m_A is destroyed here...
+        dgesvd_( &jobvt, &jobu, &n, &m, m_A.get_pointer(), &proxy_ld,
+                 m_Sd.get_pointer(), m_Vt.get_pointer(), &n, m_U.get_pointer(), &m, work, &work_sz,
+                 &info );
+    }
+}
+#endif

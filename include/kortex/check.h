@@ -86,8 +86,6 @@ using std::vector;
 namespace kortex {
 
     string format_function_message(const string& str, const int& number);
-    void assert_array(const char* name, const float * arr, int asz);
-    void assert_array(const char* name, const double* arr, int asz);
 
     template <typename T> inline
     bool is_16_byte_aligned(const T* pnt) {
@@ -169,6 +167,23 @@ namespace kortex {
     inline bool is_nonnegative_number( const float&  v ) { return ( is_a_number(v) && (v>=0) ) ? true : false; }
     inline bool is_nonnegative_number( const double& v ) { return ( is_a_number(v) && (v>=0) ) ? true : false; }
 
+    template<typename T>
+    inline bool is_valid_array( const T* A, int asz ) {
+        assert_pointer( A );
+        assert_pointer_size( asz );
+        for( int i=0; i<asz; i++ ) {
+            if( !is_a_number(A[i]) ) return false;
+            if( !is_finite  (A[i]) ) return false;
+        }
+        return true;
+    }
+
+    template<typename T>
+    inline void assert_array(const char* name, const T * arr, int asz) {
+#ifdef DEBUG
+        assert_statement_g( is_valid_array(arr,asz), "[%s] array contains nan/inf", name );
+#endif
+    }
 
 }
 

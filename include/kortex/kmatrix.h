@@ -374,6 +374,16 @@ namespace kortex {
 
     bool rq_givens_decomposition_3( const KMatrix& A, KMatrix& R, KMatrix& Q );
 
+
+    void initialize( const double* A, int nr, int nc, int lda, KMatrix& mA );
+    void initialize( const KMatrix& mA, double* A, int asz );
+
+    inline bool is_equal( const KMatrix& a, const KMatrix& b, const double& eps=1e-12 ) {
+        return is_equal( a(), a.h(), a.w(), b(), b.h(), b.w(), eps );
+    }
+    void row_to_column_order( const KMatrix& A,   KMatrix& A_co );
+    void column_to_row_order( const KMatrix& A_co, KMatrix& A   );
+
 }
 
 #endif

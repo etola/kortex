@@ -28,24 +28,5 @@ namespace kortex {
         return string(buffer);
     }
 
-    void assert_array(const char* name, const float* arr, int asz) {
-#ifdef DEBUG
-        assert_statement_g( is_positive_number(asz), "[%s] array size is weird [asz %d]", name, asz );
-        for(int i=0; i<asz; i++) {
-            assert_statement_g( is_a_number(arr[i]), "[%s] array contains NaN [idx %d]", name, i );
-        }
-#endif
-    }
-
-    void assert_array(const char* name, const double* arr, int asz) {
-#ifdef DEBUG
-        assert_statement_g( is_positive_number(asz), "[%s] array size is weird [asz %d]", name, asz );
-        for(int i=0; i<asz; i++) {
-            assert_statement_g( is_a_number(arr[i]), "[%s] array contains NaN", name );
-        }
-#endif
-    }
-
-
 }
 
