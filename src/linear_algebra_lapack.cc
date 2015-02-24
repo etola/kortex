@@ -146,7 +146,7 @@ namespace kortex {
         MemUnit mem;
         int    lwork = m*m*11;
         mem.resize( ( 2*m + lwork ) * sizeof(double) );
-        double* work = mem.get_buffer();
+        double* work = (double*)mem.get_buffer();
 
         KMatrix tH = H;
         tH.transpose();

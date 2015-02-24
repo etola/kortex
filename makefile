@@ -90,14 +90,14 @@ eigen_conversion.h
 #
 installdir := ${HOME}/usr/local/kortex/
 external_sources :=
-external_libraries := libjpeg libpng12 eigen3
+external_libraries := libjpeg libpng12 blas
 libdir := lib
 srcdir := src
 includedir:= include
 #
 # custom flags
 #
-define_flags := -DWITH_EIGEN
+define_flags :=
 custom_ld_flags :=
 custom_cflags := -std=c++0x
 # -std=c++0x : to include file cstdint in types.h
