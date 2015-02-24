@@ -277,26 +277,26 @@ namespace kortex {
         }
         int dim = csz - 1;
         const static int n_pre_dim = 10;
-        assert_statement( dim < n_pre_dim, "non enough static memory allocated" );
+        passert_statement( dim < n_pre_dim, "non enough static memory allocated" );
+
         double D[ n_pre_dim * n_pre_dim ];
         memset( D, 0, sizeof(*D)*n_pre_dim*n_pre_dim );
-        double eigs_r[n_pre_dim], eigs_i[n_pre_dim];
 
         for( int i=0; i<dim; i++ ) {
             if( i != dim-1 )
                 D[ (i+1)*dim+i ] = 1.0;
-
             D[i] = -coeffs[dim-1-i]/coeffs[dim];
         }
 
-        MemUnit mem;
-        bool rval = mat_eigenvalues_upper_hessenberg( D, dim, eigs_r, eigs_i, n_pre_dim, mem );
+        vector<double> eig_real, eig_imag;
+        bool rval = find_eigenvalues( D, dim, eig_real, eig_imag );
+
         if( !rval ) {
             return false;
         } else {
             for( int i=0; i<dim; i++ ) {
-                if( fabs(eigs_i[i]) < DBL_MIN )
-                    real_roots.push_back( eigs_r[i] );
+                if( fabs( eig_imag[i] ) < DBL_MIN )
+                    real_roots.push_back( eig_real[i] );
             }
         }
 

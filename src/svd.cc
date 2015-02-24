@@ -15,8 +15,6 @@
 #include <kortex/kmatrix.h>
 #include <kortex/svd.h>
 
-#define WITH_EIGEN
-
 namespace kortex {
 
     SVD::SVD() {
@@ -138,9 +136,7 @@ namespace kortex {
 
 #ifdef WITH_EIGEN
 
-#define EIGEN_DEFAULT_TO_ROW_MAJOR
-#include <Eigen/Dense>
-#include <Eigen/SVD>
+#include <kortex/eigen_conversion.h>
 
 namespace kortex {
 
@@ -148,34 +144,12 @@ namespace kortex {
         return 0;
     }
 
-    void convert( const Eigen::MatrixXd& m, KMatrix& km ) {
-        assert_statement( m.IsRowMajor, "eigen matrix should be row major" );
-        km.init( m.rows(), m.cols() );
-        int sz = km.size();
-        const double*  m_ =  m.data();
-        double      * km_ = km.get_pointer();
-        for( int i=0; i<sz; i++ )
-            km_[i] = m_[i];
-    }
-    void convert( const double* A, int nr, int nc, int nld, Eigen::MatrixXd& m ) {
-        assert_statement( m.IsRowMajor, "eigen matrix should be row major" );
-
-        m.resize( nr, nc );
-        double* m_ = m.data();
-        for( int y=0; y<nr; y++ ) {
-            const double* ar = A  + y*nld;
-            double      * mr = m_ + y*nc ;
-            for( int x=0; x<nc; x++ )
-                mr[x] = ar[x];
-        }
-    }
-
     void SVD::decompose(const double* A, int nr, int nc, int nld, bool compute_u, bool compute_vt) {
 
         set_params(nr, nc, compute_u, compute_vt);
 
         Eigen::MatrixXd tA;
-        convert( A, nr, nc, nld, tA );
+        convert_mat( A, nr, nc, nld, tA );
 
         unsigned int svd_opts = 0;
         if( compute_u  ) svd_opts = svd_opts | Eigen::ComputeFullU;
@@ -183,10 +157,10 @@ namespace kortex {
 
         Eigen::JacobiSVD<Eigen::MatrixXd> svd( tA, svd_opts );
         if( compute_u ) {
-            convert( svd.matrixU(), m_U  );
+            convert_mat( svd.matrixU(), m_U  );
         }
         if( compute_vt ) {
-            convert( svd.matrixV(), m_Vt );
+            convert_mat( svd.matrixV(), m_Vt );
             m_Vt.transpose();
         }
 

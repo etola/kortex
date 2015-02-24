@@ -43,7 +43,8 @@ kmatrix.cc \
 rotation.cc \
 svd.cc \
 sorting.cc \
-timer.cc
+timer.cc \
+eigen_conversion.cc
 
 headers := \
 log_manager.h \
@@ -79,7 +80,9 @@ kmatrix.h \
 rotation.h \
 lapack_externs.h \
 svd.h \
-sorting.h
+sorting.h \
+timer.h \
+eigen_conversion.h
 
 
 #
@@ -94,7 +97,7 @@ includedir:= include
 #
 # custom flags
 #
-define_flags :=
+define_flags := -DWITH_EIGEN
 custom_ld_flags :=
 custom_cflags := -std=c++0x
 # -std=c++0x : to include file cstdint in types.h
