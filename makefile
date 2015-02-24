@@ -90,7 +90,7 @@ eigen_conversion.h
 #
 installdir := ${HOME}/usr/local/kortex/
 external_sources :=
-external_libraries := libjpeg libpng12 blas eigen3
+external_libraries := libjpeg libpng12 eigen3
 libdir := lib
 srcdir := src
 includedir:= include

@@ -13,6 +13,8 @@
 #ifndef KORTEX_LAPACK_EXTERNS_H
 #define KORTEX_LAPACK_EXTERNS_H
 
+#ifdef WITH_LAPACK
+
 extern "C" {
     // svd
     void dgesvd_(char* jobu, char* jobvt, int* m, int* n,
@@ -177,5 +179,7 @@ extern "C" {
 
 
 }
+
+#endif
 
 #endif

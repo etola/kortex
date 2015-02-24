@@ -1,3 +1,4 @@
+#ifdef WITH_LAPACK
 
 #include <kortex/lapack_externs.h>
 #include <kortex/mem_manager.h>
@@ -202,6 +203,6 @@ namespace kortex {
         return mat_eigenvalues_upper_hessenberg( M, eig_real, eig_imag );
     }
 
-
-
 }
+
+#endif

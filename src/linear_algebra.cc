@@ -39,8 +39,14 @@ namespace kortex {
 //
 }
 
+#if defined(WITH_EIGEN) && defined(WITH_LAPACK)
+could not define both lapack and eigen!
+#endif
+
 #ifdef WITH_EIGEN
 #include "linear_algebra_eigen.cc"
-#else
-#include "linear_algebra_blas.cc"
+#endif
+
+#ifdef WITH_LAPACK
+#include "linear_algebra_lapack.cc"
 #endif
