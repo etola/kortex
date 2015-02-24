@@ -7,3 +7,6 @@ WITH_LIBJPEG: enables jpeg file io support
 
 WITH_LIBPNG: enables png file io support
              (add libpng to external_libraries in makefile)
+
+WITH_LAPACK/WITH_EIGEN :  links the library either with blas or eigen3.
+                          add 'blas' or 'eigen3' to external_libraries
