@@ -11,13 +11,17 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-#include <kortex/random.h>
-#include <kortex/check.h>
-#include <kortex/indexed_types.h>
 
 #include <cstdlib>
+#include <algorithm>
 #include <sys/timeb.h>
 #include <climits>
+
+#include <kortex/check.h>
+#include <kortex/indexed_types.h>
+#include <kortex/mem_manager.h>
+
+#include <kortex/random.h>
 
 namespace kortex {
 
@@ -54,31 +58,34 @@ namespace kortex {
             while( counter < no_samples ) {
                 int sample = (int)(uniform_sample()*range)+minval;
                 if( sample >= maxval ) continue;
-                if( is_inside(selected_samples, counter, sample) )
+                if( counter != 0 && is_inside(selected_samples, counter, sample) )
                     continue;
                 selected_samples[counter] = sample;
                 counter ++;
             }
             return true;
         } else { // select which samples not to select since they are less in number
+            logman_warning( "Beware - this segment was not tested throughly - could have bugs" );
             int excluded_sample_no = range - no_samples;
-            int * temp_space = new int [excluded_sample_no];
-
+            assert_statement( excluded_sample_no > 0, "this should not be" );
+            int * temp_space = NULL;
+            allocate( temp_space, excluded_sample_no );
             int counter = 0;
             while( counter < excluded_sample_no ) {
                 int sample = (int)(uniform_sample()*range)+minval;
-                if( is_inside(temp_space, counter, sample) )
+                if( counter != 0 && is_inside(temp_space, counter, sample) )
                     continue;
                 temp_space[counter] = sample;
                 counter ++;
             }
             counter = 0;
-            for(int i=minval; i<maxval; i++) {
-                if( is_inside(temp_space, excluded_sample_no, i) ) continue;
+            for( int i=minval; i<maxval; i++ ) {
+                if( is_inside(temp_space, excluded_sample_no, i) )
+                    continue;
                 selected_samples[counter] = i;
                 counter++;
             }
-            delete [] temp_space;
+            deallocate( temp_space );
             return true;
         }
     }
@@ -106,7 +113,7 @@ namespace kortex {
         vector<ifloat> nums( n );
         for( int i=0; i<n; i++ ) {
             nums[i].id  = i;
-            nums[i].val = uniform_sample();
+            nums[i].val = (float)uniform_sample();
         }
         sort_ascending( nums );
 
@@ -117,4 +124,3 @@ namespace kortex {
     }
 
 }
-

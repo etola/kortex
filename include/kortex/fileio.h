@@ -52,8 +52,8 @@ namespace kortex {
     void check_file_stream_error( const ofstream& fout, const char* msg=NULL );
 
     void reset_file_contents(const char* file_name);
-    int  create_folder(const string& path, mode_t perm=0777);
-    bool delete_file(const string& path);
+    int  create_folder( const string& path );
+    bool delete_file  ( const string& path );
 
     void open_or_fail(const string& file, ifstream &fin);
     void open_or_fail(const string& file, ofstream &fout);
@@ -86,11 +86,6 @@ namespace kortex {
         sprintf( buffer, "%zd", v );
         return string(buffer);
     }
-    inline string in_str( const uint  & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%ud", v );
-        return string(buffer);
-    }
     inline string in_str( const bool  & v ) {
         char buffer[1024];
         sprintf( buffer, "%d", v );
@@ -103,6 +98,9 @@ namespace kortex {
     }
     inline string in_str( const string& v ) {
         return v;
+    }
+    inline string in_str( const char* v ) {
+        return string(v);
     }
 
     template<typename T>
@@ -137,14 +135,13 @@ namespace kortex {
 //
 //
 
-    inline void in_value( const char* str, float  & v ) { v = atof(str);       }
-    inline void in_value( const char* str, double & v ) { v = atof(str);       }
-    inline void in_value( const char* str, int    & v ) { v = atoi(str);       }
-    inline void in_value( const char* str, size_t & v ) { v = atoi(str);       }
-    inline void in_value( const char* str, uint   & v ) { v = atoi(str);       }
-    inline void in_value( const char* str, bool   & v ) { v = (bool)atoi(str); }
-    inline void in_value( const char* str, char   & v ) { v = str[0];          }
-    inline void in_value( const char* str, string & v ) { v = string(str);     }
+    inline void in_value( const char* str, float  & v ) { v = (float)atof(str);       }
+    inline void in_value( const char* str, double & v ) { v =        atof(str);       }
+    inline void in_value( const char* str, int    & v ) { v =        atoi(str);       }
+    inline void in_value( const char* str, size_t & v ) { v =        atoi(str);       }
+    inline void in_value( const char* str, bool   & v ) { v =   bool(atoi(str)!=0);   }
+    inline void in_value( const char* str, char   & v ) { v = str[0];                 }
+    inline void in_value( const char* str, string & v ) { v = string(str);            }
 
     template<typename T>
     void read_param( ifstream& fin, const char* param_name, T& param ) {

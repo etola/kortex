@@ -14,15 +14,18 @@
 #ifdef  WITH_SSE
 
 #include <kortex/check.h>
+#include <kortex/defs.h>
 #include <kortex/sse_extensions.h>
 
 namespace kortex {
 
     float sse_dot_128( const float* a, const float* b ) {
-        switch( is_16_byte_aligned(a) && is_16_byte_aligned(b) ) {
+        bool st = (is_16_byte_aligned(a) && is_16_byte_aligned(b));
+        switch( st ) {
         case true : return sse_dot_128a(a,b); break;
         case false: return sse_dot_128u(a,b); break;
         }
+        passert_statement( 0, "should not have reached here" );
     }
     float sse_dot_128a( const float* a, const float* b ) {
         assert_statement( (is_16_byte_aligned(a) && is_16_byte_aligned(b)),
@@ -125,11 +128,8 @@ namespace kortex {
         case true : return sse_sq_sum_a(a,sz); break;
         case false: return sse_sq_sum_u(a,sz); break;
         }
+        passert_statement(0, "should not have reached here");
     }
-
-
-
-
 
     /// sum_i_{i=0:19} (a_i)^2
     float sse_sq_sum_20a(const float* a) {
@@ -147,7 +147,7 @@ namespace kortex {
     /// a <= a*v
     void sse_scale_20a(float* a, float v) {
         assert_statement( is_16_byte_aligned(a), "a is not 16byte aligned" );
-        float v4[4] __attribute__ ((__aligned__(16)));
+        float WND_BYTE_ALIGNED_16 v4[4] BYTE_ALIGNED_16;
         for(int i=0; i<4; i++) v4[i] = v;
         __m128 xmm_a, xmm_c;
         __m128 xmm_b = _mm_load_ps(v4);
@@ -160,7 +160,7 @@ namespace kortex {
 
     void  sse_scale_a( float* a, int asz, float v ) {
         assert_statement( is_16_byte_aligned(a), "a is not 16byte aligned" );
-        float v4[4] __attribute__ ((__aligned__(16)));
+        float WND_BYTE_ALIGNED_16 v4[4] BYTE_ALIGNED_16;
         for( int i=0; i<4; i++ ) v4[i] = v;
 
         __m128 xmm_a, xmm_c;
@@ -198,6 +198,7 @@ namespace kortex {
         case true : return sse_scale_a(a,asz,v); break;
         case false: return sse_scale_u(a,asz,v); break;
         }
+        passert_statement( 0, "should not have reached here" );
     }
 
     float sse_sum( const float* a, int sz ) {
@@ -205,6 +206,7 @@ namespace kortex {
         case true : return sse_sum_a(a,sz); break;
         case false: return sse_sum_u(a,sz); break;
         }
+        passert_statement(0, "should not have reached here");
     }
 
     float sse_sum_u( const float* a, int sz ) {
@@ -294,10 +296,12 @@ namespace kortex {
     }
 
     float sse_sq_sum( const float* a, const float* b, int sz ) {
-        switch( is_16_byte_aligned(a) && is_16_byte_aligned(b) ) {
+        bool st = is_16_byte_aligned(a) && is_16_byte_aligned(b);
+        switch( st ) {
         case true : return sse_sq_sum_a(a,b,sz); break;
         case false: return sse_sq_sum_u(a,b,sz); break;
         }
+        passert_statement(0, "should not have reached here");
     }
 
 

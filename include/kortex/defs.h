@@ -21,7 +21,17 @@
 #define MAX_ARR_SIZE         16384
 #define NRM_EPS              1e-16
 
+#ifdef __GNUC__
 #define BYTE_ALIGNED_16 __attribute__ ((__aligned__ (16)))
+#else
+#define BYTE_ALIGNED_16
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+#define WND_BYTE_ALIGNED_16 __declspec(align(16))
+#else
+#define WND_BYTE_ALIGNED_16
+#endif
 
 namespace kortex {
 

@@ -177,7 +177,6 @@ namespace kortex {
         mat_set_col( get_pointer(), nr, nc, c, alpha, cdata, csz );
     }
 
-
     double* KMatrix::get_pointer() {
         passert_statement( !is_const(), "cannot return non-const pointer for const matrix" );
         assert_statement( size() != 0, "matrix has not been initialized" );
@@ -190,6 +189,7 @@ namespace kortex {
         case true : return m_ro_data;
         case false: return m_data;
         }
+        passert_statement( 0, "should not have reached here" );
     }
 
     double* KMatrix::get_row( int rid ) {

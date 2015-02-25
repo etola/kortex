@@ -277,7 +277,7 @@ namespace kortex {
         passert_statement( out.type() == img.type(), "image types not agree" );
         passert_statement( check_dimensions(img, out), "dimension mismatch" );
         img.passert_type( IT_F_GRAY | IT_F_IRGB ); // supporting these types
-                                                    // for now
+                                                   // for now
         switch( img.type() ) {
         case IT_F_GRAY:
             filter_hv_par( img.get_row_f(0), img.w(), img.h(), kernel, ksz, out.get_row_f(0) );
@@ -298,7 +298,7 @@ namespace kortex {
     int  filter_size( const float& sigma ) {
         passert_statement( sigma > 0.0f, "sigma should be positive" );
         const int gauss_truncate = 4;
-        int fsz = 2.0 * gauss_truncate * sigma + 1.0;
+        int fsz = int( 2.0f * gauss_truncate * sigma + 1.0f );
         if( fsz%2 == 0 ) fsz++;
         if( fsz < 3 ) fsz = 3;
         return fsz;
@@ -600,8 +600,8 @@ namespace kortex {
             double scr = 1.0;
             if( nw >= nh ) scr = img.w() / double(max_img_dim);
             else           scr = img.h() / double(max_img_dim);
-            nw  = img.w() / scr;
-            nh  = img.h() / scr;
+            nw  = int(img.w() / scr);
+            nh  = int(img.h() / scr);
         }
         image_resize_coarse( img, nw, nh, run_parallel, rimg );
     }
@@ -766,8 +766,8 @@ namespace kortex {
             double scr = 1.0;
             if( nw >= nh ) scr = img.w() / double(max_img_dim);
             else           scr = img.h() / double(max_img_dim);
-            nw  = img.w() / scr;
-            nh  = img.h() / scr;
+            nw  = int(img.w() / scr);
+            nh  = int(img.h() / scr);
         }
         image_resize_fine( img, nw, nh, run_parallel, rimg );
     }
@@ -1121,11 +1121,11 @@ namespace kortex {
 #pragma omp parallel for
         for( int y=0; y<h; y++ ) {
             float* mrow = mask.get_row_f(y);
-            int yd = fabs(y-h/2);
+            int yd = (int)fabs(y-h/2.0f);
             assert_statement_g( yd>=0 && yd < d, "[oob %d %d]", yd, d );
             float ey = exp_vals[ yd ];
             for( int x=0; x<w; x++ ) {
-                int xd = fabs(x-w/2);
+                int xd =  (int)fabs(x-w/2.0f);
                 assert_statement_g( xd>=0 && xd < d, "[oob %d %d]", xd, d );
                 mrow[x] = ey * exp_vals[ xd ] + 1.0f;
             }
@@ -1141,9 +1141,9 @@ namespace kortex {
 #pragma omp parallel for
         for(int y=0; y<h; y++) {
             float* mrow = mask.get_row_f(y);
-            float y_w = 1.0 - fabs(2.0f*float(y)/(h-1.0f)-1.0f);
+            float y_w = 1.0f - fabs(2.0f*float(y)/(h-1.0f)-1.0f);
             for( int x=0; x<w; x++ ) {
-                float x_w = 1.0 - fabs(2.0f*float(x)/(w-1.0f)-1.0f);
+                float x_w = 1.0f - fabs(2.0f*float(x)/(w-1.0f)-1.0f);
                 mrow[x] = 254.0f * (y_w*x_w) + 1.0f;
             }
         }
@@ -1165,7 +1165,7 @@ namespace kortex {
         for(int i=0; i<ksz; i++)
             kernel[i] = 1.0f;
         filter_hv( mask, kernel, ksz, mask );
-        image_threshold( mask, ksz*ksz-1 );
+        image_threshold( mask, float(ksz*ksz-1) );
     }
 
 
@@ -1446,43 +1446,43 @@ namespace kortex {
 
         // x=0; y=1:h-1
         for( int y=1; y<h-1; y++ ) {
-            dx[ y*w ] = 2.0 * ( im[y*w+1]-im[y*w] );
+            dx[ y*w ] = 2.0f * ( im[y*w+1]-im[y*w] );
             dy[ y*w ] = im[ (y-1)*w ] - im[ (y+1)*w ];
         }
 
         // x=w-1; y=1:h-1
         for( int y=1; y<h-1; y++ ) {
-            dx[ y*w+w-1 ] = 2.0 * ( im[y*w+w-1]-im[y*w+w-2] );
-            dy[ y*w+w-1 ] =       ( im[(y-1)*w+w-1]-im[(y+1)*w+w-1] );
+            dx[ y*w+w-1 ] = 2.0f * ( im[y*w+w-1]-im[y*w+w-2] );
+            dy[ y*w+w-1 ] =        ( im[(y-1)*w+w-1]-im[(y+1)*w+w-1] );
         }
 
         // x=1:w-1; y=0
         for( int x=1; x<w-1; x++ ) {
             dx[x] = ( im[x+1] - im[x-1] );
-            dy[x] = 2.0 * ( im[x] - im[w+x] );
+            dy[x] = 2.0f * ( im[x] - im[w+x] );
         }
 
         // x=1:w-1; y=h-1
         for( int x=1; x<w-1; x++ ) {
             dx[ (h-1)*w + x ] = im[ x+1 ] - im[ x-1 ];
-            dy[ (h-1)*w + x ] = 2.0 * ( im[ (h-2)*w + x ] - im[ (h-1)*w + x ] );
+            dy[ (h-1)*w + x ] = 2.0f * ( im[ (h-2)*w + x ] - im[ (h-1)*w + x ] );
         }
 
         // x=0 y=0
-        dx[0] = 2.0 * ( im[1] - im[0] );
-        dy[0] = 2.0 * ( im[0] - im[w] );
+        dx[0] = 2.0f * ( im[1] - im[0] );
+        dy[0] = 2.0f * ( im[0] - im[w] );
 
         // x=0 y=h-1
-        dx[ (h-1)*w ] = 2.0 * ( im[ (h-1)*w+1 ] - im[ (h-1)*w ] );
-        dy[ (h-1)*w ] = 2.0 * ( im[ (h-2)*w   ] - im[ (h-1)*w ] );
+        dx[ (h-1)*w ] = 2.0f * ( im[ (h-1)*w+1 ] - im[ (h-1)*w ] );
+        dy[ (h-1)*w ] = 2.0f * ( im[ (h-2)*w   ] - im[ (h-1)*w ] );
 
         // x=w-1 y=0
-        dx[ w-1 ] = 2.0 * ( im[ w-1 ] - im[   w-2 ] );
-        dy[ w-1 ] = 2.0 * ( im[ w-1 ] - im[ 2*w-1 ] );
+        dx[ w-1 ] = 2.0f * ( im[ w-1 ] - im[   w-2 ] );
+        dy[ w-1 ] = 2.0f * ( im[ w-1 ] - im[ 2*w-1 ] );
 
         // x=w-1 y=h-1
-        dx[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-1)*w + w-1 ] - im[ (h-1)*w + w-2 ] );
-        dy[ (h-1)*w + w-1 ] = 2.0 * ( im[ (h-2)*w + w-1 ] - im[ (h-1)*w + w-1 ] );
+        dx[ (h-1)*w + w-1 ] = 2.0f * ( im[ (h-1)*w + w-1 ] - im[ (h-1)*w + w-2 ] );
+        dy[ (h-1)*w + w-1 ] = 2.0f * ( im[ (h-2)*w + w-1 ] - im[ (h-1)*w + w-1 ] );
 
         assert_array( "dx", dx, w*h );
         assert_array( "dy", dy, w*h );

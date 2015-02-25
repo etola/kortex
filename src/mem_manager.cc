@@ -39,17 +39,25 @@ namespace kortex {
     void* allocate(const size_t& sz) {
         void* ptr = NULL;
 #if defined(WITH_SSE)
-        const int ret = posix_memalign(&ptr, simd_alignment, sz);
-        if( ret != 0 ) ptr = NULL;
+#ifdef _WIN32
+        ptr = _aligned_malloc(sz, simd_alignment);
 #else
-        ptr = aligned_malloc( sz, simd_alignment );
+        const int ret = posix_memalign(&ptr, simd_alignment, sz);
+        if (ret != 0) ptr = NULL;
+#endif
+#else
+        ptr = aligned_malloc(sz, simd_alignment);
 #endif
         return ptr;
     }
 
     void deallocate( void *ptr ) {
 #if defined(WITH_SSE)
+#ifdef _WIN32
+        _aligned_free(ptr);
+#else
         free((void*)ptr);
+#endif
         ptr = NULL;
 #else
         aligned_free(ptr);
@@ -93,4 +101,3 @@ namespace kortex {
 
 
 }
-

@@ -38,7 +38,11 @@ namespace kortex {
         void log    ( const char* group, const char* msg, ... );
         void warning( const char* group, const char* msg, ... );
         void error  ( const char* group, const char* msg, ... );
-        void fatal  ( const char* group, const char* msg, ... ) __attribute__ ((noreturn));
+#ifdef __GNUC__
+        void fatal(const char* group, const char* msg, ...) __attribute__((noreturn));
+#else
+        __declspec(noreturn) void fatal(const char* group, const char* msg, ...);
+#endif
 
         void set_streams( FILE* tinfo_stream, FILE* tlog_stream,
                           FILE* twarn_stream, FILE* terr_stream ) {

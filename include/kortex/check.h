@@ -21,17 +21,29 @@
 using std::string;
 using std::vector;
 
+#ifdef _WIN32
+#ifndef isnan
+#define isnan(x) _isnan(x)
+#endif
+#ifndef isinf
+#define isinf(x) (!_finite(x))
+#endif
+#endif
+
+#ifdef __GNUC__
 #ifdef isnan
 #undef isnan
-// using std::isnan;
 #endif
-
 #ifdef isinf
 #undef isinf
-// using std::isinf;
+#endif
 #endif
 
-#define function_line_str kortex::format_function_message(__PRETTY_FUNCTION__, __LINE__).c_str()
+#ifdef __GNUC__
+#define function_line_str kortex::format_function_message( __PRETTY_FUNCTION__, __LINE__).c_str()
+#else
+#define function_line_str kortex::format_function_message( __FUNCTION__, __LINE__).c_str()
+#endif
 
 #define logman_info_(...)    kortex::log_man()->info   (function_line_str, __VA_ARGS__)
 #define logman_log_(...)     kortex::log_man()->log    (function_line_str, __VA_ARGS__)
@@ -51,13 +63,30 @@ using std::vector;
 #define logman_error(msg)   kortex::log_man()->error  (function_line_str, "%s", msg)
 #define logman_fatal(msg)   kortex::log_man()->fatal  (function_line_str, "%s", msg)
 
+namespace kortex {
+    template <typename T>
+    inline bool is_finite( const T& v ) {
+        return std::isfinite(v);
+    }
+
+    template <typename T>
+    inline bool is_a_number( const T& v ) {
+        return ( std::isnan(v) ) ? false : true;
+    }
+
+    template <typename T>
+    inline bool is_valid_number( const T& v ) {
+        return is_a_number(v) && is_finite(v);
+    }
+}
+
 #ifdef DEBUG
 #define assert_statement( statement, msg )      { if( !(statement) ) { logman_fatal(msg); } }
 #define assert_statement_g(statement, msg, ...) { if( !(statement) ) { logman_fatal_g(msg, __VA_ARGS__); } }
 #define assert_pointer(statement)               { if( !(statement) ) { logman_fatal("passed null pointer"); } }
-#define assert_pointer_size(psz)                { if( isnan(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
+#define assert_pointer_size(psz)                { if( !is_valid_number(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
 #define assert_boundary(val,minval,maxval)      { if( !(val>=minval && val<maxval ) ) logman_fatal_g("out of bounds: %f not in [%f,%f)", float(val), float(minval), float(maxval) ); }
-#define assert_number(num)                      { if( std::isnan(num) || std::isinf(num) ) { logman_fatal("nan/inf test failed"); } }
+#define assert_number(v)                        { if( !is_valid_number(v) ) { logman_fatal("nan/inf test failed"); } }
 #define assert_noalias(obj1,obj2)               { if( &obj1 == &obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #define assert_noalias_p(obj1,obj2)             { if(  obj1 ==  obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #else
@@ -75,9 +104,9 @@ using std::vector;
 #define passert_statement( statement, msg )      { if( !(statement) ) { logman_fatal(msg); } }
 #define passert_statement_g(statement, msg, ...) { if( !(statement) ) { logman_fatal_g(msg, __VA_ARGS__); } }
 #define passert_pointer(statement)               { if( !(statement) ) { logman_fatal("passed null pointer"); } }
-#define passert_pointer_size(psz)                { if( std::isnan(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
+#define passert_pointer_size(psz)                { if( !is_valid_number(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
 #define passert_boundary(val,minval,maxval)      { if( !(val>=minval && val<maxval ) ) logman_fatal("out of bounds"); }
-#define passert_number(num)                      { if( std::isnan(num) || std::isinf(num) ) { logman_fatal("nan/inf test failed"); } }
+#define passert_number(v)                        { if( !is_valid_number(v) ) { logman_fatal("nan/inf test failed"); } }
 #define passert_noalias(obj1,obj2)               { if( &obj1 == &obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #define passert_noalias_p(obj1,obj2)             { if(  obj1 ==  obj2 ) { logman_fatal("aliasing is not allowed"); } }
 
@@ -123,29 +152,36 @@ namespace kortex {
         return ( x >= xmin && x < xmax ) ? true : false;
     }
 
-    inline bool is_inside( const vector<int>& arr, const int& v ) {
+    template <typename T>
+    inline bool is_inside( const vector<T>& arr, const T& v ) {
         for( size_t i=0; i<arr.size(); i++ )
             if( arr[i] == v ) return true;
         return false;
     }
 
-    inline bool is_inside( const int* arr, const int& narr, const int& query ) {
+    template <typename T>
+    inline bool is_inside( const T* arr, const int& narr, const T& query ) {
         assert_pointer( arr );
+        assert_pointer_size( narr );
         for( int i=0; i<narr; i++ )
             if( arr[i] == query ) return true;
         return false;
     }
 
-    inline bool is_ascending( const vector<int>& arr ) {
+    template <typename T>
+    inline bool is_ascending( const vector<T>& arr ) {
         int asz = arr.size();
+        if( asz == 1 ) return true;
         for( int i=1; i<asz; i++ )
             if( arr[i] < arr[i-1] )
                 return false;
         return true;
     }
 
-    inline bool is_descending( const vector<int>& arr ) {
+    template <typename T>
+    inline bool is_descending( const vector<T>& arr ) {
         int asz = arr.size();
+        if( asz == 1 ) return true;
         for( int i=1; i<asz; i++ )
             if( arr[i] > arr[i-1] )
                 return false;
@@ -153,19 +189,14 @@ namespace kortex {
     }
 
     template <typename T>
-    inline bool is_finite( const T& v ) { return std::isfinite(v); }
+    inline bool is_positive_number( const T& v ) {
+        return ( is_a_number(v) && (v>T(0)) ) ? true : false;
+    }
 
-    inline bool is_a_number(const int&    v) { return ( std::isnan(v) ) ? false : true; }
-    inline bool is_a_number(const float&  v) { return ( std::isnan(v) ) ? false : true; }
-    inline bool is_a_number(const double& v) { return ( std::isnan(v) ) ? false : true; }
-
-    inline bool is_positive_number( const int&    v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
-    inline bool is_positive_number( const float&  v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
-    inline bool is_positive_number( const double& v ) { return ( is_a_number(v) && (v>0) ) ? true : false; }
-
-    inline bool is_nonnegative_number( const int&    v ) { return ( is_a_number(v) && (v>=0) ) ? true : false; }
-    inline bool is_nonnegative_number( const float&  v ) { return ( is_a_number(v) && (v>=0) ) ? true : false; }
-    inline bool is_nonnegative_number( const double& v ) { return ( is_a_number(v) && (v>=0) ) ? true : false; }
+    template <typename T>
+    inline bool is_nonnegative_number( const T& v ) {
+        return ( is_a_number(v) && (v>=T(0)) ) ? true : false;
+    }
 
     template<typename T>
     inline bool is_valid_array( const T* A, int asz ) {

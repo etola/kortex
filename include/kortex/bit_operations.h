@@ -20,6 +20,29 @@
 
 namespace kortex {
 
+#ifdef _WIN32
+    inline int bitcounter64(uint64_t v) {
+#ifndef __popcnt64
+        typedef union Packed32_2 {
+            uint32_t v32[2];
+            uint64_t v64;
+        } Packed32_2;
+        Packed32_2 tv;
+        tv.v64 = v;
+        return __popcnt(tv.v32[0]) + __popcnt(tv.v32[1]);
+#else
+        return __popcnt64(v)
+#endif
+            }
+#endif
+
+#ifdef __GNUC__
+    inline int bitcounter64(uint64_t v) {
+        return __builtin_popcountll(v);
+    }
+#endif
+
+
     inline bool have_same_sign(const int& x, const int& y) {
         return ((x ^ y) < 0);
     }
@@ -79,15 +102,15 @@ namespace kortex {
     inline int hamming_64(const uchar* a, const uchar * b) {
         uint64_t* ta = (uint64_t*)a;
         uint64_t* tb = (uint64_t*)b;
-        return __builtin_popcountll( (*ta)^(*tb) );
+        return bitcounter64( (*ta)^(*tb) );
     }
 
     inline int hamming_128(const uchar* a, const uchar* b) {
         uint64_t* ta = (uint64_t*)a;
         uint64_t* tb = (uint64_t*)b;
         int s = 0;
-        s += __builtin_popcountll( (*ta++) ^ (*tb++) );
-        s += __builtin_popcountll( (*ta  ) ^ (*tb  ) );
+        s += bitcounter64( (*ta++) ^ (*tb++) );
+        s += bitcounter64( (*ta  ) ^ (*tb  ) );
         return s;
     }
 
@@ -95,10 +118,10 @@ namespace kortex {
         uint64_t* ta = (uint64_t*)a;
         uint64_t* tb = (uint64_t*)b;
         int s = 0;
-        s += __builtin_popcountll( (*ta++) ^ (*tb++) );
-        s += __builtin_popcountll( (*ta++) ^ (*tb++) );
-        s += __builtin_popcountll( (*ta++) ^ (*tb++) );
-        s += __builtin_popcountll( (*ta  ) ^ (*tb  ) );
+        s += bitcounter64( (*ta++) ^ (*tb++) );
+        s += bitcounter64( (*ta++) ^ (*tb++) );
+        s += bitcounter64( (*ta++) ^ (*tb++) );
+        s += bitcounter64( (*ta  ) ^ (*tb  ) );
         return s;
     }
 

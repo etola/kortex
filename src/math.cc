@@ -193,6 +193,7 @@ namespace kortex {
         case true:  return sqrt( sse_sq_sum_128a(a) ); break;
         case false: return sqrt( sse_sq_sum_128u(a) ); break;
         }
+        passert_statement( 0, "should not have reached here" );
 #else
         float nrm = 0.0f;
         for( int k=0; k<128; k++ ) {

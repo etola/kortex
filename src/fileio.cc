@@ -39,6 +39,15 @@ namespace kortex {
         else return FF_NONE;
     }
 
+    int create_folder( const string& path ) {
+#ifdef __GNUC__
+        mode_t perm=0777;
+        return mkdir( path.c_str(), perm );
+#else
+        logman_fatal_g( "folder creation not supported in this OS [%s]", path.c_str() );
+#endif
+    }
+
     void check_file_stream_error( const ifstream& fin, const char* msg ) {
         if( !fin.fail() ) return;
         if( msg == NULL ) logman_fatal  ("error while reading file stream");
@@ -54,10 +63,6 @@ namespace kortex {
         passert_pointer( file_name );
         FILE* fp = fopen(file_name,"w");
         if( fp ) fclose(fp);
-    }
-
-    int create_folder(const string& path, mode_t perm) {
-        return mkdir( path.c_str(), perm );
     }
 
     bool delete_file(const string& path) {

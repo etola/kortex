@@ -30,9 +30,14 @@ namespace kortex {
         int     n = nc;
         int     info;
 
-        // dont forget - contents of m_A is destroyed here...
+        double * vt_ptr = NULL;
+        double *  u_ptr = NULL;
+        if( m_compute_vt ) vt_ptr = m_Vt.get_pointer();
+        if( m_compute_u  )  u_ptr = m_U.get_pointer();
+
+        // computing the A-transpose svd here -> dgesvd is column-major
         dgesvd_( &jobvt, &jobu, &n, &m, m_A.get_pointer(), &proxy_ld,
-                 m_Sd.get_pointer(), m_Vt.get_pointer(), &n, m_U.get_pointer(), &m, work, &work_sz,
+                 m_Sd.get_pointer(), vt_ptr, &n, u_ptr, &m, work, &work_sz,
                  &info );
     }
 }

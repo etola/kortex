@@ -14,6 +14,7 @@
 #ifndef KORTEX_COLOR_H
 #define KORTEX_COLOR_H
 
+#include <algorithm>
 #include <kortex/types.h>
 
 namespace kortex {

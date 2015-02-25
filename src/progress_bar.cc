@@ -15,6 +15,8 @@
 
 #include <ostream>
 #include <iostream>
+#include <algorithm>
+
 // #include <ctime>
 
 using std::string;

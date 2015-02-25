@@ -11,10 +11,16 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-#include <kortex/log_manager.h>
 #include <string>
+#include <ctime>
+
+#ifdef __GNUC__
 #include <cxxabi.h>
 #include <execinfo.h>
+#endif
+
+#include <kortex/check.h>
+#include <kortex/log_manager.h>
 
 using std::string;
 
@@ -26,6 +32,7 @@ namespace kortex {
     /// taken from
     /// http://mykospark.net/2009/09/runtime-backtrace-in-c-with-name-demangling/
     string demangle(const char* symbol) {
+#ifdef __GNUC__
         char temp[128];
         if( sscanf(symbol, "%*[^(]%*[^_]%127[^)+]", temp) == 1 ) {
             char* demangled = NULL;
@@ -37,13 +44,14 @@ namespace kortex {
                 return result;
             }
         }
-
         if( sscanf(symbol, "%127s", temp) == 1 )
             return temp;
+#endif
         return symbol;
     }
 
     void print_trace() {
+#ifdef __GNUC__
         void *array[50];
         size_t size    = backtrace (array, 50);
         char** strings = backtrace_symbols (array, size);
@@ -52,6 +60,8 @@ namespace kortex {
             fprintf(stderr, "[ %04d ] [ %s ]\n", int(size-i), demangle(strings[i]).c_str() );
         }
         free(strings);
+#endif
+        logman_warning("would have printed the stack in linux");
     }
 
     static void _fatal_func(const char* group, const char* msg, va_list prm) {

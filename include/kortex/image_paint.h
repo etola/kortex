@@ -20,8 +20,8 @@
 
 namespace kortex {
 
-    class Image;
-    class Rect2i;
+    class  Image;
+    struct Rect2i;
 
     void draw_point         ( Image& im, int x, int y, ColorName color, int thickness=0 );
     void draw_line          ( Image& im, int x0, int y0, int x1, int y1, ColorName color, int thickness=0 );

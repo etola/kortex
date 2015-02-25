@@ -29,14 +29,15 @@ namespace kortex {
 
     void draw_line( Image& im, int x0, int y0, int x1, int y1, ColorName color, int thickness ) {
         im.assert_type( IT_U_PRGB | IT_U_IRGB );
-        float dx = x1 - x0;
-        float dy = y1 - y0;
+        float dx = float( x1 - x0 );
+        float dy = float( y1 - y0 );
         float sz = sqrt(dx*dx + dy*dy);
         dx /= sz;
         dy /= sz;
         uchar cr, cg, cb;
         get_color(color, cr, cg, cb);
-        float y=y0, x=x0;
+        float y = float(y0);
+        float x = float(x0);
         while(1) {
             if( !im.is_inside( (int)x, (int)y ) ) break;
             im.set( (int)x, (int)y, thickness, cr, cg, cb);
@@ -105,7 +106,7 @@ namespace kortex {
 
         uchar cr, cg, cb;
         get_color(color, cr, cg, cb);
-        int sy = y + dr;
+        int sy = int(y + dr);
         int sx = x;
 
         for(int a=5; a<=360; a+=5 ) {
@@ -130,12 +131,9 @@ namespace kortex {
                 if( !im.is_inside(x,y) )
                     continue;
                 im.get(x,y,pr,pg,pb);
-                pr = ss * cr + (1.0f-ss) * pr;
-                pg = ss * cg + (1.0f-ss) * pg;
-                pb = ss * cb + (1.0f-ss) * pb;
-                if( pr>255 ) pr = 255;
-                if( pg>255 ) pg = 255;
-                if( pb>255 ) pb = 255;
+                pr = cast_to_gray_range( ss * cr + (1.0f-ss) * pr );
+                pg = cast_to_gray_range( ss * cg + (1.0f-ss) * pg );
+                pb = cast_to_gray_range( ss * cb + (1.0f-ss) * pb );
                 im.set(x, y, pr, pg, pb);
             }
         }
@@ -169,12 +167,9 @@ namespace kortex {
             for(int x=0; x<im.w(); x++) {
                 if( mask.getu(x, y) ) {
                     im.get(x,y,pr,pg,pb);
-                    pr = ss * cr + (1.0f-ss) * pr;
-                    pg = ss * cg + (1.0f-ss) * pg;
-                    pb = ss * cb + (1.0f-ss) * pb;
-                    if( pr>255 ) pr = 255;
-                    if( pg>255 ) pg = 255;
-                    if( pb>255 ) pb = 255;
+                    pr = cast_to_gray_range( ss * cr + (1.0f-ss) * pr );
+                    pg = cast_to_gray_range( ss * cg + (1.0f-ss) * pg );
+                    pb = cast_to_gray_range( ss * cb + (1.0f-ss) * pb );
                     im.set(x, y, pr, pg, pb);
                 }
             }

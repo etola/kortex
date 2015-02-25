@@ -42,12 +42,12 @@ namespace kortex {
         const T* row0 = img + y0*w*nc+c;
         const T* row1 = img + y1*w*nc+c;
 
-        double ab = alfa * beta;
+        float ab = alfa * beta;
 
         x1 = nc*x1;
         x0 = nc*x0;
 
-        return (alfa - ab) * row0[x1] + (1.0-beta)*(1.0-alfa) * row0[x0] + ab * row1[x1] + (beta-ab) * row1[x0];
+        return (alfa - ab) * row0[x1] + (1.0f-beta)*(1.0f-alfa) * row0[x0] + ab * row1[x1] + (beta-ab) * row1[x0];
     }
 
     /// assumes the position to compute interp is between n1 and n2 and t away from n1.
@@ -57,7 +57,7 @@ namespace kortex {
         float c2 = 2*n0-5*n1+4*n2-n3;
         float c3 = -n0+3*n1-3*n2+n3;
         float t2 = t*t;
-        return (c3*t2*t + c2*t2 + c1*t + c0)*0.5;
+        return float(c3*t2*t + c2*t2 + c1*t + c0)*0.5f;
     }
 
     /// computes the bicubic interpolation at y, x for channel ch for a

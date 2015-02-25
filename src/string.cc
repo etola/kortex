@@ -13,6 +13,7 @@
 // ---------------------------------------------------------------------------
 #include <kortex/string.h>
 #include <kortex/check.h>
+#include <kortex/linux_windows_defs.h>
 #include <cstring>
 
 namespace kortex {

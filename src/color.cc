@@ -22,7 +22,7 @@ namespace kortex {
             return;
         }
         h /= 60.0f;
-        int   i = floor( h );
+        int   i = (int)floor(h);
         float f = h - i;
         float p = v * ( 1 - s );
         float q = v * ( 1 - s * f );
