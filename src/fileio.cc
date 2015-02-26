@@ -71,13 +71,15 @@ namespace kortex {
         else                              return false;
     }
 
-    void open_or_fail(const string& file, ifstream &fin) {
-        fin.open( file.c_str() );
+    void open_or_fail( const string& file, ifstream &fin, bool binary ) {
+        if( binary ) fin.open( file.c_str(), ios::binary );
+        else         fin.open( file.c_str() );
         check_file_stream_error(fin, ("cannot open file: "+file).c_str());
     }
 
-    void open_or_fail(const string& file, ofstream &fout) {
-        fout.open( file.c_str() );
+    void open_or_fail( const string& file, ofstream &fout, bool binary ) {
+        if( binary ) fout.open( file.c_str(), ios::binary );
+        else         fout.open( file.c_str() );
         check_file_stream_error(fout, ("cannot open file: "+file).c_str());
     }
 
@@ -157,7 +159,7 @@ namespace kortex {
 
     void save_ascii(const string& file, const vector<bool>& array) {
         ofstream fout;
-        open_or_fail(file, fout);
+        open_or_fail(file, fout, false);
         write_array( fout, NULL, array );
         fout.close();
     }
@@ -165,7 +167,7 @@ namespace kortex {
     void load_ascii(const string& file, vector<bool>& array) {
         array.clear();
         ifstream fin;
-        open_or_fail(file, fin);
+        open_or_fail(file, fin, false);
         int narr;
         read_param( fin, NULL, narr );
         array.resize(narr);

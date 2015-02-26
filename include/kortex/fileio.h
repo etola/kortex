@@ -55,8 +55,8 @@ namespace kortex {
     int  create_folder( const string& path );
     bool delete_file  ( const string& path );
 
-    void open_or_fail(const string& file, ifstream &fin);
-    void open_or_fail(const string& file, ofstream &fout);
+    void open_or_fail( const string& file, ifstream &fin,  bool binary );
+    void open_or_fail( const string& file, ofstream &fout, bool binary );
 
     void file_exists_or_fail(const string& file);
     bool file_exists(const string& file);

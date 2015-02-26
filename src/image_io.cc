@@ -25,7 +25,7 @@ namespace kortex {
     void save_binary( const string& file, const Image* img ) {
         passert_pointer( img );
         ofstream fout;
-        open_or_fail( file, fout );
+        open_or_fail( file, fout, true );
         insert_binary_stream_begin_tag( fout );
         write_bparam( fout, img->w() );
         write_bparam( fout, img->h() );
@@ -48,7 +48,7 @@ namespace kortex {
     void load_binary( const string& file, Image* img ) {
         passert_pointer( img );
         ifstream fin;
-        open_or_fail( file, fin );
+        open_or_fail( file, fin, true );
         check_binary_stream_begin_tag( fin );
         int w, h, ch, type;
         read_bparam( fin, w );
@@ -72,7 +72,7 @@ namespace kortex {
 
     void read_ibin_size( const string& file, int& w, int& h, int& nc ) {
         ifstream fin;
-        open_or_fail( file, fin );
+        open_or_fail( file, fin, true );
         check_binary_stream_begin_tag( fin );
         read_bparam( fin, w );
         read_bparam( fin, h );

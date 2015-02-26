@@ -336,12 +336,12 @@ namespace kortex {
 
     void KMatrix::save( const string& file ) const {
         ofstream fout;
-        open_or_fail( file, fout );
+        open_or_fail( file, fout, false );
         save( fout, "X" );
         fout.close();
     }
     void KMatrix::save( ofstream& fout, const string& mat_name ) const {
-        fout << mat_name.c_str() << " " << nr << " " << nc << " ";
+        fout << mat_name.c_str() << "\n" << nr << " " << nc << " ";
         for( int r=0; r<nr; r++ ) {
             const double* row = get_row( r );
             for( int c=0; c<nc; c++ ) {
@@ -380,7 +380,7 @@ namespace kortex {
     void KMatrix::load( const string& file ) {
         passert_statement( !is_const(), "cannot modify const matrix" );
         ifstream fin;
-        open_or_fail( file, fin );
+        open_or_fail( file, fin, false );
         load( fin, "X" );
         fin.close();
     }
