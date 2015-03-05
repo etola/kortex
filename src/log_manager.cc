@@ -60,8 +60,9 @@ namespace kortex {
             fprintf(stderr, "[ %04d ] [ %s ]\n", int(size-i), demangle(strings[i]).c_str() );
         }
         free(strings);
-#endif
+#else
         logman_warning("would have printed the stack in linux");
+#endif
     }
 
     static void _fatal_func(const char* group, const char* msg, va_list prm) {
