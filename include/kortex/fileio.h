@@ -26,18 +26,6 @@ using std::ostream;
 #include <kortex/check.h>
 #include <kortex/string.h>
 
-#include <cfloat>
-
-#ifdef DBL_DECIMAL_DIG
-#define OP_DBL_Digs (DBL_DECIMAL_DIG)
-#else
-#ifdef DECIMAL_DIG
-#define OP_DBL_Digs (DECIMAL_DIG)
-#else
-#define OP_DBL_Digs (DBL_DIG + 3)
-#endif
-#endif
-
 namespace kortex {
 
     enum FileFormat { FF_NONE=0,
@@ -66,43 +54,6 @@ namespace kortex {
 //
 //
 //
-    inline string in_str( const int   & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%d", v );
-        return string(buffer);
-    }
-    inline string in_str( const float & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%.*e", OP_DBL_Digs-1, v );
-        return string(buffer);
-    }
-    inline string in_str( const double& v ) {
-        char buffer[1024];
-        sprintf( buffer, "%.*e", OP_DBL_Digs-1, v );
-        return string(buffer);
-    }
-    inline string in_str( const size_t& v ) {
-        char buffer[1024];
-        sprintf( buffer, "%zd", v );
-        return string(buffer);
-    }
-    inline string in_str( const bool  & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%d", v );
-        return string(buffer);
-    }
-    inline string in_str( const char  & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%c", v );
-        return string(buffer);
-    }
-    inline string in_str( const string& v ) {
-        return v;
-    }
-    inline string in_str( const char* v ) {
-        return string(v);
-    }
-
     template<typename T>
     void write_param( ofstream& fout, const char* param_name, const T& param ) {
         if( param_name ) fout << param_name << " ";
@@ -134,14 +85,6 @@ namespace kortex {
 
 //
 //
-
-    inline void in_value( const char* str, float  & v ) { v = (float)atof(str);       }
-    inline void in_value( const char* str, double & v ) { v =        atof(str);       }
-    inline void in_value( const char* str, int    & v ) { v =        atoi(str);       }
-    inline void in_value( const char* str, size_t & v ) { v =        atoi(str);       }
-    inline void in_value( const char* str, bool   & v ) { v =   bool(atoi(str)!=0);   }
-    inline void in_value( const char* str, char   & v ) { v = str[0];                 }
-    inline void in_value( const char* str, string & v ) { v = string(str);            }
 
     template<typename T>
     void read_param( ifstream& fin, const char* param_name, T& param ) {
