@@ -44,7 +44,8 @@ rotation.cc \
 svd.cc \
 sorting.cc \
 timer.cc \
-eigen_conversion.cc
+eigen_conversion.cc \
+option_parser.cc
 
 headers := \
 log_manager.h \
@@ -82,8 +83,8 @@ lapack_externs.h \
 svd.h \
 sorting.h \
 timer.h \
-eigen_conversion.h
-
+eigen_conversion.h \
+option_parser.h
 
 #
 # output info
