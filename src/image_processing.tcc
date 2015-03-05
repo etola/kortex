@@ -16,38 +16,26 @@
 namespace kortex {
 
     template<typename T>
-    float bilinear_interpolation(const T* img, const int& w, const int& h, const int& nc, const int& c, const float& x, const float& y) {
+    float bilinear_interpolation( const T* img, const int& w, const int& h, const int& nc, const int& c, const float& x, const float& y ) {
         assert_pointer( img );
-        passert_statement_g( x>=0 && x<=w-1 && y>=0 && y<=h-1, "[x %f][y %f] [w %d] [h %d]", x, y, w, h );
+        passert_statement_g( x>=0.0f && x<float(w) && y>=0.0f && y<float(h), "[x %f][y %f] [w %d] [h %d]", x, y, w, h );
 
         int   x0  = (int)floor( x );
         int   y0  = (int)floor( y );
-        int   x1  = x0+1;
-        int   y1  = y0+1;
+        int   x1  = std::min(x0+1, w-1);
+        int   y1  = std::min(y0+1, h-1);
 
-        float alfa = x0 - x;
-        float beta = y0 - y;
+        float alfa = x - x0;
+        float beta = y - y0;
 
-        if( alfa < 0.0001f ) {
-            alfa = 0.0f;
-            y1   = y0;
-        }
-        if( beta < 0.0001f ) {
-            beta = 0.0f;
-            x1   = x0;
-        }
         assert_statement( is_inside(x0,0,w) && is_inside(x1,0,w), "coords oob" );
         assert_statement( is_inside(y0,0,h) && is_inside(y1,0,h), "coords oob" );
 
-        const T* row0 = img + y0*w*nc+c;
-        const T* row1 = img + y1*w*nc+c;
+        const T* I = img + y0*w*nc + c;
+        const T* J = img + y1*w*nc + c;
 
-        float ab = alfa * beta;
-
-        x1 = nc*x1;
-        x0 = nc*x0;
-
-        return (alfa - ab) * row0[x1] + (1.0f-beta)*(1.0f-alfa) * row0[x0] + ab * row1[x1] + (beta-ab) * row1[x0];
+        return (1.0f-beta) * ( (1.0f-alfa) * I[x0] + alfa * I[x1] )
+            +        beta  * ( (1.0f-alfa) * J[x0] + alfa * J[x1] );
     }
 
     /// assumes the position to compute interp is between n1 and n2 and t away from n1.
