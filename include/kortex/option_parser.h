@@ -55,12 +55,21 @@ namespace kortex {
 
         void add_option( const string& name, const string& explanation, const string& type, OptionType opt_type, const string& default_value="" );
 
+        void set_default( const string& name, ... );
+
+        void set_default( const string& name, const string& v0 );
+        void set_default( const string& name, const string& v0, const string& v1 );
+        void set_default( const string& name, const string& v0, const string& v1, const string& v2 );
+        void set_default( const string&
+                          name, const string& v0, const string& v1,
+                          const string& v2, const string& v3 );
+
         void print_help   () const;
         void print_options() const;
 
         int  n_options    () const { return m_options.size(); }
 
-        int get_option( const char* str ) const;
+        int get_option( const string& str ) const;
         const OptionItem& get_option( int i ) const {
             assert_boundary( i, 0, n_options() );
             return m_options[i];
@@ -107,6 +116,10 @@ namespace kortex {
         double getd( const char* str ) const { double v; get( str, v ); return v; }
         string gets( const char* str ) const { string v; get( str, v ); return v; }
         bool   getb( const char* str ) const { bool   v; get( str, v ); return v; }
+
+        double getd( const char* str, int id ) const;
+        int    geti( const char* str, int id ) const;
+        string gets( const char* str, int id ) const;
 
         template<typename T>
         void get( const char* str, vector<T>& v ) const {

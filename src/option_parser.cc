@@ -65,24 +65,74 @@ namespace kortex {
 
     }
 
+    void OptionParser::set_default( const string& name, const string& v0 ) {
+        int oid = get_option( name );
+        passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
+        OptionItem& opt = get_option(oid);
+        opt.push_value(v0);
+    }
+    void OptionParser::set_default( const string& name, const string& v0, const string& v1 ) {
+        int oid = get_option( name );
+        passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
+        OptionItem& opt = get_option(oid);
+        opt.push_value(v0);
+        opt.push_value(v1);
+    }
+    void OptionParser::set_default( const string& name,
+                                    const string& v0, const string& v1, const string& v2 ) {
+        int oid = get_option( name );
+        passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
+        OptionItem& opt = get_option(oid);
+        opt.push_value(v0);
+        opt.push_value(v1);
+        opt.push_value(v2);
+    }
+    void OptionParser::set_default( const string& name,
+                                    const string& v0, const string& v1,
+                                    const string& v2, const string& v3 ) {
+        int oid = get_option( name );
+        passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
+        OptionItem& opt = get_option(oid);
+        opt.push_value(v0);
+        opt.push_value(v1);
+        opt.push_value(v2);
+        opt.push_value(v3);
+    }
+
 
     void OptionParser::print_help() const {
         printf("\n");
+
+        int opt_len = 3;
+        int exp_len = 20;
         for(int i=0; i<n_options(); i++ ) {
+            const OptionItem& opt = get_option(i);
+            exp_len = std::min( 40, std::max( exp_len, (int)opt.explanation.size() ) );
+            opt_len = std::min( 10, std::max( opt_len, (int)opt.name.size() ) );
+        }
+
+        for( int i=0; i<n_options(); i++ ) {
             const OptionItem& opt = get_option(i);
             switch( opt.opt_type ) {
             case OP_MULTI_INPUT:
-                printf( "%-10s N %-10s | %s\n", opt.name.c_str(), data_type(opt.data_type).c_str(), opt.explanation.c_str() );
+                if( !opt.n_values() ) {
+                    printf( "%-*s  N %-7s| %-*s |\n", opt_len, opt.name.c_str(), data_type(opt.data_type).c_str(), exp_len, opt.explanation.c_str() );
+                } else {
+                    printf( "%-*s  N %-7s| %-*s | def: ", opt_len, opt.name.c_str(), data_type(opt.data_type).c_str(), exp_len, opt.explanation.c_str() );
+                    for( int j=0; j<opt.n_values(); j++ )
+                        printf( "%s ", opt.get_value(j).c_str() );
+                    printf("\n");
+                }
                 break;
             case OP_SINGLE_INPUT: {
                 if( !opt.n_values() )
-                    printf( "%-12s %-10s | %s\n", opt.name.c_str(), data_type(opt.data_type).c_str(), opt.explanation.c_str() );
+                    printf( "%-*s  %-7s| %-*s |\n", opt_len+2, opt.name.c_str(), data_type(opt.data_type).c_str(), exp_len, opt.explanation.c_str() );
                 else
-                    printf( "%-12s %-10s | %s [default %s]\n", opt.name.c_str(), data_type(opt.data_type).c_str(), opt.explanation.c_str(), opt.get_value(0).c_str() );
+                    printf( "%-*s  %-7s| %-*s | def: %s\n", opt_len+2, opt.name.c_str(), data_type(opt.data_type).c_str(), exp_len, opt.explanation.c_str(), opt.get_value(0).c_str() );
             }
                 break;
             case OP_NO_INPUT:
-                printf( "%-12s %-10s | %s\n", opt.name.c_str(), "", opt.explanation.c_str() );
+                printf( "%-*s  %-7s| %-*s |\n", opt_len+2, opt.name.c_str(), "", exp_len, opt.explanation.c_str() );
                 break;
             }
         }
@@ -104,10 +154,10 @@ namespace kortex {
 
     }
 
-    int OptionParser::get_option( const char* str ) const {
+    int OptionParser::get_option( const string& str ) const {
         int oid = -1;
         for( int i=0; i<n_options(); i++ ) {
-            if( !strcmp( str, m_options[i].name.c_str() ) ) {
+            if( !strcmp( str.c_str(), m_options[i].name.c_str() ) ) {
                 oid = i;
                 break;
             }
@@ -154,6 +204,51 @@ namespace kortex {
                 opt.push_value( argv[cnt++] );
             }
         }
+    }
+
+    double OptionParser::getd( const char* str, int id ) const {
+        int oid = get_option( str );
+        if( oid == -1 )
+            logman_fatal_g( "no such key [opt %s]\n", str );
+        const OptionItem& opt = get_option(oid);
+        double v;
+        if( opt.data_type != get_type(v) )
+            logman_fatal_g( "option type and requested data type does not match [opt %s]\n", opt.name.c_str() );
+        passert_statement_g( opt.opt_type == OP_MULTI_INPUT,
+                             "need to be multi-element [%s]", str );
+        passert_boundary( id, 0, opt.n_values() );
+        in_value( opt.get_value(id).c_str(), v );
+        return v;
+    }
+
+    int OptionParser::geti( const char* str, int id ) const {
+        int oid = get_option( str );
+        if( oid == -1 )
+            logman_fatal_g( "no such key [opt %s]\n", str );
+        const OptionItem& opt = get_option(oid);
+        int v;
+        if( opt.data_type != get_type(v) )
+            logman_fatal_g( "option type and requested data type does not match [opt %s]\n", opt.name.c_str() );
+        passert_statement_g( opt.opt_type == OP_MULTI_INPUT,
+                             "need to be multi-element [%s]", str );
+        passert_boundary( id, 0, opt.n_values() );
+        in_value( opt.get_value(id).c_str(), v );
+        return v;
+    }
+
+    string OptionParser::gets( const char* str, int id ) const {
+        int oid = get_option( str );
+        if( oid == -1 )
+            logman_fatal_g( "no such key [opt %s]\n", str );
+        const OptionItem& opt = get_option(oid);
+        string v;
+        if( opt.data_type != get_type(v) )
+            logman_fatal_g( "option type and requested data type does not match [opt %s]\n", opt.name.c_str() );
+        passert_statement_g( opt.opt_type == OP_MULTI_INPUT,
+                             "need to be multi-element [%s]", str );
+        passert_boundary( id, 0, opt.n_values() );
+        v = opt.get_value(id);
+        return v;
     }
 
 
