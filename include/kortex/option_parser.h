@@ -112,10 +112,10 @@ namespace kortex {
             return false;
         }
 
-        int    geti( const char* str ) const { int    v; get( str, v ); return v; }
-        double getd( const char* str ) const { double v; get( str, v ); return v; }
-        string gets( const char* str ) const { string v; get( str, v ); return v; }
-        bool   getb( const char* str ) const { bool   v; get( str, v ); return v; }
+        int    geti( const char* str ) const { int    v=0;    get( str, v ); return v; }
+        double getd( const char* str ) const { double v=0.0;  get( str, v ); return v; }
+        string gets( const char* str ) const { string v="";   get( str, v ); return v; }
+        bool   getb( const char* str ) const { bool   v=true; get( str, v ); return v; }
 
         double getd( const char* str, int id ) const;
         int    geti( const char* str, int id ) const;
