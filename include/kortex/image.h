@@ -282,14 +282,6 @@ namespace kortex {
         }
     };
 
-
-
-
-
-
-
-
-
 ///
     size_t      image_no_channels ( const ImageType& it ) {
         switch( it ) {
@@ -388,6 +380,9 @@ namespace kortex {
         return true;
     }
 
+//
+    void extract_region_patch  ( const Image& img, int x0, int y0, int x1, int y1, Image& patch );
+    void extract_centered_patch( const Image& img, int x0, int y0, int pw, int ph, Image& patch );
 
 
 }

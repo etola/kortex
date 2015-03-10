@@ -830,4 +830,45 @@ namespace kortex {
         return true;
     }
 
+//
+//
+//
+    void extract_region_patch( const Image& img, int x0, int y0, int x1, int y1, Image& patch ) {
+        assert_statement_g( x0<x1 && y0<y1, "[sp %d %d] [ep %d %d]", x0, y0, x1, y1 );
+        assert_statement_g( x0<img.w() && y0<img.h(), "invalid region [sp %d %d] [ep %d %d]", x0, y1, x1, y1 );
+        assert_statement_g( x1>0 && y1>0, "invalid region [sp %d %d] [ep %d %d]", x0, y1, x1, y1 );
+        int px = x1-x0;
+        int py = y1-y0;
+        patch.create( px, py, img.type() );
+        patch.zero();
+
+        int sx0=x0, sy0=y0, sx1=x1, sy1=y1;
+        int dx =0,  dy = 0;
+
+        if( x0 < 0 ) {
+            sx0 = 0;
+            dx  = -x0;
+        }
+        if( y0 < 0 ) {
+            sy0 = 0;
+            dy  = -y0;
+        }
+        sx1 = std::min( sx1, img.w() );
+        sy1 = std::min( sy1, img.h() );
+
+        patch.copy_from_region( &img, sx0, sy0, sx1-sx0, sy1-sy0, dx, dy );
+    }
+
+    void extract_centered_patch( const Image& img, int x0, int y0, int pw, int ph, Image& patch ) {
+        int x1 = x0 + pw/2;
+        int y1 = y0 + ph/2;
+        x0 -= pw/2;
+        y0 -= ph/2;
+        if( x1-x0 != pw ) x1++;
+        if( y1-y0 != ph ) y1++;
+        assert_statement_g( (x1-x0 == pw) && (y1-y0 == ph), "[xy0 %d %d pwh %d %d -> x1 y1 %d %d]", x0, y0, pw, ph, x1, y1 );
+        extract_region_patch( img, x0, y0, x1, y1, patch );
+    }
+
+
 }
