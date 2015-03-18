@@ -11,9 +11,9 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
-#include <kortex/image_conversion.h>
-#include <kortex/image.h>
+
 #include <kortex/color.h>
+#include <kortex/image_conversion.h>
 
 namespace kortex {
 
@@ -462,6 +462,10 @@ namespace kortex {
         }
     }
 
+    void convert_image( const Image& src, ImageType type, Image& dst ) {
+        dst.create( src.w(), src.h(), type );
+        convert_image( &src, &dst );
+    }
 
     void convert_image( const Image* src, Image* dst ) {
         passert_pointer( src && dst );
