@@ -150,6 +150,9 @@ namespace kortex {
 
     private:
         vector<OptionItem> m_options;
+
+        /// returns how many arguments need to be read.
+        int  num_option_arguments( int argc, char** argv, int start ) const;
     };
 
 

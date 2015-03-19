@@ -99,7 +99,6 @@ namespace kortex {
         opt.push_value(v3);
     }
 
-
     void OptionParser::print_help() const {
         printf("\n");
 
@@ -116,9 +115,9 @@ namespace kortex {
             switch( opt.opt_type ) {
             case OP_MULTI_INPUT:
                 if( !opt.n_values() ) {
-                    printf( "%-*s  N %-7s| %-*s |\n", opt_len, opt.name.c_str(), data_type(opt.data_type).c_str(), exp_len, opt.explanation.c_str() );
+                    printf( "%-*s  * %-7s| %-*s |\n", opt_len, opt.name.c_str(), data_type(opt.data_type).c_str(), exp_len, opt.explanation.c_str() );
                 } else {
-                    printf( "%-*s  N %-7s| %-*s | def: ", opt_len, opt.name.c_str(), data_type(opt.data_type).c_str(), exp_len, opt.explanation.c_str() );
+                    printf( "%-*s  * %-7s| %-*s | def: ", opt_len, opt.name.c_str(), data_type(opt.data_type).c_str(), exp_len, opt.explanation.c_str() );
                     for( int j=0; j<opt.n_values(); j++ )
                         printf( "%s ", opt.get_value(j).c_str() );
                     printf("\n");
@@ -165,6 +164,24 @@ namespace kortex {
         return oid;
     }
 
+    int  OptionParser::num_option_arguments( int argc, char** argv, int start ) const {
+
+        if( start < 0 || start >= argc ) {
+            logman_warning_g( "passing oob starting point [ %d, %d]", start, argc );
+            return -1;
+        }
+
+        int counter = 0;
+        while( start < argc ) {
+            const char* str = argv[start++];
+            if( str[0] == '-' )
+                break;
+            counter++;
+        }
+
+        return counter;
+    }
+
     void OptionParser::parse( int argc, char** argv ) {
 
         int cnt = 1;
@@ -186,18 +203,22 @@ namespace kortex {
             }
 
             if( cnt >= argc ) {
-                printf( "false input options\n" );
+                printf( "something wrong with the option arguments [%s]", opt.name.c_str() );
                 print_help();
                 exit(1);
             }
-            int n = 1;
-            if( opt.opt_type == OP_MULTI_INPUT )
-                n = atoi( argv[cnt++] );
+
+            int n = num_option_arguments( argc, argv, cnt );
+            if( n == -1 ) {
+                printf( "something wrong with the number of option arguments [%s]", opt.name.c_str() );
+                print_help();
+                exit(1);
+            }
 
             opt.clear();
             for( int i=0; i<n; i++ ) {
                 if( cnt >= argc ) {
-                    printf( "false input options\n" );
+                    printf( "something wrong with the option arguments [%s]", opt.name.c_str() );
                     print_help();
                     exit(1);
                 }
