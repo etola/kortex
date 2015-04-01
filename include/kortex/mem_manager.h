@@ -14,20 +14,24 @@
 #ifndef KORTEX_MEM_MANAGER_H
 #define KORTEX_MEM_MANAGER_H
 
+#include <cstdint>
+
 #include <kortex/types.h>
 #include <kortex/check.h>
 
 namespace kortex {
 
-    void allocate(    int*& ptr, const size_t& n_elem );
-    void allocate(  float*& ptr, const size_t& n_elem );
-    void allocate( double*& ptr, const size_t& n_elem );
-    void allocate(  uchar*& ptr, const size_t& n_elem );
+    void allocate(      int*& ptr, const size_t& n_elem );
+    void allocate(    float*& ptr, const size_t& n_elem );
+    void allocate(   double*& ptr, const size_t& n_elem );
+    void allocate(    uchar*& ptr, const size_t& n_elem );
+    void allocate( uint64_t*& ptr, const size_t& n_elem );
 
-    void deallocate(    int*& ptr );
-    void deallocate(  float*& ptr );
-    void deallocate( double*& ptr );
-    void deallocate(  uchar*& ptr );
+    void deallocate(      int*& ptr );
+    void deallocate( uint64_t*& ptr );
+    void deallocate(    float*& ptr );
+    void deallocate(   double*& ptr );
+    void deallocate(    uchar*& ptr );
 
     enum MemoryMode { MM_16_UNALIGNED=0, MM_16_ALIGNED=1 };
 

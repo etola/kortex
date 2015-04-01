@@ -81,11 +81,19 @@ namespace kortex {
         ptr = (uchar*)( allocate(memsz) );
         if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", n_elem/GB );
     }
+    void allocate( uint64_t*& ptr, const size_t& n_elem ) {
+        passert_pointer_size( n_elem );
+        passert_statement( ptr == NULL, "passed non-NULL pointer" );
+        size_t memsz = n_elem * sizeof(*ptr);
+        ptr = (uint64_t*)( allocate(memsz) );
+        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", n_elem/GB );
+    }
 
-    void deallocate(    int*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
-    void deallocate(  float*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
-    void deallocate( double*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
-    void deallocate(  uchar*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
+    void deallocate( uint64_t*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
+    void deallocate(      int*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
+    void deallocate(    float*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
+    void deallocate(   double*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
+    void deallocate(    uchar*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }
 
 
 }
