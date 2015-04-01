@@ -89,6 +89,8 @@ namespace kortex {
 #define assert_number(v)                        { if( !is_valid_number(v) ) { logman_fatal("nan/inf test failed"); } }
 #define assert_noalias(obj1,obj2)               { if( &obj1 == &obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #define assert_noalias_p(obj1,obj2)             { if(  obj1 ==  obj2 ) { logman_fatal("aliasing is not allowed"); } }
+#define debug_warning( statement, msg )      { if( !(statement) ) { logman_warning(msg); } }
+#define debug_warning_g(statement, msg, ...) { if( !(statement) ) { logman_warning_g(msg, __VA_ARGS__); } }
 #else
 #define assert_statement( statement, msg ) { }
 #define assert_statement_g(statement, msg, ...) { }
@@ -98,6 +100,8 @@ namespace kortex {
 #define assert_number(num) { }
 #define assert_noalias(obj1,obj2) { }
 #define assert_noalias_p(obj1,obj2) { }
+#define debug_warning( statement, msg      ) { }
+#define debug_warning_g( statement, msg, ... ) { }
 #endif
 
 /// persistent assert -> stays thru runtime
