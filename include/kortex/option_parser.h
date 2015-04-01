@@ -122,7 +122,7 @@ namespace kortex {
         string gets( const char* str, int id ) const;
 
         template<typename T>
-        void get( const char* str, vector<T>& v ) const {
+        bool get( const char* str, vector<T>& v ) const {
             int oid = get_option( str );
             if( oid == -1 ) {
                 printf( "no such key [%s]\n", str );
@@ -138,7 +138,7 @@ namespace kortex {
             v.clear();
             if( opt.n_values() == 0 ) {
                 printf( "option not set [%s]!\n", str );
-                return;
+                return false;
             }
 
             for( int i=0; i<opt.n_values(); i++ ) {
@@ -146,6 +146,8 @@ namespace kortex {
                 in_value( opt.get_value(i).c_str(), tp );
                 v.push_back( tp );
             }
+
+            return true;
         }
 
     private:
