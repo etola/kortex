@@ -368,12 +368,12 @@ namespace kortex {
 
     void flip_image_ver( Image& img ) {
 
-        img.passert_type( IT_F_GRAY | IT_U_GRAY );
+        img.passert_type( IT_F_GRAY | IT_U_GRAY | IT_U_PRGB );
         int w = img.w();
         int h = img.h();
 
-        switch( img.precision() ) {
-        case TYPE_FLOAT: {
+        switch( img.type() ) {
+        case IT_F_GRAY: {
             for( int y=0; y<h/2; y++ ) {
                 float* urow = img.get_row_f(y);
                 float* drow = img.get_row_f(h-y-1);
@@ -382,12 +382,23 @@ namespace kortex {
                 }
             }
         } break;
-        case TYPE_UCHAR: {
+        case IT_U_GRAY: {
             for( int y=0; y<h/2; y++ ) {
                 uchar* urow = img.get_row_u(y);
                 uchar* drow = img.get_row_u(h-y-1);
                 for( int x=0; x<w; x++ ) {
                     std::swap( urow[x], drow[x] );
+                }
+            }
+        } break;
+        case IT_U_PRGB: {
+            for( int y=0; y<h/2; y++ ) {
+                uchar* urow = img.get_row_u(y);
+                uchar* drow = img.get_row_u(h-y-1);
+                for( int x=0; x<w; x++ ) {
+                    std::swap( urow[3*x  ], drow[3*x  ] );
+                    std::swap( urow[3*x+1], drow[3*x+1] );
+                    std::swap( urow[3*x+2], drow[3*x+2] );
                 }
             }
         } break;
