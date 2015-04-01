@@ -391,9 +391,9 @@ namespace kortex {
         assert_type( IT_U_PRGB );
         passert_statement_g( x0>=0 && x0<=m_w-1, "pixel oob [%f %f]", x0, y0 );
         passert_statement_g( y0>=0 && y0<=m_h-1, "pixel oob [%f %f]", x0, y0 );
-        r = bilinear_interpolation( m_data_u, m_w, m_h, 3, 0, x0, y0 );
-        g = bilinear_interpolation( m_data_u, m_w, m_h, 3, 1, x0, y0 );
-        b = bilinear_interpolation( m_data_u, m_w, m_h, 3, 2, x0, y0 );
+        r = bilinear_interpolation( m_data_u, m_w, m_h, m_ch, 0, x0, y0 );
+        g = bilinear_interpolation( m_data_u, m_w, m_h, m_ch, 1, x0, y0 );
+        b = bilinear_interpolation( m_data_u, m_w, m_h, m_ch, 2, x0, y0 );
     }
     void Image::get_bilinear_ui( const float& x0, const float& y0, float& r, float& g, float& b ) const {
         assert_type( IT_U_IRGB );
@@ -434,9 +434,9 @@ namespace kortex {
     void Image::get_bicubic_up( const float& x0, const float& y0, float& r, float& g, float& b ) const {
         assert_type( IT_U_PRGB );
         passert_statement( is_inside_margin(x0,y0,2), "pixel oob" );
-        r = bicubic_interpolation( m_data_u, m_w, m_h, 3, 0, x0, y0 );
-        g = bicubic_interpolation( m_data_u, m_w, m_h, 3, 1, x0, y0 );
-        b = bicubic_interpolation( m_data_u, m_w, m_h, 3, 2, x0, y0 );
+        r = bicubic_interpolation( m_data_u, m_w, m_h, m_ch, 0, x0, y0 );
+        g = bicubic_interpolation( m_data_u, m_w, m_h, m_ch, 1, x0, y0 );
+        b = bicubic_interpolation( m_data_u, m_w, m_h, m_ch, 2, x0, y0 );
     }
     void Image::get_bicubic_ui( const float& x0, const float& y0, float& r, float& g, float& b ) const {
         assert_type( IT_U_IRGB );

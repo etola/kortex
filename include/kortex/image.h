@@ -31,7 +31,8 @@ namespace kortex {
                      IT_F_PRGB=8,    // float 3-channel pixel-ordered
                      IT_U_IRGB=16,   // uchar 3-channel image-ordered
                      IT_F_IRGB=32,   // float 3-channel image-ordered
-                     IT_I_GRAY=64 }; // int   1-channel
+                     IT_I_GRAY=64    // int   1-channel
+    };
 
     enum ChannelType { ITC_PIXEL=1,   // pixel-ordered  [ r0g0b0 r1g1b1...]
                        ITC_IMAGE=2 }; // image-ordered  [ r0r1r2 g0g1g2...]
@@ -285,27 +286,27 @@ namespace kortex {
 ///
     size_t      image_no_channels ( const ImageType& it ) {
         switch( it ) {
-        case IT_U_GRAY: return 1;
-        case IT_F_GRAY: return 1;
-        case IT_I_GRAY: return 1;
-        case IT_U_PRGB: return 3;
-        case IT_F_PRGB: return 3;
-        case IT_U_IRGB: return 3;
-        case IT_F_IRGB: return 3;
-        default       : switch_fatality();
+        case IT_U_GRAY  : return 1;
+        case IT_F_GRAY  : return 1;
+        case IT_I_GRAY  : return 1;
+        case IT_U_PRGB  : return 3;
+        case IT_F_PRGB  : return 3;
+        case IT_U_IRGB  : return 3;
+        case IT_F_IRGB  : return 3;
+        default         : switch_fatality();
         }
         return 0;
     }
     DataType    image_precision   ( const ImageType& it ) {
         switch( it ) {
-        case IT_U_GRAY:
-        case IT_U_PRGB:
-        case IT_U_IRGB: return TYPE_UCHAR;
-        case IT_F_GRAY:
-        case IT_F_PRGB:
-        case IT_F_IRGB: return TYPE_FLOAT;
-        case IT_I_GRAY: return TYPE_INT;
-        default       : switch_fatality();
+        case IT_U_GRAY  :
+        case IT_U_PRGB  :
+        case IT_U_IRGB  :return TYPE_UCHAR;
+        case IT_F_GRAY  :
+        case IT_F_PRGB  :
+        case IT_F_IRGB  : return TYPE_FLOAT;
+        case IT_I_GRAY  : return TYPE_INT;
+        default         : switch_fatality();
         }
         return TYPE_UCHAR;
     }
@@ -314,14 +315,14 @@ namespace kortex {
     }
     ChannelType image_channel_type( const ImageType& it ) {
         switch( it ) {
-        case IT_U_GRAY:
-        case IT_F_GRAY:
-        case IT_I_GRAY:
-        case IT_U_PRGB:
-        case IT_F_PRGB: return ITC_PIXEL;
-        case IT_U_IRGB:
-        case IT_F_IRGB: return ITC_IMAGE;
-        default       : switch_fatality();
+        case IT_U_GRAY  :
+        case IT_F_GRAY  :
+        case IT_I_GRAY  :
+        case IT_U_PRGB  :
+        case IT_F_PRGB  : return ITC_PIXEL;
+        case IT_U_IRGB  :
+        case IT_F_IRGB  : return ITC_IMAGE;
+        default         : switch_fatality();
         }
     }
     ImageType   image_type        ( DataType precision,
@@ -356,13 +357,13 @@ namespace kortex {
     }
     ImageType get_image_type( int im_type ) {
         switch( im_type ) {
-        case 1 : return IT_U_GRAY;
-        case 2 : return IT_F_GRAY;
-        case 4 : return IT_U_PRGB;
-        case 8 : return IT_F_PRGB;
-        case 16: return IT_U_IRGB;
-        case 32: return IT_F_IRGB;
-        case 64: return IT_I_GRAY;
+        case 1   : return IT_U_GRAY;
+        case 2   : return IT_F_GRAY;
+        case 4   : return IT_U_PRGB;
+        case 8   : return IT_F_PRGB;
+        case 16  : return IT_U_IRGB;
+        case 32  : return IT_F_IRGB;
+        case 64  : return IT_I_GRAY;
         default: switch_fatality();
         }
     }
