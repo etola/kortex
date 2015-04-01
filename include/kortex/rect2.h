@@ -72,6 +72,8 @@ namespace kortex {
             id = 0;
         }
 
+        void reset_max_region();
+
         void init(int xmin, int xmax, int ymin, int ymax) {
             lx = xmin;
             ux = xmax;

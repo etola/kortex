@@ -13,6 +13,8 @@
 // ---------------------------------------------------------------------------
 
 #include <algorithm>
+#include <climits>
+
 #include <kortex/rect2.h>
 
 namespace kortex {
@@ -51,6 +53,10 @@ namespace kortex {
 //
 //
 
+    void Rect2i::reset_max_region() {
+        init( INT_MIN, INT_MAX, INT_MIN, INT_MAX );
+        id = 0;
+    }
 
     bool Rect2i::is_inside(int x, int y) const {
         if( x>=lx && x<ux && y>=ly && y<uy ) return true;
