@@ -46,6 +46,8 @@ namespace kortex {
                                             ChannelType channel_type );
     inline ImageType get_image_type( int im_type );
 
+    inline string image_type_name( const ImageType& it );
+
 ///
 
     class Image {
@@ -276,14 +278,29 @@ namespace kortex {
         /// asserts the image type - persistent in DEBUG/RELEASE mode
         void passert_type( int type, const char* msg = NULL ) const {
             if( msg ) {
-                passert_statement_g( m_type & type, "invalid image type [%s]", msg );
+                passert_statement_g( m_type & type, "invalid image type [is %s] [req %s] [%s]", image_type_name(m_type).c_str(), image_type_name((ImageType)type).c_str(), msg );
             } else {
-                passert_statement  ( m_type & type, "invalid image type" );
+                passert_statement_g( m_type & type, "invalid image type [is %s] [req %s]",  image_type_name(m_type).c_str(), image_type_name((ImageType)type).c_str() );
             }
         }
     };
 
 ///
+    string image_type_name( const ImageType& it ) {
+        switch( it ) {
+        case IT_U_GRAY  : return "IT_U_GRAY";
+        case IT_F_GRAY  : return "IT_F_GRAY";
+        case IT_I_GRAY  : return "IT_I_GRAY";
+        case IT_U_PRGB  : return "IT_U_PRGB";
+        case IT_F_PRGB  : return "IT_F_PRGB";
+        case IT_U_IRGB  : return "IT_U_IRGB";
+        case IT_F_IRGB  : return "IT_F_IRGB";
+        default         : switch_fatality();
+        }
+        return 0;
+    }
+
+
     size_t      image_no_channels ( const ImageType& it ) {
         switch( it ) {
         case IT_U_GRAY  : return 1;
