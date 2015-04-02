@@ -66,6 +66,9 @@ namespace kortex {
         get_color( (ColorName)mc, cr, cg, cb);
     }
 
+    ColorName get_color( const string&    str   );
+    string    get_color( const ColorName& color );
+
     void hsv_to_rgb( float h, float s, float v, float &r, float &g, float &b );
 
 
