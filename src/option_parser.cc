@@ -139,18 +139,23 @@ namespace kortex {
     }
 
     void OptionParser::print_options() const {
-
         printf( "\n" );
         for( int i=0; i<n_options(); i++ ) {
             const OptionItem& opt = get_option(i);
-            printf( "%s:\n", opt.name.c_str() );
-            for( int j=0; j<opt.n_values(); j++ ) {
-                printf( "%20s\n", opt.get_value(j).c_str() );
+            if( opt.opt_type == OP_MULTI_INPUT ) {
+                for( int j=0; j<opt.n_values(); j++ ) {
+                    if( j == 0 )
+                        printf( "%-20s: %-20s\n", opt.name.c_str(), opt.get_value(j).c_str() );
+                    else
+                        printf( "%-20s  %-20s\n", "", opt.get_value(j).c_str() );
+                }
+            } else if( opt.opt_type == OP_SINGLE_INPUT ) {
+                printf( "%-20s: %-20s\n", opt.name.c_str(), opt.get_value(0).c_str() );
+            } else {
+                printf( "%-20s: %-20d\n", opt.name.c_str(), this->getb(opt.name.c_str()) );
             }
-            printf( "\n" );
         }
         printf( "\n" );
-
     }
 
     int OptionParser::get_option( const string& str ) const {

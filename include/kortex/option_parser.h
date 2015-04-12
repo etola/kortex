@@ -121,6 +121,18 @@ namespace kortex {
         int    geti( const char* str, int id ) const;
         string gets( const char* str, int id ) const;
 
+        bool is_set( const char* str ) const {
+            int oid = get_option( str );
+            if( oid == -1 ) {
+                return false;
+            }
+            const OptionItem& opt = get_option(oid);
+            if( opt.n_values() == 0 ) {
+                return false;
+            }
+            return true;
+        }
+
         template<typename T>
         bool get( const char* str, vector<T>& v ) const {
             int oid = get_option( str );
@@ -137,7 +149,7 @@ namespace kortex {
 
             v.clear();
             if( opt.n_values() == 0 ) {
-                printf( "option not set [%s]!\n", str );
+                logman_warning_g( "option not set [%s]!\n", str );
                 return false;
             }
 
