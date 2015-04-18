@@ -33,7 +33,7 @@ namespace kortex {
 
         void   clear() { value.clear(); }
 
-        string get_value( int i ) const { return value[i];     }
+        string get_value( int i ) const { assert_boundary(i,0,n_values()); return value[i];     }
         int    n_values()         const { return value.size(); }
 
         void push_value( const string& str ) { value.push_back( str ); }
@@ -120,6 +120,16 @@ namespace kortex {
         double getd( const char* str, int id ) const;
         int    geti( const char* str, int id ) const;
         string gets( const char* str, int id ) const;
+
+        int    n_values( const char* str ) const {
+            int oid = get_option(str);
+            if( oid == -1 ) {
+                printf( "\n\ninvalid option requested [%s]\n", str );
+                print_help();
+                exit(0);
+            }
+            return get_option(oid).n_values();
+        }
 
         bool is_set( const char* str ) const {
             int oid = get_option( str );

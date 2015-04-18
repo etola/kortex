@@ -143,6 +143,9 @@ namespace kortex {
         for( int i=0; i<n_options(); i++ ) {
             const OptionItem& opt = get_option(i);
             if( opt.opt_type == OP_MULTI_INPUT ) {
+                if( opt.n_values() == 0 ) {
+                    printf( "%-20s: %-20s\n", opt.name.c_str(), "" );
+                }
                 for( int j=0; j<opt.n_values(); j++ ) {
                     if( j == 0 )
                         printf( "%-20s: %-20s\n", opt.name.c_str(), opt.get_value(j).c_str() );
@@ -150,7 +153,10 @@ namespace kortex {
                         printf( "%-20s  %-20s\n", "", opt.get_value(j).c_str() );
                 }
             } else if( opt.opt_type == OP_SINGLE_INPUT ) {
-                printf( "%-20s: %-20s\n", opt.name.c_str(), opt.get_value(0).c_str() );
+                if( opt.n_values() == 0 )
+                    printf( "%-20s: %-20s\n", opt.name.c_str(), "" );
+                else
+                    printf( "%-20s: %-20s\n", opt.name.c_str(), opt.get_value(0).c_str() );
             } else {
                 printf( "%-20s: %-20d\n", opt.name.c_str(), this->getb(opt.name.c_str()) );
             }
@@ -169,7 +175,7 @@ namespace kortex {
         return oid;
     }
 
-    int  OptionParser::num_option_arguments( int argc, char** argv, int start ) const {
+    int OptionParser::num_option_arguments( int argc, char** argv, int start ) const {
 
         if( start < 0 || start >= argc ) {
             logman_warning_g( "passing oob starting point [ %d, %d]", start, argc );
@@ -179,13 +185,21 @@ namespace kortex {
         int counter = 0;
         while( start < argc ) {
             const char* str = argv[start++];
-            if( str[0] == '-' )
+            if( str[0] != '-' ) {
+                counter++;
+                continue;
+            }
+            if( strlen(str) <= 1 )
                 break;
-            counter++;
+            if( isdigit(str[1]) || str[1] =='.' )
+                counter++;
+            else
+                break;
         }
 
         return counter;
     }
+
 
     void OptionParser::parse( int argc, char** argv ) {
 
@@ -213,7 +227,9 @@ namespace kortex {
                 exit(1);
             }
 
-            int n = num_option_arguments( argc, argv, cnt );
+            int n;
+            if( opt.opt_type == OP_SINGLE_INPUT ) n = 1;
+            else                                  n = num_option_arguments( argc, argv, cnt );
             if( n == -1 ) {
                 printf( "something wrong with the number of option arguments [%s]", opt.name.c_str() );
                 print_help();
