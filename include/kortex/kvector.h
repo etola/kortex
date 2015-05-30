@@ -73,6 +73,13 @@ namespace kortex {
 
         void operator+=( const KVector<T,N>& rhs );
 
+        T&       x()       { assert_statement( 0<N, "dimension does not exist" ); return m_v[0]; }
+        const T& x() const { assert_statement( 0<N, "dimension does not exist" ); return m_v[0]; }
+        T&       y()       { assert_statement( 1<N, "dimension does not exist" ); return m_v[1]; }
+        const T& y() const { assert_statement( 1<N, "dimension does not exist" ); return m_v[1]; }
+        T&       z()       { assert_statement( 2<N, "dimension does not exist" ); return m_v[2]; }
+        const T& z() const { assert_statement( 2<N, "dimension does not exist" ); return m_v[2]; }
+
     private:
         T m_v[N];
     };
