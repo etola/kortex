@@ -340,6 +340,37 @@ namespace kortex {
         }
     }
 
+    void compute_covariance_3( const double* Xs, int m, int n, double cov[9] ) {
+        assert_statement( n==3, "sample dimension has to be 3" );
+        assert_statement( m> 3, "not enough samples provided" );
+
+        double x_mean[3] = {0.0, 0.0, 0.0};
+
+        for( int i=0; i<m; i++ ) {
+            const double* X = Xs + 3*i;
+            x_mean[0] += X[0];
+            x_mean[1] += X[1];
+            x_mean[2] += X[2];
+        }
+        x_mean[0] /= m;
+        x_mean[1] /= m;
+        x_mean[2] /= m;
+
+        double xn[3];
+        double xout[9];
+        memset( cov, 0, sizeof(*cov)*9 );
+        for( int i=0; i<m; i++ ) {
+            const double* X = Xs + 3*i;
+            xn[0] = X[0] - x_mean[0];
+            xn[1] = X[1] - x_mean[1];
+            xn[2] = X[2] - x_mean[2];
+            mat_mat_trans( xn, 3, 1, xn, 3, 1, xout, 9 );
+            for( int j=0; j<9; j++ ) cov[j] += xout[j];
+        }
+
+        for( int j=0; j<9; j++ )
+            cov[j] /= (m-1);
+    }
 
 
 }

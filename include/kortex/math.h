@@ -109,6 +109,8 @@ namespace kortex {
     // or max) peak occurs.
     double optimize_peak( double xp, double xc, double xa, double yp, double yc, double ya );
 
+    void compute_covariance_3( const double* Xs, int m, int n, double cov[9] );
+
 }
 
 #endif
