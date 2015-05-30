@@ -368,7 +368,7 @@ namespace kortex {
 
     void flip_image_ver( Image& img ) {
 
-        img.passert_type( IT_F_GRAY | IT_U_GRAY | IT_U_PRGB );
+        img.passert_type( IT_F_GRAY | IT_U_GRAY | IT_U_PRGB | IT_F_PRGB );
         int w = img.w();
         int h = img.h();
 
@@ -388,6 +388,17 @@ namespace kortex {
                 uchar* drow = img.get_row_u(h-y-1);
                 for( int x=0; x<w; x++ ) {
                     std::swap( urow[x], drow[x] );
+                }
+            }
+        } break;
+        case IT_F_PRGB: {
+            for( int y=0; y<h/2; y++ ) {
+                float* urow = img.get_row_f(y);
+                float* drow = img.get_row_f(h-y-1);
+                for( int x=0; x<w; x++ ) {
+                    std::swap( urow[3*x  ], drow[3*x  ] );
+                    std::swap( urow[3*x+1], drow[3*x+1] );
+                    std::swap( urow[3*x+2], drow[3*x+2] );
                 }
             }
         } break;
@@ -1010,36 +1021,30 @@ namespace kortex {
     }
 
     /// q = s * p
-    void image_scale( const Image& p, float s, Image& q ) {
+    void image_scale( const Image& p, float s, bool run_parallel, Image& q ) {
         assert_statement( check_dimensions(p,q), "dimension mismatch" );
-        p.assert_type( IT_F_GRAY );
-        q.assert_type( IT_F_GRAY );
-        int h = p.h();
-        int w = p.w();
-        for( int y=0; y<h; y++ ) {
-            const float* prow = p.get_row_f(y);
-            float      * qrow = q.get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                qrow[x] = s * prow[x];
-            }
-        }
-    }
+        passert_statement( p.type() == q.type(), "image types do not agree" );
 
-    /// q = s * p
-    void image_scale_par( const Image& p, float s, Image& q ) {
-        assert_statement( check_dimensions(p,q), "dimension mismatch" );
-        p.assert_type( IT_F_GRAY );
-        q.assert_type( IT_F_GRAY );
-        int h = p.h();
-        int w = p.w();
+        p.passert_type( IT_F_GRAY | IT_F_IRGB | IT_F_PRGB );
+
+        size_t psz = p.element_count();
+
+        const float* pptr = p.get_fptr();
+        float      * qptr = q.get_fptr();
+
+        switch( run_parallel ) {
+        case false: {
+            for( size_t i=0; i<psz; i++ )
+                qptr[i] = s * pptr[i];
+        } break;
+        case true: {
 #pragma omp parallel for
-        for( int y=0; y<h; y++ ) {
-            const float* prow = p.get_row_f(y);
-            float      * qrow = q.get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                qrow[x] = s * prow[x];
+            for( size_t i=0; i<psz; i++ ) {
+                qptr[i] = s * pptr[i];
             }
+        } break;
         }
+
     }
 
     /// checks whether p has values of either 0 or 1
@@ -1343,7 +1348,7 @@ namespace kortex {
         passert_statement( check_dimensions( img, out ), "dimension mismatch" );
         passert_statement( img.type() == out.type(), "image types do not agree" );
 
-        size_t psz = img.pixel_count();
+        size_t psz = img.element_count();
         const float* iptr = img.get_fptr();
         float      * optr = out.get_fptr();
 

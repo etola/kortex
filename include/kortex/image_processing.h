@@ -165,14 +165,15 @@ namespace kortex {
     }
 
     /// q = s*p
-    void image_scale    ( const Image& p, float s, Image& q );
-    void image_scale_par( const Image& p, float s, Image& q );
-    inline void image_scale( const Image& p, float s, bool run_parallel, Image& q ) {
-        switch( run_parallel ) {
-        case false: image_scale    ( p, s, q ); break;
-        case true : image_scale_par( p, s, q ); break;
-        }
+    void image_scale( const Image& p, float s, bool run_parallel, Image& q );
+    inline void image_scale( const Image& p, float s, Image& q ) {
+        image_scale( p, s, false, q );
     }
+    inline void image_scale_par( const Image& p, float s, Image& q ) {
+        image_scale( p, s, true, q );
+    }
+
+
 
     /// checks whether p has values of either 0.0f or 1.0f
     bool is_binarized( const Image& p );
