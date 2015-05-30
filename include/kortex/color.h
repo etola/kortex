@@ -61,9 +61,13 @@ namespace kortex {
 
     void get_color(ColorName color, uchar &cr, uchar &cg, uchar &cb);
 
-    inline void get_color(int color, uchar &cr, uchar &cg, uchar &cb) {
+    inline ColorName get_color( int color ) {
         int mc = color % COLOR_WHITE + 1;
-        get_color( (ColorName)mc, cr, cg, cb);
+        return ColorName(mc);
+    }
+    inline void get_color(int color, uchar &cr, uchar &cg, uchar &cb) {
+        ColorName cn = get_color( color );
+        get_color( cn, cr, cg, cb);
     }
 
     ColorName get_color( const string&    str   );
