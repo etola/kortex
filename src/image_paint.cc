@@ -21,7 +21,7 @@ namespace kortex {
 
     void draw_point( Image& im, int x, int y, ColorName color, int thickness ) {
         im.assert_type( IT_U_PRGB | IT_U_IRGB );
-
+        if( !im.is_inside(x,y) ) return;
         uchar cr, cg, cb;
         get_color(color, cr, cg, cb);
         im.set( x, y, thickness, cr, cg, cb );
