@@ -23,6 +23,7 @@ using std::ofstream;
 using std::ifstream;
 using std::ostream;
 
+#include <kortex/indexed_types.h>
 #include <kortex/check.h>
 #include <kortex/string.h>
 
@@ -138,8 +139,6 @@ namespace kortex {
         check_file_stream_error( fin );
     }
 
-    void read_string(ifstream& fin, string& param, const char* check_against);
-
 //
 //  binary
 //
@@ -164,6 +163,13 @@ namespace kortex {
         fout.write( (const char*)v.c_str(), sizeof(char)*nsz );
         check_file_stream_error(fout);
     }
+
+    template<> inline
+    void write_bparam( ofstream& fout, const iint& v ) {
+        write_bparam( fout, v.id  );
+        write_bparam( fout, v.val );
+    }
+
     template<typename T>
     void write_barray( ofstream& fout, const T* varr, const int& nv ) {
         fout.write( (const char*)varr, sizeof(*varr)*nv );
@@ -197,6 +203,11 @@ namespace kortex {
         v = buffer;
         check_file_stream_error(fin);
     }
+    template<> inline
+    void read_bparam( ifstream& fin, iint& v ) {
+        read_bparam( fin, v.id  );
+        read_bparam( fin, v.val );
+    }
 
     template<typename T>
     void read_barray( ifstream& fin, T* varr, const int& nv ) {
@@ -223,6 +234,24 @@ namespace kortex {
 
     void save_ascii( const string& file, const vector<bool>& array );
     void load_ascii( const string& file,       vector<bool>& array );
+
+    template<typename T>
+    void save_ascii( const string& file, const vector<T>& arr ) {
+        ofstream fout;
+        open_or_fail( file, fout, false );
+        write_array( fout, NULL, arr );
+        fout.close();
+    }
+    template<typename T>
+    void load_ascii( const string& file, vector<T>& arr ) {
+        ifstream fin;
+        open_or_fail( file, fin, false );
+        read_array( fin, NULL, arr );
+        fin.close();
+    }
+
+    void read_string(ifstream& fin, string& param, const char* check_against);
+
 
 }
 
