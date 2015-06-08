@@ -220,6 +220,17 @@ namespace kortex {
 #endif
     }
 
+    template<typename T>
+    bool is_all_zero( const T* A, int asz, T eps=1e-16 ) {
+        assert_pointer( A );
+        assert_pointer_size( asz );
+        for( int i=0; i<asz; i++ )
+            if( fabs(A[i]) > eps ) return false;
+        return true;
+    }
+
+
+
 }
 
 #endif
