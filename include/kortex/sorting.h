@@ -21,6 +21,9 @@ namespace kortex {
     void sort_ascending ( std::vector<float>& arr);
     void sort_descending( std::vector<float>& arr );
 
+    void sort_ascending ( std::vector<int>& arr);
+    void sort_descending( std::vector<int>& arr );
+
 }
 
 #endif
