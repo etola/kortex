@@ -11,6 +11,9 @@
 // web   : http://www.engintola.com
 //
 // ---------------------------------------------------------------------------
+
+#include <cmath>
+#include <kortex/check.h>
 #include <kortex/message.h>
 #include "message.tcc"
 
@@ -35,6 +38,13 @@ namespace kortex {
         printf("\n");
     }
 
+    void print( const vector<iint>& arr ) {
+        for( int i=0; i<(int)arr.size(); i++ ) {
+            printf( "% 3d % 4d\n", arr[i].id, arr[i].val );
+        }
+        printf( "\n" );
+    }
+
     void print_mat( const vector<float>& mat, int nr, int nc, const char* pretag  ) {
         if( pretag ) printf( "%s ", pretag );
         for( int r=0; r<nr; r++ ) {
@@ -45,5 +55,45 @@ namespace kortex {
         }
     }
 
+    void display_similarity_matrix( const vector<int>& dmatrix, int scale ) {
+
+        int nf = sqrt(dmatrix.size());
+        assert_statement( nf*nf == (int)dmatrix.size(), "invalid matrix data" );
+
+        const int interval = 10;
+
+        printf("%4s|", "-" );
+        for( int i=0; i<nf; i++ ) {
+            if( i!=0 && i%interval==0 ) printf(" |%d|", i/10 );
+            printf(" %d",i%10);
+        }
+        printf("\n");
+
+        for( int i=0; i<nf; i++ ) {
+            if( i%interval==0 && i!=0 ) {
+                printf("|% 3d|", i );
+                for( int j=0; j<nf; j++ ) {
+                    if( j%interval==0 && j!=0 ) printf("  | ");
+                    printf("--");
+                }
+                printf("\n");
+            }
+
+            printf("% 4d|", i%10);
+            for( int j=0; j<nf; j++ ) {
+                if( j%interval==0 && j!=0 ) printf("  | ");
+
+                if( i == j ) {
+                    printf( " ." );
+                } else {
+                    int v = std::min( 9,dmatrix[ i*nf+j ]/scale );
+                    if( v ) printf( " %d", v );
+                    else    printf( " ." );
+                }
+            }
+            printf("|\n");
+        }
+        printf("\n");
+    }
 
 }

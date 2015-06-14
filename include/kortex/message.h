@@ -18,6 +18,8 @@
 #include <iomanip>
 #include <vector>
 
+#include <kortex/indexed_types.h>
+
 using std::vector;
 
 namespace kortex {
@@ -44,6 +46,9 @@ namespace kortex {
     void print_separator( int nsz, const char* ch=NULL );
     void print_arr( const vector<int>& var, const char* pretag=NULL, const char* posttag=NULL );
     void print_mat( const vector<float>& mat, int nr, int nc, const char* pretag=NULL  );
+    void print( const vector<iint>& arr );
+
+    void display_similarity_matrix( const vector<int>& dmatrix, int scale );
 
 }
 
