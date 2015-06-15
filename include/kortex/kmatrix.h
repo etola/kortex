@@ -384,6 +384,9 @@ namespace kortex {
     void row_to_column_order( const KMatrix& A,   KMatrix& A_co );
     void column_to_row_order( const KMatrix& A_co, KMatrix& A   );
 
+    void mat_copy_columns( const KMatrix& A, const vector<int>& cols, KMatrix& fA );
+
+
 }
 
 #endif

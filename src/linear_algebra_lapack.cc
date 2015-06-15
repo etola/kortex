@@ -203,6 +203,108 @@ namespace kortex {
         return mat_eigenvalues_upper_hessenberg( M, eig_real, eig_imag );
     }
 
+    //
+    // Generalized eigenvalue, eigenvector decomposition. There are more efficient
+    // versions for more well-behaving ( symmetric, hessenberg... ) matrices.
+    //
+    // eigenvalues are stored within eval_r, eval_i (real+imaginary)
+    //
+    // EVEC_R/VR is DOUBLE PRECISION array, dimension (N,N). The right eigenvectors
+    //   v(j) are stored one after another in the columns of VR, in the same order
+    //   as their eigenvalues. If the j-th eigenvalue is real, then v(j) = VR(:,j),
+    //   the j-th column of VR.  If the j-th and (j+1)-st eigenvalues form a complex
+    //   conjugate pair, then v(j) = VR(:,j) + i*VR(:,j+1) and v(j+1) = VR(:,j) -
+    //   i*VR(:,j+1).
+    //
+    // EVEC_L -> left eigenvectors of A - stored similarly as EVEC_R
+    //
+    bool mat_eigen( const KMatrix& A,
+                    KMatrix& eval_r, KMatrix& eval_i,
+                    KMatrix* evec_r, KMatrix* evec_l ) {
+
+        assert_statement( A.is_square(), "matrix has to be square" );
+        assert_statement( A.h() > 0, "empty matrix" );
+
+        char jobvl = 'N';
+        char jobvr = 'N';
+        if( evec_r ) jobvr = 'V';
+        if( evec_l ) jobvl = 'V';
+
+        KMatrix Atmp;
+        mat_transpose(A, Atmp);
+
+        int n = A.h();
+
+        eval_r.resize(n,1);
+        eval_i.resize(n,1);
+        if( evec_r ) evec_r->resize(n,n);
+        if( evec_l ) evec_l->resize(n,n);
+
+
+        double* vec_l = NULL;
+        double* vec_r = NULL;
+        if( evec_l ) vec_l = evec_l->get_pointer();
+        if( evec_r ) vec_r = evec_r->get_pointer();
+
+        int info = 0;
+        int lwork = -1;
+        double work_sz[1];
+        dgeev_( &jobvl, &jobvr, &n, Atmp.get_pointer(), &n,
+                eval_r.get_pointer(), eval_i.get_pointer(),
+                vec_l, &n, vec_r, &n, work_sz, &lwork, &info );
+
+        MemUnit mem;
+        lwork = work_sz[0];
+        mem.resize( lwork*sizeof(double) );
+        double* work = (double*)mem.get_buffer();
+
+        dgeev_( &jobvl, &jobvr, &n, Atmp.get_pointer(), &n,
+                eval_r.get_pointer(), eval_i.get_pointer(),
+                vec_l, &n, vec_r, &n, work, &lwork, &info );
+
+        if( evec_l ) evec_l->transpose();
+        if( evec_r ) evec_r->transpose();
+
+        return bool(info==0);
+    }
+
+    bool mat_eigen_real( const KMatrix& A, KMatrix& eval, KMatrix* evec_r, KMatrix* evec_l ) {
+
+        KMatrix er, ei;
+        KMatrix vr, vl;
+
+        KMatrix* pvr = NULL; if( evec_r ) pvr = &vr;
+        KMatrix* pvl = NULL; if( evec_l ) pvl = &vl;
+        if( !mat_eigen( A, er, ei, pvr, pvl ) )
+            return false;
+
+        if( is_all_zero( ei(), ei.size() ) ) {
+            eval = er;
+            if( evec_l ) evec_l->copy( vl );
+            if( evec_r ) evec_r->copy( vr );
+            return true;
+        }
+
+        double eps = 1e-16;
+        vector<int> cols;
+        for( int i=0; i<ei.size(); i++ ) {
+            if( fabs(ei[i]) < eps )
+                cols.push_back(i);
+        }
+
+        if( evec_l ) mat_copy_columns( vl, cols, *evec_l );
+        if( evec_r ) mat_copy_columns( vr, cols, *evec_r );
+
+        int sz = cols.size();
+        eval.resize( sz, 1 );
+        double      * ev  = eval.get_pointer();
+        const double* per = er();
+        for( unsigned int i=0; i<cols.size(); i++ ) {
+            ev[i] = per[ cols[i] ];
+        }
+        return true;
+    }
+
 }
 
 #endif

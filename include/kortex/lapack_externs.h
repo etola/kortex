@@ -178,6 +178,22 @@ extern "C" {
                 double *s, double *rcond, int *rank, double *work, int *lwork, int *info);
 
 
+    // DGEEV computes for an N-by-N real nonsymmetric matrix A, the eigenvalues
+    // and, optionally, the left and/or right eigenvectors.
+    //
+    // The right eigenvector v(j) of A satisfies
+    //                  A * v(j) = lambda(j) * v(j)
+    // where lambda(j) is its eigenvalue.
+    // The left eigenvector u(j) of A satisfies
+    //               u(j)**H * A = lambda(j) * u(j)**H
+    // where u(j)**H denotes the conjugate-transpose of u(j).
+    //
+    // The computed eigenvectors are normalized to have Euclidean norm equal to
+    // 1 and largest component real.
+    void dgeev_( char* jobvl, char* jobvr, int* n, double* A, int* lda,
+                 double* wr, double* wi, double* vl, int* ldvl,  double* vr, int* ldvr,
+                 double* work, int* lwork, int* info );
+
 }
 
 #endif

@@ -609,5 +609,22 @@ namespace kortex {
         }
     }
 
+    void mat_copy_columns( const KMatrix& A, const vector<int>& cols, KMatrix& fA ) {
+        int h = A.h();
+        int w = A.w();
+        fA.resize( h, cols.size() );
+        int faw = cols.size();
+        for( unsigned int i=0; i<cols.size(); i++ ) {
+            int j = cols[i];
+            assert_boundary( j, 0, w );
+            const double* src_j =  A.get_col(j);
+            double      * dst_i = fA.get_col(i);
+            for( int y=0; y<h; y++ ) {
+                dst_i[ y*faw ] = src_j[ y*w ];
+            }
+        }
+    }
+
+
 
 }

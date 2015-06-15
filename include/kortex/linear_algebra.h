@@ -54,6 +54,28 @@ namespace kortex {
         return find_eigenvalues( wM, eig_real, eig_imag );
     }
 
+    ///
+    /// Generalized eigenvalue, eigenvector decomposition. There are more efficient
+    /// versions for more well-behaving ( symmetric, hessenberg... ) matrices.
+    ///
+    /// eigenvalues are stored within eval_r, eval_i (real+imaginary)
+    ///
+    /// EVEC_R/VR is DOUBLE PRECISION array, dimension (N,N). The right eigenvectors
+    ///   v(j) are stored one after another in the columns of VR, in the same order
+    ///   as their eigenvalues. If the j-th eigenvalue is real, then v(j) = VR(:,j),
+    ///   the j-th column of VR.  If the j-th and (j+1)-st eigenvalues form a complex
+    ///   conjugate pair, then v(j) = VR(:,j) + i*VR(:,j+1) and v(j+1) = VR(:,j) -
+    ///   i*VR(:,j+1).
+    ///
+    /// EVEC_L -> left eigenvectors of A - stored similarly as EVEC_R
+    ///
+    bool mat_eigen( const KMatrix& A, KMatrix& eval_r, KMatrix& eval_i,
+                    KMatrix* evec_r, KMatrix* evec_l );
+
+    /// extracts the real eigenvalues and eigenvectors
+    bool mat_eigen_real( const KMatrix& A, KMatrix& eval, KMatrix* evec_r, KMatrix* evec_l=NULL );
+
+
 }
 
 #endif
