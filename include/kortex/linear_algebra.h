@@ -70,10 +70,11 @@ namespace kortex {
     /// EVEC_L -> left eigenvectors of A - stored similarly as EVEC_R
     ///
     bool mat_eigen( const KMatrix& A, KMatrix& eval_r, KMatrix& eval_i,
-                    KMatrix* evec_r, KMatrix* evec_l );
+                    KMatrix* evec_r, KMatrix* evec_l=NULL );
 
-    /// extracts the real eigenvalues and eigenvectors
-    bool mat_eigen_real( const KMatrix& A, KMatrix& eval, KMatrix* evec_r, KMatrix* evec_l=NULL );
+    /// extracts the real eigenvalues and eigenvectors. if the real part of the
+    /// eigenvalue is less than eps, it is rejected
+    bool mat_eigen_real( const KMatrix& A, KMatrix& eval, KMatrix* evec_r, KMatrix* evec_l, const double& eps=1e-16 );
 
 
 }

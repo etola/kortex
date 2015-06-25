@@ -1,5 +1,5 @@
 #ifdef WITH_LAPACK
-
+#include <kortex/timer.h>
 #include <kortex/lapack_externs.h>
 #include <kortex/mem_manager.h>
 
@@ -268,7 +268,9 @@ namespace kortex {
         return bool(info==0);
     }
 
-    bool mat_eigen_real( const KMatrix& A, KMatrix& eval, KMatrix* evec_r, KMatrix* evec_l ) {
+    bool mat_eigen_real( const KMatrix& A, KMatrix& eval, KMatrix* evec_r, KMatrix* evec_l, const double& eps ) {
+
+        // Timer tr;
 
         KMatrix er, ei;
         KMatrix vr, vl;
@@ -277,24 +279,31 @@ namespace kortex {
         KMatrix* pvl = NULL; if( evec_l ) pvl = &vl;
         if( !mat_eigen( A, er, ei, pvr, pvl ) )
             return false;
+        // printf( "te1 %f\n", tr.elapsed() );
 
-        if( is_all_zero( ei(), ei.size() ) ) {
-            eval = er;
-            if( evec_l ) evec_l->copy( vl );
-            if( evec_r ) evec_r->copy( vr );
-            return true;
-        }
+        // tr.end();
+        // if( is_all_zero( ei(), ei.size() ) ) {
+            // eval = er;
+            // if( evec_l ) evec_l->copy( vl );
+            // if( evec_r ) evec_r->copy( vr );
+            // return true;
+        // }
+        // printf( "te2 %f\n", tr.elapsed() );
 
-        double eps = 1e-16;
+        // tr.end();
         vector<int> cols;
         for( int i=0; i<ei.size(); i++ ) {
-            if( fabs(ei[i]) < eps )
+            if( fabs(er[i]) < eps )
+                continue;
+            if( fabs(ei[i]) < 1e-16 )
                 cols.push_back(i);
         }
-
+        if( cols.size() == 0 ) return false;
         if( evec_l ) mat_copy_columns( vl, cols, *evec_l );
         if( evec_r ) mat_copy_columns( vr, cols, *evec_r );
+        // printf( "te3 %f\n", tr.elapsed() );
 
+        // tr.end();
         int sz = cols.size();
         eval.resize( sz, 1 );
         double      * ev  = eval.get_pointer();
@@ -302,6 +311,8 @@ namespace kortex {
         for( unsigned int i=0; i<cols.size(); i++ ) {
             ev[i] = per[ cols[i] ];
         }
+        // printf( "te4 %f\n", tr.elapsed() );
+
         return true;
     }
 
