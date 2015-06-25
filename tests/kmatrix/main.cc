@@ -14,6 +14,7 @@
 
 #include <kortex/svd.h>
 #include <kortex/kmatrix.h>
+
 using namespace kortex;
 
 void matrix_test();
@@ -72,6 +73,57 @@ void assert_value_equality( const double& a, const double& b, double eps, string
     }
 }
 
+void mat_copy_test() {
+
+    KMatrix A(5,9);
+
+    for( int y=0; y<5; y++ ) {
+        for( int x=0; x<9; x++ ) {
+            A.set( y, x, y*9+x );
+        }
+    }
+
+    double top_left[] = {
+        0.0000,    1.0000,    2.0000,    3.0000,
+        9.0000,   10.0000,   11.0000,   12.0000,
+        18.0000,   19.0000,   20.0000,   21.0000
+    };
+    double top_right[] = {
+        5.0000,    6.0000,    7.0000,    8.0000,
+        14.0000,   15.0000,   16.0000,   17.0000,
+        23.0000,   24.0000,   25.0000,   26.0000
+    };
+    double bottom_left[] = {
+        18.0000,   19.0000,   20.0000,   21.0000,
+        27.0000,   28.0000,   29.0000,   30.0000,
+        36.0000,   37.0000,   38.0000,   39.0000 };
+
+    double bottom_right[] = {
+        23.0000,   24.0000,   25.0000,   26.0000,
+        32.0000,   33.0000,   34.0000,   35.0000,
+        41.0000,   42.0000,   43.0000,   44.0000
+    };
+
+    KMatrix TL(top_left,3,4);
+    KMatrix TR(top_right,3,4);
+    KMatrix BL(bottom_left,3,4);
+    KMatrix BR(bottom_right,3,4);
+
+    KMatrix B;
+
+    mat_top_left( A, 3, 4, B );
+    assert_matrix_equality( TL, B, 1e-12, "top_left failed" );
+
+    mat_top_right( A, 3, 4, B );
+    assert_matrix_equality( TR, B, 1e-12, "top_right failed" );
+
+    mat_bottom_left( A, 3, 4, B );
+    assert_matrix_equality( BL, B, 1e-12, "bottom_left failed" );
+
+    mat_bottom_right( A, 3, 4, B );
+    assert_matrix_equality( BR, B, 1e-12, "bottom_right failed" );
+
+}
 
 void matrix_test() {
 
@@ -298,7 +350,7 @@ void matrix_test() {
     assert_matrix_equality( E, gDnormalized, eps, "normalize" );
 
     assert_value_equality( gDBt.trace(), 2.35204069861958, eps, "trace" );
-    assert_value_equality( gDBt.det3(),  0.120817507913528, eps, "det3" );
+    assert_value_equality( gDBt.det(),  0.120817507913528, eps, "det" );
     assert_value_equality( gD.norm(),    2.03630780826325, eps, "norm" );
     assert_value_equality( gD.norm_sq(), 4.14654948999388, eps, "norm_sq" );
     assert_value_equality( gD(1,1), 0.64211390605921370, eps, "operator ()" );
@@ -527,6 +579,7 @@ void matrix_test() {
     F.save("/tmp/kortex_matrix_tmp-2.tmp");
     assert_matrix_equality( F, gA, eps, "save/load" );
 
+    mat_copy_test();
 
 }
 
