@@ -314,6 +314,10 @@ namespace kortex {
                    const double* B, int br, int bc,
                    const double& eps=1e-12 );
 
+    bool is_mag_equal( const double* A, int ar, int ac,
+                       const double* B, int br, int bc,
+                       const double& eps=1e-12 );
+
 }
 
 #endif
