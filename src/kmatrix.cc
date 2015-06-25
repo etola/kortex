@@ -271,8 +271,8 @@ namespace kortex {
         return mat_trace( get_const_pointer(), nr, nc );
     }
 
-    double KMatrix::det3() const {
-        passert_statement( nr == nc && nr == 3, "invalid matrix size" );
+    double KMatrix::det() const {
+        passert_statement( nr == nc && nr == 3, "invalid matrix size - only implemented for n=3" );
         return mat_det_3( get_const_pointer(), nr );
     }
 
@@ -292,6 +292,22 @@ namespace kortex {
             this->copy( tmp );
         }
 
+    }
+
+    void KMatrix::negate_col( int cid ) {
+        assert_boundary( cid, 0, nc );
+        assert_statement( !is_const(), "cannot modify const matrix" );
+        double* col = get_col(cid);
+        for( int i=0; i<nr; i++ )
+            col[i*nc] = -col[i*nc];
+    }
+
+    void KMatrix::negate_row( int rid ) {
+        assert_boundary( rid, 0, nr );
+        assert_statement( !is_const(), "cannot modify const matrix" );
+        double* row = get_row(rid);
+        for( int i=0; i<nc; i++ )
+            row[i] = -row[i];
     }
 
     void KMatrix::scale_row( int rid, double alpha ) {

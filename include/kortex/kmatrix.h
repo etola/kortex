@@ -178,13 +178,16 @@ namespace kortex {
         double normalize();
 
         double trace  () const;
-        double det3   () const;
+        double det    () const;
         double norm   () const;
         double norm_sq() const;
 
         void scale_row( int rid, double alpha );
         void scale_col( int cid, double alpha );
         void scale    ( double s );
+
+        void negate_col( int cid );
+        void negate_row( int rid );
 
         void print( const string& str ) const;
 
@@ -385,6 +388,40 @@ namespace kortex {
     void column_to_row_order( const KMatrix& A_co, KMatrix& A   );
 
     void mat_copy_columns( const KMatrix& A, const vector<int>& cols, KMatrix& fA );
+
+
+    inline void mat_top_left( const KMatrix& A, int nr, int nc, KMatrix& B ) {
+        B.resize(nr,nc);
+        B.copy( A, 0, 0, nr, nc, 0, 0 );
+    }
+
+    inline void mat_top_right( const KMatrix& A, int nr, int nc, KMatrix& B ) {
+        assert_statement( nc <= A.w(), "invalid" );
+        B.resize(nr,nc);
+        B.copy( A, 0, A.w()-nc, nr, nc, 0, 0 );
+    }
+
+    inline void mat_bottom_left( const KMatrix& A, int nr, int nc, KMatrix& B ) {
+        assert_statement( nr <= A.h(), "invalid" );
+        B.resize(nr,nc);
+        B.copy( A, A.h()-nr, 0, nr, nc, 0, 0 );
+    }
+
+    inline void mat_bottom_right( const KMatrix& A, int nr, int nc, KMatrix& B ) {
+        assert_statement( nr <= A.h(), "invalid" );
+        assert_statement( nc <= A.w(), "invalid" );
+        B.resize(nr,nc);
+        B.copy( A, A.h()-nr, A.w()-nc, nr, nc, 0, 0 );
+    }
+
+    /// computes C = inv(A)*B
+    inline bool mat_inv_mat( const KMatrix& A, const KMatrix& B, KMatrix& C ) {
+        KMatrix Ai;
+        if( !mat_inv( A, Ai ) )
+            return false;
+        mat_mat( Ai, B, C );
+        return true;
+    }
 
 
 }
