@@ -15,6 +15,7 @@
 #ifndef KORTEX_KVECTOR_H
 #define KORTEX_KVECTOR_H
 
+#include <cstring>
 #include <kortex/check.h>
 
 namespace kortex {
@@ -187,7 +188,7 @@ namespace kortex {
 //
     template<typename T, int N>
     KVector<T,N>& KVector<T,N>::operator=( const KVector<T,N>& rhs ) {
-        memcpy( m_v, rhs.m_v, sizeof(*m_v)*N );
+        std::memcpy( m_v, rhs.m_v, sizeof(*m_v)*N );
         return *this;
     }
 
