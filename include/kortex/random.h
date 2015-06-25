@@ -24,6 +24,8 @@ namespace kortex {
     /// generates a seed to feed to srand. better than time(NULL)
     unsigned int time_seed();
 
+    /// returns a number in the range [0,1] -> not a very good random number
+    /// generated but good enough for very simple stuff.
     double  uniform_sample();
 
     /// selects no_samples random in [minval maxval). returns false if samples cannot be selected
