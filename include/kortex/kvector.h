@@ -43,6 +43,8 @@ namespace kortex {
         KVector( const T& v0, const T& v1, const T& v2 );              // init first 3 elems
         KVector( const T& v0, const T& v1, const T& v2, const T& v3 ); // init first 4 elems
 
+        KVector( const T* a, int asz );
+
         void set( const T* vals );
         void set( const T& v0, const T& v1 );
         void set( const T& v0, const T& v1, const T& v2 );
@@ -59,6 +61,25 @@ namespace kortex {
         void normalize();
 
         void zero();
+        void negate() {
+            for( int i=0; i<N; i++ )
+                m_v[i] = -m_v[i];
+        }
+        void scale( const double& s ) {
+            for( int i=0; i<N; i++ )
+                m_v[i] *= s;
+        }
+        void add( const double* a, int asz ) {
+            assert_statement( asz == N, "invalid sized add vector" );
+            for( int i=0; i<asz; i++ )
+                m_v[i] += a[i];
+        }
+
+        void print( const char* str ) const {
+            if( str )
+                printf( "%s ", str );
+            printf( "%f %f %f\n", m_v[0], m_v[1], m_v[2] );
+        }
 
     public:
         T&          operator[]( int i )       { assert_boundary(i,0,N); return m_v[i]; }
@@ -73,6 +94,7 @@ namespace kortex {
         KVector<T,N> operator+( const KVector<T,N>& rhs ) const;
 
         void operator+=( const KVector<T,N>& rhs );
+        void operator-=( const KVector<T,N>& rhs );
 
         KVector<T,N>& operator=( const KVector<T,N>& rhs );
 
@@ -122,6 +144,13 @@ namespace kortex {
     }
 
     template<typename T, int N>
+    KVector<T,N>::KVector( const T* a, int asz ) {
+        assert_statement( N == asz, "invalid dimension" );
+        for( int i=0; i<N; i++ )
+            m_v[i] = a[i];
+    }
+
+    template<typename T, int N>
     void KVector<T,N>::set( const T& v0, const T& v1 ) {
         m_v[0] = v0;
         m_v[1] = v1;
@@ -139,7 +168,6 @@ namespace kortex {
         m_v[2] = v2;
         m_v[3] = v3;
     }
-
 
     template<typename T, int N>
     KVector<T,N>::KVector( const KVector<T,N>& rhs ) {
@@ -228,6 +256,12 @@ namespace kortex {
     void KVector<T,N>::operator+=( const KVector<T,N>& rhs ) {
         for( int i=0; i<N; i++ )
             m_v[i] += rhs.m_v[i];
+    }
+
+    template <typename T, int N>
+    void KVector<T,N>::operator-=( const KVector<T,N>& rhs ) {
+        for( int i=0; i<N; i++ )
+            m_v[i] -= rhs.m_v[i];
     }
 
 //

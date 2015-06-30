@@ -43,6 +43,10 @@ namespace kortex {
         const double* Vt() const { return m_Vt(); }
         const double* U () const { return m_U();  }
 
+        const KMatrix& mU () const { return m_U;  }
+        const KMatrix& mVt() const { return m_Vt; }
+        const KMatrix& mSd() const { return m_Sd; }
+
         void print() const;
 
     private:

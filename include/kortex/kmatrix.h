@@ -83,6 +83,14 @@ namespace kortex {
         /// should be equivalent to nr*nc
         void set( const double* data, int dsz );
 
+        void set( const double& v0, const double& v1 );
+        void set( const double& v0, const double& v1, const double& v2 );
+        void set( const double& v0, const double& v1, const double& v2, const double& v3 );
+
+        void set( const double& v0, const double& v1, const double& v2,
+                  const double& v3, const double& v4, const double& v5,
+                  const double& v6, const double& v7, const double& v8 );
+
         void set_row( int rid, const double* rdata, int rdsz );
         /// set the contents of the row with row_data[0:csz-1] starting from r0,c0
         void set_row( int r0, int c0, const double* row_data, int csz );
@@ -125,10 +133,10 @@ namespace kortex {
             assert_boundary( k, 0, size() );
             return get_const_pointer()[k];
         }
-        // double& operator[] (int k) {
-            // assert_boundary( k, 0, size() );
-            // return get_pointer()[k];
-        // }
+        double& operator() (int k) {
+            assert_boundary( k, 0, size() );
+            return get_pointer()[k];
+        }
 
 
         KMatrix operator-( const KMatrix& rhs ) const {

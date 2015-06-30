@@ -153,6 +153,35 @@ namespace kortex {
         memcpy( m_data, data, sizeof(*m_data)*dsz );
     }
 
+    void KMatrix::set( const double& v0, const double& v1 ) {
+        assert_statement( size() == 2, "size mismatch - call init first" );
+        m_data[0] = v0;
+        m_data[1] = v1;
+    }
+    void KMatrix::set( const double& v0, const double& v1, const double& v2 ) {
+        assert_statement( size() == 3, "size mismatch - call init first" );
+        m_data[0] = v0;
+        m_data[1] = v1;
+        m_data[2] = v2;
+    }
+    void KMatrix::set( const double& v0, const double& v1, const double& v2, const double& v3 ) {
+        assert_statement( size() == 4, "size mismatch - call init first" );
+        m_data[0] = v0;
+        m_data[1] = v1;
+        m_data[2] = v2;
+        m_data[3] = v3;
+    }
+
+    void KMatrix::set( const double& v0, const double& v1, const double& v2,
+                       const double& v3, const double& v4, const double& v5,
+                       const double& v6, const double& v7, const double& v8 ) {
+        assert_statement( size() == 9, "size mismatch - call init first" );
+        m_data[0] = v0; m_data[1] = v1; m_data[2] = v2;
+        m_data[3] = v3; m_data[4] = v4; m_data[5] = v5;
+        m_data[6] = v6; m_data[7] = v7; m_data[8] = v8;
+    }
+
+
     void KMatrix::set_row( int rid, const double* rdata, int rdsz ) {
         assert_boundary( rid, 0, nr );
         assert_pointer( rdata );
