@@ -65,7 +65,7 @@ namespace kortex {
             }
             return true;
         } else { // select which samples not to select since they are less in number
-            logman_warning( "Beware - this segment was not tested throughly - could have bugs" );
+            // logman_warning( "Beware - this segment was not tested throughly - could have bugs" );
             int excluded_sample_no = range - no_samples;
             assert_statement( excluded_sample_no > 0, "this should not be" );
             int * temp_space = NULL;
