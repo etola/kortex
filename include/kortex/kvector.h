@@ -58,7 +58,7 @@ namespace kortex {
         T norm() const;
         T square_norm() const;
 
-        void normalize();
+        T normalize();
 
         void zero();
         void negate() {
@@ -197,12 +197,14 @@ namespace kortex {
     }
 
     template<typename T, int N>
-    void KVector<T,N>::normalize() {
-        T inrm = T(1)/norm();
+    T KVector<T,N>::normalize() {
+        T nrm = norm();
+        T inrm = T(1)/nrm;
         for( int i=0; i<N; i++ ) {
             m_v[i] *= inrm;
             assert_number( m_v[i] );
         }
+        return nrm;
     }
 
     template<typename T, int N>
