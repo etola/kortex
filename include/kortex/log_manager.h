@@ -62,7 +62,11 @@ namespace kortex {
         void stop_recording();
         void write_to_log_file(const char* group, const char* msg, va_list argptr);
 
+        void brief( bool bval=true ) { brief_message = bval; }
+
     private:
+
+        bool  brief_message;
 
         FatalFnPtr fatal_func;
         Verbosity  verbosity;

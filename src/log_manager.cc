@@ -80,6 +80,7 @@ namespace kortex {
           warn_stream(twarn_stream),
           err_stream(terr_stream) {
         log_file = NULL;
+        brief_message = false;
     }
 
     void LogManager::info(const char* group, const char* msg, ...) {
@@ -99,7 +100,8 @@ namespace kortex {
 
     void LogManager::log(const char* group, const char* msg, ...) {
         if( verbosity > LogManager::Cautious ) {
-            fprintf(log_stream, "[%-40.40s] ", group);
+            if( !brief_message )
+                fprintf(log_stream, "[%-40.40s] ", group);
             va_list prm;
             va_start(prm, msg);
             vfprintf(log_stream, msg, prm);
