@@ -30,12 +30,20 @@ namespace kortex {
             printf("%c",sch);
         printf("\n");
     }
-    void print_arr( const vector<int>& var, const char* pretag, const char* posttag ) {
-        if( pretag  ) printf( "%s ",  pretag  );
+    void print_arr( const vector<int>& var, const char* pretag, const char* posttag, bool detailed ) {
+        static const int bufsz = 2560;
+        char buf[bufsz];
+        int nstr = 0;
+        if( pretag  ) nstr = sprintf( buf+nstr, "%s ",  pretag  );
         for( unsigned i=0; i<var.size(); i++ )
-            printf("%d ", var[i]);
-        if( posttag ) printf( "%s", posttag );
-        printf("\n");
+            nstr += sprintf( buf+nstr, "%d ", var[i] );
+        if( posttag ) nstr += sprintf( buf+nstr, "%s", posttag );
+        assert_statement( nstr <= bufsz, "buffer overflow" );
+
+        if( detailed )
+            logman_log( buf );
+        else
+            printf( "%s\n", buf );
     }
 
     void print( const vector<iint>& arr ) {
@@ -95,5 +103,55 @@ namespace kortex {
         }
         printf("\n");
     }
+
+    void print_similarity_matrix( const vector<int>& dmatrix, int scale ) {
+
+        int nf = sqrt(dmatrix.size());
+        assert_statement( nf > 0, "empty matrix" );
+        assert_statement( nf*nf == (int)dmatrix.size(), "matrix has to be square" );
+
+        const int interval = 10;
+
+        static const int bufsz = 2560;
+        int  nstr = 0;
+        char buf[bufsz];
+
+        nstr += sprintf( buf+nstr, "%4s|", "-" );
+        for( int i=0; i<nf; i++ ) {
+            if( i!=0 && i%interval==0 ) nstr += sprintf( buf+nstr, " |%d|", i/10 );
+            nstr += sprintf( buf+nstr, " %d",i%10 );
+        }
+        logman_log( buf );
+
+        for( int i=0; i<nf; i++ ) {
+            nstr = 0;
+            if( i%interval==0 && i!=0 ) {
+                nstr += sprintf( buf+nstr, "|% 3d|", i );
+                for( int j=0; j<nf; j++ ) {
+                    if( j%interval==0 && j!=0 ) nstr += sprintf( buf+nstr, "  | " );
+                    nstr += sprintf( buf+nstr, "--" );
+                }
+                logman_log( buf );
+            }
+
+            nstr = 0;
+            nstr += sprintf( buf, "% 4d|", i%10 );
+            for( int j=0; j<nf; j++ ) {
+                if( j%interval==0 && j!=0 ) nstr += sprintf( buf+nstr, "  | " );
+
+                if( i == j ) {
+                    nstr += sprintf( buf+nstr, " ." );
+                } else {
+                    int v = std::min( 9,dmatrix[ i*nf+j ]/scale );
+                    if( v ) nstr += sprintf( buf+nstr, " %d",v );
+                    else    nstr += sprintf( buf+nstr, " ."  );
+                }
+            }
+            nstr += sprintf( buf+nstr, "|");
+            logman_log( buf );
+        }
+        logman_log( "" );
+    }
+
 
 }
