@@ -45,7 +45,9 @@ svd.cc \
 sorting.cc \
 timer.cc \
 eigen_conversion.cc \
-option_parser.cc
+option_parser.cc \
+object_cache.cc
+
 
 headers := \
 log_manager.h \
@@ -84,7 +86,8 @@ svd.h \
 sorting.h \
 timer.h \
 eigen_conversion.h \
-option_parser.h
+option_parser.h \
+object_cache.h
 
 #
 # output info
