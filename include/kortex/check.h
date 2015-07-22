@@ -17,6 +17,7 @@
 #include <kortex/log_manager.h>
 #include <cmath> // isnan / isinf tests
 #include <string>
+#include <set>
 #include <vector>
 using std::string;
 using std::vector;
@@ -38,30 +39,6 @@ using std::vector;
 #undef isinf
 #endif
 #endif
-
-#ifdef __GNUC__
-#define function_line_str kortex::format_function_message( __PRETTY_FUNCTION__, __LINE__).c_str()
-#else
-#define function_line_str kortex::format_function_message( __FUNCTION__, __LINE__).c_str()
-#endif
-
-#define logman_info_(...)    kortex::log_man()->info   (function_line_str, __VA_ARGS__)
-#define logman_log_(...)     kortex::log_man()->log    (function_line_str, __VA_ARGS__)
-#define logman_warning_(...) kortex::log_man()->warning(function_line_str, __VA_ARGS__)
-#define logman_error_(...)   kortex::log_man()->error  (function_line_str, __VA_ARGS__)
-#define logman_fatal_(...)   kortex::log_man()->fatal  (function_line_str, __VA_ARGS__)
-
-#define logman_info_g(fmt, ...)    logman_info_(fmt, __VA_ARGS__)
-#define logman_log_g(fmt, ...)     logman_log_(fmt, __VA_ARGS__)
-#define logman_warning_g(fmt, ...) logman_warning_(fmt, __VA_ARGS__)
-#define logman_error_g(fmt, ...)   logman_error_(fmt, __VA_ARGS__)
-#define logman_fatal_g(fmt, ...)   logman_fatal_(fmt, __VA_ARGS__)
-
-#define logman_info(msg)    kortex::log_man()->info   (function_line_str, "%s", msg)
-#define logman_log(msg)     kortex::log_man()->log    (function_line_str, "%s", msg)
-#define logman_warning(msg) kortex::log_man()->warning(function_line_str, "%s", msg)
-#define logman_error(msg)   kortex::log_man()->error  (function_line_str, "%s", msg)
-#define logman_fatal(msg)   kortex::log_man()->fatal  (function_line_str, "%s", msg)
 
 namespace kortex {
     template <typename T>
@@ -227,6 +204,12 @@ namespace kortex {
         for( int i=0; i<asz; i++ )
             if( fabs(A[i]) > eps ) return false;
         return true;
+    }
+
+    inline bool has_unique_elements( const vector<int>& arr ) {
+        std::set<int> sarr;
+        sarr.insert( arr.begin(), arr.end() );
+        return bool( sarr.size() == arr.size() );
     }
 
 

@@ -85,7 +85,7 @@ namespace kortex {
 
     void LogManager::info(const char* group, const char* msg, ...) {
         if( verbosity > LogManager::Normal ) {
-            fprintf(info_stream, "[%-30.30s] ", group);
+            fprintf(info_stream, "[%-40.40s] ", group);
             va_list prm;
             va_start(prm, msg);
             vfprintf(info_stream, msg, prm);
