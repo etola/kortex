@@ -15,8 +15,10 @@
 #ifndef KORTEX_OBJECT_CACHE_H
 #define KORTEX_OBJECT_CACHE_H
 
+#include <string>
 #include <vector>
 using std::vector;
+using std::string;
 
 namespace kortex {
 
@@ -30,11 +32,23 @@ namespace kortex {
     class ObjectCache {
     public:
 
+        ObjectCache() {
+            m_max_object_number = 0;
+        }
+
         ObjectCache( const vector<string>& file_paths, int n_max_object_number ) {
-            m_max_object_number = n_max_object_number;
-            m_objects.resize( m_max_object_number );
+            init( file_paths, n_max_object_number );
+        }
+
+        void set_cache_size( int n_max_object_number );
+
+        void add_file( const string& path ) {
+            m_file_paths.push_back(path);
+        }
+
+        void init( const vector<string>& file_paths, int n_max_object_number ) {
             m_file_paths = file_paths;
-            clear_cache();
+            set_cache_size( n_max_object_number );
         }
 
         int n_files() const { return m_file_paths.size(); }
@@ -54,6 +68,9 @@ namespace kortex {
 
         /// marks all cache slots as free and removes object memories
         void release_cache_memory();
+
+        /// resets everything - gets rid of file paths
+        void reset_cache();
 
         /// returns the number of the empty cache spots
         int n_empty_cache_slots() const;

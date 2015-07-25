@@ -21,6 +21,15 @@
 namespace kortex {
 
     template<typename T>
+    void ObjectCache<T>::set_cache_size( int n_max_object_number ) {
+        assert_statement( n_max_object_number > 1, "too small cache" );
+        m_max_object_number = n_max_object_number;
+        m_objects.resize( n_max_object_number );
+        clear_cache();
+    }
+
+
+    template<typename T>
     const T* ObjectCache<T>::get_object( int fidx ) const {
         int cidx = get_cache_index( fidx );
         if( cidx == -1 ) return NULL;
@@ -69,6 +78,7 @@ namespace kortex {
 
     template<typename T>
     void ObjectCache<T>::load_objects( const vector<int>& to_be_loaded ) {
+        assert_statement( n_files(), "not initialized properly" );
         prep_cache_for_new_files( to_be_loaded );
         for( unsigned i=0; i<to_be_loaded.size(); i++ ) {
             int fidx = to_be_loaded[i];
@@ -116,6 +126,12 @@ namespace kortex {
         for( unsigned i=0; i<m_objects.size(); i++ )
             m_objects[i].obj.release();
         clear_cache();
+    }
+
+    template<typename T>
+    void ObjectCache<T>::reset_cache() {
+        release_cache_memory();
+        m_file_paths.clear();
     }
 
     template<typename T>
