@@ -34,6 +34,9 @@ namespace kortex {
         const T* I = img + y0*w*nc + c;
         const T* J = img + y1*w*nc + c;
 
+        x0 = x0 * nc;
+        x1 = x1 * nc;
+
         return (1.0f-beta) * ( (1.0f-alfa) * I[x0] + alfa * I[x1] )
             +        beta  * ( (1.0f-alfa) * J[x0] + alfa * J[x1] );
     }
