@@ -15,8 +15,17 @@
 #include <kortex/check.h>
 #include <kortex/linux_windows_defs.h>
 #include <cstring>
+#include <limits.h>
+#include <stdlib.h>
 
 namespace kortex {
+
+    string resolve_full_path( const string& istr ) {
+        char resolve_path[PATH_MAX];
+        char* rpath = realpath( istr.c_str(), resolve_path );
+        passert_statement_g( rpath != NULL, "realpath cannot resolve path [%s]", istr.c_str() );
+        return string(resolve_path);
+    }
 
     /// returns 0 if strings are identical disregarding case
     int compare_string_nc( const string& str1, const string& str2 ) {

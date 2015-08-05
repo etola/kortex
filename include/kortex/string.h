@@ -104,6 +104,7 @@ namespace kortex {
     /// replaces all the white_space chars with the fill string. check tst_string for examples.
     string replace_whitespace( const string& str, const string& white_space, const string& fill_str );
 
+    string resolve_full_path( const string& istr );
 
 }
 
