@@ -47,7 +47,8 @@ timer.cc \
 eigen_conversion.cc \
 option_parser.cc \
 object_cache.cc \
-indexed_array.cc
+indexed_array.cc \
+color_map.cc
 
 headers := \
 log_manager.h \
@@ -88,7 +89,8 @@ timer.h \
 eigen_conversion.h \
 option_parser.h \
 object_cache.h \
-indexed_array.h
+indexed_array.h \
+color_map.h
 
 #
 # output info
