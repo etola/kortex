@@ -25,6 +25,7 @@ namespace kortex {
     extern float g_colormap_hot[192];
     extern float g_colormap_jet[192];
     extern float g_colormap_hsv[192];
+    extern float g_colormap_cool[192];
     extern float g_colormap_winter[192];
 
     struct ColorMap {
