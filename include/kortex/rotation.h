@@ -15,12 +15,12 @@
 
 namespace kortex {
 
-    static const double  canonical_xd  [] = {  1.0,  0.0,  0.0 };
-    static const double  canonical_yd  [] = {  0.0,  1.0,  0.0 };
-    static const double  canonical_zd  [] = {  0.0,  0.0,  1.0 };
-    static const double  canonical_xd_r[] = { -1.0,  0.0,  0.0 };
-    static const double  canonical_yd_r[] = {  0.0, -1.0,  0.0 };
-    static const double  canonical_zd_r[] = {  0.0,  0.0, -1.0 };
+    // static const double  canonical_xd  [] = {  1.0,  0.0,  0.0 };
+    // static const double  canonical_yd  [] = {  0.0,  1.0,  0.0 };
+    // static const double  canonical_zd  [] = {  0.0,  0.0,  1.0 };
+    // static const double  canonical_xd_r[] = { -1.0,  0.0,  0.0 };
+    // static const double  canonical_yd_r[] = {  0.0, -1.0,  0.0 };
+    // static const double  canonical_zd_r[] = {  0.0,  0.0, -1.0 };
 
     /// computes the rotation matrix that rotates na to nb
     void rotate_normal_to_normal( const double* na, const double* nb, double* Rab );
@@ -29,7 +29,9 @@ namespace kortex {
     void quaternion_to_rotation  ( const double* q,  double* R );
     void  axisangle_to_rotation  ( const double* aa, double* R );
 
+    void rotation_matrix_around_z( const float & angle_in_degrees, float  R[9] );
     void rotation_matrix_around_z( const double& angle_in_degrees, double R[9] );
+
     void euler_to_rotation( double theta, double phi, double psi, double * R );
 
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
@@ -41,7 +43,8 @@ namespace kortex {
     void azel_to_cartesian( double az, double el, double n[3] );
     void cartesian_to_azel( const double n[3], double& az, double& el );
 
-    void construct_local_coordinate_frame(const double* z_normal, double* new_u, double* new_v);
+    void construct_local_coordinate_frame(const float * z_normal, float * new_u, float * new_v );
+    void construct_local_coordinate_frame(const double* z_normal, double* new_u, double* new_v );
     void rotation_to_az_el_zeta( const double R[9], double& az, double& el, double& zeta );
 
     /// az, el, zeta given in degrees

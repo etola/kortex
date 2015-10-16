@@ -89,6 +89,13 @@ namespace kortex {
         quaternion_to_rotation ( q, R);
     }
 
+    void rotation_matrix_around_z( const float& angle_in_degrees, float R[9] ) {
+        float in_plane = angle_in_degrees * RADIANS;
+        R[0] = cos(in_plane);  R[1] = -sin(in_plane); R[2] = 0;
+        R[3] = sin(in_plane);  R[4] =  cos(in_plane); R[5] = 0;
+        R[6] = 0;              R[7] =  0;             R[8] = 1;
+    }
+
     void rotation_matrix_around_z( const double& angle_in_degrees, double R[9] ) {
         double in_plane = angle_in_degrees * RADIANS;
         R[0] = cos(in_plane);  R[1] = -sin(in_plane); R[2] = 0;
@@ -155,9 +162,34 @@ namespace kortex {
                            "overlapping pointers not allowed" );
         assert_statement( is_unit_norm_3(z_normal), "z should be unit normed" );
 
+        double canonical_xd[] = {  1.0,  0.0,  0.0 };
+        double canonical_yd[] = {  0.0,  1.0,  0.0 };
         const double *tmp_n = canonical_xd;
         if( fabs(dot3(z_normal, tmp_n)) > 0.99 ) {
             tmp_n = canonical_yd;
+            cross3_normalized(tmp_n, z_normal, new_u);
+            cross3_normalized(z_normal, new_u, new_v);
+        } else {
+            cross3_normalized(z_normal, tmp_n, new_v);
+            cross3_normalized(new_v, z_normal, new_u);
+        }
+
+        assert_statement( is_unit_norm_3(new_u) && is_unit_norm_3(new_v),
+                          "output is not unit normed" );
+    }
+
+    void construct_local_coordinate_frame( const float* z_normal, float* new_u, float* new_v ) {
+        assert_pointer( z_normal && new_u && new_v );
+        passert_statement( (z_normal != new_u) && (z_normal != new_v) && (new_u != new_v),
+                           "overlapping pointers not allowed" );
+        assert_statement( is_unit_norm_3(z_normal), "z should be unit normed" );
+
+        float canonical_xf[] = {  1.0f,  0.0f,  0.0f };
+        float canonical_yf[] = {  0.0f,  1.0f,  0.0f };
+
+        const float *tmp_n = canonical_xf;
+        if( fabs(dot3(z_normal, tmp_n)) > 0.99f ) {
+            tmp_n = canonical_yf;
             cross3_normalized(tmp_n, z_normal, new_u);
             cross3_normalized(z_normal, new_u, new_v);
         } else {
