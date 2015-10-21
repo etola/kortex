@@ -65,6 +65,13 @@ namespace kortex {
 
     }
 
+    void OptionParser::add_separator() {
+        OptionItem opt;
+        opt.name = "reserved";
+        opt.opt_type = OP_SEPARATOR;
+        m_options.push_back( opt );
+    }
+
     void OptionParser::set_default( const string& name, const string& v0 ) {
         int oid = get_option( name );
         passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
@@ -132,6 +139,9 @@ namespace kortex {
                 break;
             case OP_NO_INPUT:
                 printf( "%-*s  %-7s| %-*s |\n", opt_len+2, opt.name.c_str(), "", exp_len, opt.explanation.c_str() );
+                break;
+            case OP_SEPARATOR:
+                printf( "\n" );
                 break;
             }
         }

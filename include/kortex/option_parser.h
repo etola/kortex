@@ -21,7 +21,7 @@
 
 namespace kortex {
 
-    enum OptionType { OP_NO_INPUT=0, OP_SINGLE_INPUT=1, OP_MULTI_INPUT=-1 };
+    enum OptionType { OP_NO_INPUT=0, OP_SINGLE_INPUT=1, OP_MULTI_INPUT=-1, OP_SEPARATOR=99 };
 
     struct OptionItem {
 
@@ -54,6 +54,7 @@ namespace kortex {
         }
 
         void add_option( const string& name, const string& explanation, const string& type, OptionType opt_type, const string& default_value="" );
+        void add_separator();
 
         void set_default( const string& name, ... );
 
@@ -107,6 +108,8 @@ namespace kortex {
                 break;
             case OP_MULTI_INPUT:
                 logman_fatal_g( "multi-element option - cannot be parsed [opt %s]\n", opt.name.c_str() );
+                break;
+            case OP_SEPARATOR:
                 break;
             }
             return false;
