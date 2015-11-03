@@ -3,3 +3,6 @@
   some tips about using the C++11 <random>  http://cpp.indi.frih.net/blog/2014/12/the-bell-has-tolled-for-rand/
 
 - integrate kvector with kmatrix
+
+- kmatrix/matrix and most math operations should really support float/double
+  mixing
