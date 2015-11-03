@@ -254,7 +254,7 @@ namespace kortex {
     }
 
     void rotation_matrix_frame_error( const double* R_ref, const double* R_obs,
-                                      double& e_boresight, double& e_inplain ) {
+                                      double& e_boresight, double& e_inplane ) {
         assert_pointer( R_ref );
         assert_pointer( R_obs );
 
@@ -273,7 +273,7 @@ namespace kortex {
         double eid = std::max( std::min( dot3( ref_x,    obs_x    ), 1.0 ), -1.0 );
 
         e_boresight = acos( ebd ) * DEGREES;
-        e_inplain   = acos( eid ) * DEGREES;
+        e_inplane   = acos( eid ) * DEGREES;
     }
 
     /// front_az, front_el sets the z-direction of the camera frame.
