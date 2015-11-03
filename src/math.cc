@@ -154,6 +154,19 @@ namespace kortex {
         return nrm;
     }
 
+    float  normalize_l2norm3( const float* arr, float* na ) {
+        assert_pointer( arr );
+        float nrm = l2norm3( arr );
+        if( nrm < NRM_EPS ) {
+            memset( na, 0, sizeof(*arr)*3 );
+            return nrm;
+        }
+        float inrm = 1.0f/nrm;
+        for( int p=0; p<3; p++ )
+            na[p] = inrm * arr[p];
+        return nrm;
+    }
+
     void scale( float* arr, int asz, float v ) {
         assert_pointer( arr );
         assert_pointer_size( asz );
