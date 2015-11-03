@@ -77,7 +77,7 @@ namespace kortex {
     }
 
     std::ostream& progress_bar::out(std::ostream& os) {
-        if( m_current > (m_progress * (m_end - m_start) / m_divisions) ||
+        if( m_current > (m_progress * (m_end - m_start) / (double)m_divisions) ||
             m_current == m_end ) {
             m_progress++;
             os << m_message << m_limit;
