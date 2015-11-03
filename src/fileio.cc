@@ -66,7 +66,7 @@ namespace kortex {
     }
 
     bool delete_file(const string& path) {
-        logman_log_g("deleting file [%s]", path.c_str());
+        // logman_log_g("deleting file [%s]", path.c_str());
         if( remove( path.c_str() ) == 0 ) return true;
         else                              return false;
     }
