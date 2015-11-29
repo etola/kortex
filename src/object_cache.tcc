@@ -113,6 +113,8 @@ namespace kortex {
         passert_statement( p, "no empty object slot is available - cache is full - init with larger cache size" );
         p->file_index = fidx;
         p->obj.load( m_file_paths[fidx] );
+        if( post_load_func )
+            post_load_func( p->obj );
     }
 
     template<typename T>

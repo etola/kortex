@@ -34,6 +34,7 @@ namespace kortex {
 
         ObjectCache() {
             m_max_object_number = 0;
+            post_load_func = NULL;
         }
 
         ObjectCache( const vector<string>& file_paths, int n_max_object_number ) {
@@ -81,10 +82,16 @@ namespace kortex {
 
         void report_cache_state() const;
 
+        void set_post_load_function( void (*f)( T& obj ) ) {
+            post_load_func = f;
+        }
+
     private:
         int                      m_max_object_number;
         vector< CacheObject<T> > m_objects;
         vector<string          > m_file_paths;
+
+        void (*post_load_func)( T& obj );
 
         /// preps cache for new file load - removes cache items if not enough
         /// empty slots are present
@@ -100,6 +107,7 @@ namespace kortex {
 
         /// loads object to the cache with the file index identifier
         void         load_object( int fidx );
+
 
     };
 
