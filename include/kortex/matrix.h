@@ -206,6 +206,10 @@ namespace kortex {
         mat_mat( A, 3, 3, B, 3, 3, C, 9 );
     }
 
+    inline void mat_trans_mat_3( const double* A, const double* B, double* C ) {
+        mat_trans_mat( A, 3, 3, B, 3, 3, C, 9 );
+    }
+
     inline void mat_trans_mat_mat_3( const double* A, const double* B, const double* C, double* D ) {
         mat_trans_mat_mat( A, 3, 3, B, 3, 3, C, 3, 3, D, 9 );
     }
