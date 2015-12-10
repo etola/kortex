@@ -610,6 +610,7 @@ namespace kortex {
         assert_statement( lda >= nc, "invalid matrix dims" );
         mA.init( nr, nc );
         for( int r=0; r<nr; r++ ) {
+            assert_statement( r*lda < nr*nc, "invalid access - possibly wrong lda" );
             const double* ar = A + r*lda;
             memcpy( mA.get_row(r), ar, sizeof(*A)*nc );
         }

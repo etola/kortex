@@ -1,6 +1,6 @@
+.gitignore
 debug
 release
 test_in
 test_out
-kortex.pc
-kortexd.pc
+*.pc
