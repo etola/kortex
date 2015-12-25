@@ -23,6 +23,9 @@ namespace kortex {
     int nearest_int( const float & f );
     int nearest_int( const double& f );
 
+    /// returns integer y such that 2^y >= x
+    int cast_to_upper_power_2( int x );
+
     template <typename T> int sign(T v) { return (T(0) < v) - (v<T(0)); }
 
     inline float  sq(const float&  v) { return v*v; }
@@ -115,6 +118,7 @@ namespace kortex {
     double optimize_peak( double xp, double xc, double xa, double yp, double yc, double ya );
 
     void compute_covariance_3( const double* Xs, int m, int n, double cov[9] );
+
 
 }
 

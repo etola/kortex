@@ -39,6 +39,16 @@ namespace kortex {
         return (int)rint(f);
     }
 
+    /// returns integer y such that 2^y >= x
+    int cast_to_upper_power_2( int x ) {
+        int log2y = int(log2(x));
+        int y = 1<<log2y;
+        if( y < x )
+            y = y<<1;
+        return y;
+    }
+
+
     bool is_unit_norm( const float* a, int asz, float eps ) {
         assert_pointer( a );
         assert_pointer_size( asz );
