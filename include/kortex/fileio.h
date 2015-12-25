@@ -60,6 +60,11 @@ namespace kortex {
         if( param_name ) fout << param_name << " ";
         fout << in_str( param ) << "\n";
     }
+    template<> inline
+    void write_param( ofstream& fout, const char* param_name, const ifloat& param ) {
+        if( param_name ) fout << param_name << " ";
+        fout << in_str( param.id ) << " " << in_str( param.val ) << "\n";
+    }
 
     template<typename T>
     void write_array( ofstream& fout, const char* param_name, const vector<T>& arr ) {
@@ -106,6 +111,27 @@ namespace kortex {
         sscanf( buffer, format.c_str(), &stmp );
         in_value(stmp, param);
     }
+
+    template<> inline
+    void read_param( ifstream& fin, const char* param_name, ifloat& param ) {
+        char buffer[1024];
+        fin.getline( buffer, 1024 );
+        check_file_stream_error(fin, param_name);
+        string format;
+        if( param_name ) {
+            format = string(param_name)+" %s %s";
+            if( compare_string_nc( buffer, param_name ) ) {
+                logman_fatal_g("param name [%s] does not match what is read [%s]", param_name, buffer );
+            }
+        } else {
+            format = "%s %s";
+        }
+        char itmp[256], vtmp[256];
+        sscanf( buffer, format.c_str(), &itmp, &vtmp );
+        in_value( itmp, param.id  );
+        in_value( vtmp, param.val );
+    }
+
 
     template<typename T>
     void read_array( ifstream& fin, const char* param_name, T* arr, const int& n_arr ) {
@@ -205,6 +231,11 @@ namespace kortex {
     }
     template<> inline
     void read_bparam( ifstream& fin, iint& v ) {
+        read_bparam( fin, v.id  );
+        read_bparam( fin, v.val );
+    }
+    template<> inline
+    void read_bparam( ifstream& fin, ifloat& v ) {
         read_bparam( fin, v.id  );
         read_bparam( fin, v.val );
     }
