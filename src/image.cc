@@ -45,6 +45,8 @@ namespace kortex {
 
     Image::Image( const Image& img ) {
         init_();
+        if( img.is_empty() )
+            return;
         this->copy( &img );
     }
 
