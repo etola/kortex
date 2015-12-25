@@ -70,6 +70,7 @@ namespace kortex {
     void    mat_cross_form( double x, double y, double z, double* A, int asz );
 
     // A[ r, : ] <-- rdata
+    void    mat_set_row( double* A, int nra, int nca, int rid, const float * rdata, int rdsz );
     void    mat_set_row( double* A, int nra, int nca, int rid, const double* rdata, int rdsz );
     // A[ r, : ] <-- alpha * rdata
     void    mat_set_row( double* A, int nra, int nca, int rid, double alpha, const double* rdata, int rdsz );

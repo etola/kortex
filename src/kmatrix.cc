@@ -182,6 +182,12 @@ namespace kortex {
     }
 
 
+    void KMatrix::set_row( int rid, const float* rdata, int rdsz ) {
+        assert_boundary( rid, 0, nr );
+        assert_pointer( rdata );
+        assert_statement( rdsz == nc, "rdsz should be same with matrix size" );
+        mat_set_row( get_pointer(), nr, nc, rid, rdata, rdsz );
+    }
     void KMatrix::set_row( int rid, const double* rdata, int rdsz ) {
         assert_boundary( rid, 0, nr );
         assert_pointer( rdata );

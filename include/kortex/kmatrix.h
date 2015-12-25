@@ -91,6 +91,7 @@ namespace kortex {
                   const double& v3, const double& v4, const double& v5,
                   const double& v6, const double& v7, const double& v8 );
 
+        void set_row( int rid, const float * rdata, int rdsz );
         void set_row( int rid, const double* rdata, int rdsz );
         /// set the contents of the row with row_data[0:csz-1] starting from r0,c0
         void set_row( int r0, int c0, const double* row_data, int csz );

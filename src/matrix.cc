@@ -129,6 +129,14 @@ namespace kortex {
         mat_cross_form( v[0], v[1], v[2], A, asz );
     }
 
+    void mat_set_row( double* A, int nra, int nca, int rid, const float* rdata, int rdsz ) {
+        assert_matrix_init( A, nra, nca );
+        assert_boundary( rid, 0, nra );
+        assert_pointer( rdata );
+        assert_statement_g( rdsz == nca, "invalid rdsz [%d]", rdsz );
+        for( int i=0; i<rdsz; i++ )
+            A[rid*rdsz+i] = double(rdata[i]);
+    }
     void mat_set_row( double* A, int nra, int nca, int rid, const double* rdata, int rdsz ) {
         assert_matrix_init( A, nra, nca );
         assert_boundary( rid, 0, nra );
