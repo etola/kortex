@@ -60,6 +60,9 @@ namespace kortex {
     }
 
     void get_color(ColorName color, uchar &cr, uchar &cg, uchar &cb);
+    inline void get_color(ColorName name, Color& col ) {
+        get_color( name, col.r, col.g, col.b );
+    }
 
     inline ColorName get_color( int color ) {
         int mc = color % COLOR_WHITE + 1;
