@@ -18,6 +18,8 @@
 #include <vector>
 using std::vector;
 
+#include <kortex/types.h>
+
 namespace kortex {
 
     int nearest_int( const float & f );
@@ -94,6 +96,8 @@ namespace kortex {
 
     float l2norm( const float* a, const float* b, int asz );
     float normalize_l2norm( float * arr, int asz );
+
+    int l2norm_128_sq( const uchar a[128], const uchar b[128] );
 
     float  normalize_l2norm3( float * arr );
     double normalize_l2norm3( double* arr );

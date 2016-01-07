@@ -227,6 +227,21 @@ namespace kortex {
 #endif
     }
 
+    int l2norm_128_sq( const uchar a[128], const uchar b[128] ) {
+        int s = 0;
+        int d0,d1,d2,d3;
+        for( int i=0; i<32; i++ ) {
+            d0 = a[0] - b[0];
+            d1 = a[1] - b[1];
+            d2 = a[2] - b[2];
+            d3 = a[3] - b[3];
+            a += 4;
+            b += 4;
+            s += d0*d0 + d1*d1 + d2*d2 + d3*d3;
+        }
+        return s;
+    }
+
     float l2norm( const float* a, const float* b, int asz ) {
         assert_pointer( a && b );
         assert_pointer_size( asz );
