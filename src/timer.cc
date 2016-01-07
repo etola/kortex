@@ -17,8 +17,7 @@
 namespace kortex {
 
     Timer::Timer() {
-        st = std::chrono::high_resolution_clock::now();
-        el = st;
+        reset();
     }
     double Timer::elapsed() {
         en = std::chrono::high_resolution_clock::now();
@@ -41,6 +40,7 @@ namespace kortex {
 
     void Timer::reset() {
         st = std::chrono::high_resolution_clock::now();
+        el = st;
     }
 
 }
