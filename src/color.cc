@@ -107,7 +107,7 @@ namespace kortex {
         return COLOR_RED;
     }
 
-    string get_color( const ColorName& color ) {
+    string get_color_string( const ColorName& color ) {
         switch( color ) {
         case COLOR_BLACK    : return string("black"         );
         case COLOR_WHITE    : return string("white"         );
