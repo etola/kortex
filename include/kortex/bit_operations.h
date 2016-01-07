@@ -70,6 +70,29 @@ namespace kortex {
             r =  r | ( (uint64_t)(((int)(a[i]))&1) << i );
         return r;
     }
+    inline void pack128( const uchar a[128], uchar packed_a[16] ) {
+        uint64_t* r0 = (uint64_t*)(packed_a   );
+        uint64_t* r1 = (uint64_t*)(packed_a+8 );
+        for( int i=0; i<64; i++ )
+            *r0 =  *r0 | ( (uint64_t)(a[i]&1) << i );
+        for( int i=64; i<128; i++ )
+            *r1 =  *r1 | ( (uint64_t)(a[i]&1) << i );
+    }
+    inline void pack256( const uchar a[256], uchar packed_a[32] ) {
+        uint64_t* r0 = (uint64_t*)(packed_a   );
+        uint64_t* r1 = (uint64_t*)(packed_a+8 );
+        uint64_t* r2 = (uint64_t*)(packed_a+16);
+        uint64_t* r3 = (uint64_t*)(packed_a+24);
+        for( int i=0; i<64; i++ )
+            *r0 =  *r0 | ( (uint64_t)(a[i]&1) << i );
+        for( int i=64; i<128; i++ )
+            *r1 =  *r1 | ( (uint64_t)(a[i]&1) << i );
+        for( int i=128; i<192; i++ )
+            *r2 =  *r2 | ( (uint64_t)(a[i]&1) << i );
+        for( int i=192; i<256; i++ )
+            *r3 =  *r3 | ( (uint64_t)(a[i]&1) << i );
+    }
+
 
     inline void unpack64(const uint64_t& a, uchar ua[64]) {
         for( int i=0; i<64; i++ )
