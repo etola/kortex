@@ -681,6 +681,60 @@ namespace kortex {
         }
     }
 
+    void Image::copy_from_region_safe(const Image* src,
+                                      const int& sx0, const int& sy0, const int& rw,  const int& rh,
+                                      const int& dx0, const int& dy0) {
+        assert_pointer( src );
+        assert_noalias_p( this, src );
+        passert_statement( type() == src->type(), "image types should be the same" );
+        for( int y=0; y<rh; y++ ) {
+            for( int x=0; x<rw; x++ ) {
+                if( !src->is_inside(sx0+x,sy0+y) )
+                    continue;
+                if( !this->is_inside(dx0+x,dy0+y) )
+                    continue;
+
+                switch( m_type ) {
+                case IT_F_GRAY:
+                case IT_F_PRGB: {
+                    const float* sptr =  src->get_row_f(sy0+y) + (sx0+x)*m_ch;
+                    float*       dptr = this->get_row_f(dy0+y) + (dx0+x)*m_ch;
+                    memcpy( dptr, sptr, sizeof(float)*m_ch );
+                } break;
+                case IT_U_GRAY:
+                case IT_U_PRGB: {
+                    const uchar* sptr =  src->get_row_u(sy0+y) + (sx0+x)*m_ch;
+                    uchar*       dptr = this->get_row_u(dy0+y) + (dx0+x)*m_ch;
+                    memcpy( dptr, sptr, sizeof(uchar)*m_ch );
+                } break;
+                case IT_F_IRGB: {
+                    for( int c=0; c<3; c++ ) {
+                        const float* sptr =  src->get_row_fi(sy0+y,c) + sx0 + x;
+                        float*       dptr = this->get_row_fi(dy0+y,c) + dx0 + x;
+                        dptr[0] = sptr[0];
+                    }
+                } break;
+                case IT_U_IRGB: {
+                    for( int c=0; c<3; c++ ) {
+                        const uchar* sptr =  src->get_row_ui(sy0+y, c) + sx0 + x;
+                        uchar*       dptr = this->get_row_ui(dy0+y, c) + dx0 + x;
+                        dptr[0] = sptr[0];
+                    }
+                } break;
+                case IT_I_GRAY: {
+                    const int* sptr =  src->get_row_i(sy0+y) + (sx0+x)*m_ch;
+                    int*       dptr = this->get_row_i(dy0+y) + (dx0+x)*m_ch;
+                    memcpy( dptr, sptr, sizeof(int)*m_ch );
+                } break;
+                default:
+                    switch_fatality();
+                    break;
+                }
+            }
+        }
+    }
+
+
     //
     //
     //

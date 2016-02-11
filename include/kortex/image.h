@@ -223,6 +223,12 @@ namespace kortex {
                               const int& sx0, const int& sy0, const int& rw,  const int& rh,
                               const int& dx0, const int& dy0);
 
+        /// same as above but if the referenced regions are outside of either
+        /// source or destination, this skips.
+        void copy_from_region_safe(const Image* src,
+                                   const int& sx0, const int& sy0, const int& rw,  const int& rh,
+                                   const int& dx0, const int& dy0);
+
         //
         // row pointers
         //

@@ -113,8 +113,8 @@ namespace kortex {
         int exp_len = 20;
         for(int i=0; i<n_options(); i++ ) {
             const OptionItem& opt = get_option(i);
-            exp_len = std::min( 40, std::max( exp_len, (int)opt.explanation.size() ) );
-            opt_len = std::min( 10, std::max( opt_len, (int)opt.name.size() ) );
+            exp_len = std::min( 60, std::max( exp_len, (int)opt.explanation.size() ) );
+            opt_len = std::min( 16, std::max( opt_len, (int)opt.name.size() ) );
         }
 
         for( int i=0; i<n_options(); i++ ) {
