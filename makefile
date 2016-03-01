@@ -48,7 +48,9 @@ eigen_conversion.cc \
 option_parser.cc \
 object_cache.cc \
 indexed_array.cc \
-color_map.cc
+color_map.cc \
+sparse_array.cc \
+histogram.cc
 
 headers := \
 log_manager.h \
@@ -90,7 +92,9 @@ eigen_conversion.h \
 option_parser.h \
 object_cache.h \
 indexed_array.h \
-color_map.h
+color_map.h \
+sparse_array.h \
+histogram.h
 
 #
 # output info
