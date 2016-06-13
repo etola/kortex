@@ -46,13 +46,6 @@ namespace kortex {
             printf( "%s\n", buf );
     }
 
-    void print( const vector<iint>& arr ) {
-        for( int i=0; i<(int)arr.size(); i++ ) {
-            printf( "% 3d % 4d\n", arr[i].id, arr[i].val );
-        }
-        printf( "\n" );
-    }
-
     void print_mat( const vector<float>& mat, int nr, int nc, const char* pretag  ) {
         if( pretag ) printf( "%s ", pretag );
         for( int r=0; r<nr; r++ ) {

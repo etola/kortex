@@ -18,7 +18,7 @@
 #include <iomanip>
 #include <vector>
 
-#include <kortex/indexed_types.h>
+#include <kortex/keyed_value.h>
 
 using std::vector;
 

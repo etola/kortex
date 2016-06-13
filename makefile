@@ -35,7 +35,6 @@ minmax.cc \
 math.cc \
 progress_bar.cc \
 random.cc \
-indexed_types.cc \
 rect2.cc \
 linear_algebra.cc \
 matrix.cc \
@@ -47,9 +46,9 @@ timer.cc \
 eigen_conversion.cc \
 option_parser.cc \
 object_cache.cc \
-indexed_array.cc \
 color_map.cc \
-sparse_array.cc \
+sparse_array_t.cc \
+indexed_array.cc \
 histogram.cc
 
 headers := \
@@ -91,10 +90,11 @@ timer.h \
 eigen_conversion.h \
 option_parser.h \
 object_cache.h \
-indexed_array.h \
 color_map.h \
-sparse_array.h \
-histogram.h
+sparse_array_t.h \
+indexed_array.h \
+histogram.h \
+keyed_value.h
 
 #
 # output info

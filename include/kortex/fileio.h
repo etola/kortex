@@ -23,7 +23,7 @@ using std::ofstream;
 using std::ifstream;
 using std::ostream;
 
-#include <kortex/indexed_types.h>
+#include <kortex/keyed_value.h>
 #include <kortex/check.h>
 #include <kortex/string.h>
 
@@ -63,7 +63,7 @@ namespace kortex {
     template<> inline
     void write_param( ofstream& fout, const char* param_name, const ifloat& param ) {
         if( param_name ) fout << param_name << " ";
-        fout << in_str( param.id ) << " " << in_str( param.val ) << "\n";
+        fout << in_str( param.key ) << " " << in_str( param.val ) << "\n";
     }
 
     template<typename T>
@@ -128,7 +128,7 @@ namespace kortex {
         }
         char itmp[256], vtmp[256];
         sscanf( buffer, format.c_str(), &itmp, &vtmp );
-        in_value( itmp, param.id  );
+        in_value( itmp, param.key );
         in_value( vtmp, param.val );
     }
 
@@ -192,7 +192,7 @@ namespace kortex {
 
     template<> inline
     void write_bparam( ofstream& fout, const iint& v ) {
-        write_bparam( fout, v.id  );
+        write_bparam( fout, v.key );
         write_bparam( fout, v.val );
     }
 
@@ -231,12 +231,12 @@ namespace kortex {
     }
     template<> inline
     void read_bparam( ifstream& fin, iint& v ) {
-        read_bparam( fin, v.id  );
+        read_bparam( fin, v.key );
         read_bparam( fin, v.val );
     }
     template<> inline
     void read_bparam( ifstream& fin, ifloat& v ) {
-        read_bparam( fin, v.id  );
+        read_bparam( fin, v.key );
         read_bparam( fin, v.val );
     }
 

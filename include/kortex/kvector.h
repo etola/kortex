@@ -308,6 +308,16 @@ namespace kortex {
         return os;
     }
 
+    template <typename T, int N>
+    void compute_mean( const vector< KVector<T,N> >& pnts, KVector<T,N>& mean_val ) {
+        mean_val.zero();
+        int psz = pnts.size();
+        assert_statement( psz != 0, "invalid op" );
+        for( int i=0; i<psz; i++ )
+            mean_val += pnts[i];
+        mean_val.scale( 1.0/psz);
+    }
+
 }
 
 #endif

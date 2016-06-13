@@ -47,6 +47,10 @@ namespace kortex {
             m_file_paths.push_back(path);
         }
 
+        string get_file( const int& id ) const {
+            return m_file_paths[id];
+        }
+
         void init( const vector<string>& file_paths, int n_max_object_number ) {
             m_file_paths = file_paths;
             set_cache_size( n_max_object_number );

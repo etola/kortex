@@ -18,7 +18,7 @@
 #include <climits>
 
 #include <kortex/check.h>
-#include <kortex/indexed_types.h>
+#include <kortex/keyed_value.h>
 #include <kortex/mem_manager.h>
 
 #include <kortex/random.h>
@@ -112,7 +112,7 @@ namespace kortex {
 
         vector<ifloat> nums( n );
         for( int i=0; i<n; i++ ) {
-            nums[i].id  = i;
+            nums[i].key = i;
             nums[i].val = (float)uniform_sample();
         }
         sort_ascending( nums );
@@ -120,7 +120,7 @@ namespace kortex {
         perm.clear();
         perm.resize( n );
         for( int i=0; i<n; i++ )
-            perm[i] = nums[i].id;
+            perm[i] = nums[i].key;
     }
 
 }

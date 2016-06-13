@@ -29,7 +29,7 @@ namespace kortex {
 
     enum DataType { TYPE_CHAR,  TYPE_FLOAT, TYPE_DOUBLE, TYPE_INT,
                     TYPE_UCHAR, TYPE_UINT16, TYPE_SIZE_T,
-                    TYPE_BOOL,  TYPE_STRING };
+                    TYPE_BOOL,  TYPE_STRING, TYPE_NONE };
 
     inline DataType get_type( const char     & p ) { return TYPE_CHAR   ; }
     inline DataType get_type( const float    & p ) { return TYPE_FLOAT  ; }
@@ -52,6 +52,7 @@ namespace kortex {
         case TYPE_SIZE_T : return sizeof(size_t);
         case TYPE_BOOL   : return sizeof(bool);
         case TYPE_STRING : return sizeof(string);
+        case TYPE_NONE   : return 0;
         default          :
             std::cerr<<"unhandled type\n";
             exit(99);
