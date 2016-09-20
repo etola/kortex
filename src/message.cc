@@ -33,6 +33,11 @@ namespace kortex {
     void print_arr( const vector<int>& var, const char* pretag, const char* posttag, bool detailed ) {
         static const int bufsz = 2560;
         char buf[bufsz];
+
+        if( var.size() > bufsz/5 ) {
+            logman_warning( "probably buffer overflows! - run in debug if segfaults" );
+        }
+
         int nstr = 0;
         if( pretag  ) nstr = sprintf( buf+nstr, "%s ",  pretag  );
         for( unsigned i=0; i<var.size(); i++ )

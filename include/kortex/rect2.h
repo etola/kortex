@@ -31,6 +31,15 @@ namespace kortex {
             update();
         }
 
+        void init( float xmin, float xmax, float ymin, float ymax ) {
+            lx = xmin;
+            ux = xmax;
+            ly = ymin;
+            uy = ymax;
+            id = 0;
+            update();
+        }
+
         void crop(float xmin, float xmax, float ymin, float ymax) {
             if( lx<xmin ) lx=xmin;
             if( ly<ymin ) ly=ymin;
@@ -59,6 +68,10 @@ namespace kortex {
         bool is_inside_y(int y) const;
         bool is_inside_x(int x) const;
 
+        void print() const {
+            printf( "Boundary: [x %f %f ] [y %f %f] [sz %f %f]\n",
+                    lx, ux, ly, uy, dx, dy );
+        }
     };
 
     struct Rect2i {
