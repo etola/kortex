@@ -31,14 +31,11 @@ namespace kortex {
         HNode() {
             heap_idx = 0;
             heap_val = 0;
-            orig_idx = 0;
             data     = NULL;
         }
 
         size_t heap_idx;
         double heap_val;
-
-        size_t orig_idx;
 
         HData* data;
     };
@@ -53,10 +50,11 @@ namespace kortex {
         size_t m_sz;  // current number of nodes
 
         HeapType m_type;
-        MemUnit  m_memory;
 
-        HNode<HData>**  m_nodes;
         HNode<HData>    m_sentinel;
+
+        vector< HNode<HData>  > m_nodes;
+        vector< HNode<HData>* > m_node_ptrs;
 
     public:
 
@@ -65,7 +63,7 @@ namespace kortex {
 
         void init( const size_t& init_cap, const HeapType& type );
 
-        void insert( HNode<HData>* node );
+        void insert( HData& dobj, double value );
 
         HNode<HData>* peek();
         HNode<HData>* peek( size_t k );
@@ -86,20 +84,6 @@ namespace kortex {
         size_t size    () const { return m_sz;          }
         bool   is_empty() const { return m_sz == 0;     }
         bool   is_full () const { return m_sz == m_cap; }
-
-        static size_t req_mem( const size_t& cap ) {
-            return ( cap+1 ) * sizeof( HNode<HData>* );
-        }
-
-        void set_mem( MemUnit& mem ) {
-            m_memory.deallocate();
-            m_memory.swap( &mem );
-        }
-
-        void borrow_mem( MemUnit& mem ) {
-            m_memory.deallocate();
-            m_memory.borrow( &mem );
-        }
 
         void release();
         bool is_heap_healthy() const;

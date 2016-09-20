@@ -23,10 +23,10 @@ namespace kortex {
         m_cap  = 0;
         m_type = HT_ASCENDING;
     }
-
     template<typename HData>
     Heap<HData>::~Heap() {
-        m_memory.deallocate();
+        m_node_ptrs.clear();
+        m_nodes.clear();
     }
 
     template<typename HData>
@@ -41,48 +41,52 @@ namespace kortex {
         case HT_DESCENDING: m_sentinel.heap_val =  DBL_MAX; cmp = heap_max; break;
         case HT_ASCENDING : m_sentinel.heap_val = -DBL_MAX; cmp = heap_min; break;
         }
-        m_nodes[0] = &m_sentinel;
+        m_node_ptrs[0] = &m_sentinel;
     }
 
     template<typename HData>
     void Heap<HData>::reserve( const size_t& new_cap ) {
-        m_memory.resize( new_cap * sizeof(HNode<HData>*) );
-        m_nodes = (HNode<HData>**)m_memory.get_buffer();
-        m_cap   = new_cap;
+        m_cap = new_cap;
+        m_node_ptrs.resize( new_cap );
+        m_nodes.resize( new_cap );
     }
 
     template<typename HData>
     void Heap<HData>::release() {
-        m_memory.deallocate();
-        m_nodes = NULL;
+        m_node_ptrs.clear();
+        m_nodes.clear();
         m_cap   = 0;
         m_sz    = 0;
     }
 
     template<typename HData>
-    void Heap<HData>::insert( HNode<HData>* node ) {
+    void Heap<HData>::insert( HData& dobj, double value ) {
         assert_pointer( cmp );
         m_sz++;
         if( is_full() ) {
             printf( "resizing heap! %d\n", (int)m_cap*2 );
             reserve( 2*m_cap );
         }
-        m_nodes[m_sz] = node;
+        HNode<HData>* new_node = &m_nodes[m_sz];
+        new_node->data     = &dobj;
+        new_node->heap_val = value;
+
+        m_node_ptrs[m_sz] = new_node;
         upheap(m_sz);
     }
 
     template<typename HData>
     void Heap<HData>::upheap( size_t k ) {
         assert_pointer( cmp );
-        HNode<HData>* v = m_nodes[k];
+        HNode<HData>* v = m_node_ptrs[k];
 
-        while( (*cmp)( v, m_nodes[k>>1] ) ) {
-            m_nodes[ k ] = m_nodes[ k >> 1 ];
-            m_nodes[ k ]->heap_idx = k;
+        while( (*cmp)( v, m_node_ptrs[k>>1] ) ) {
+            m_node_ptrs[ k ] = m_node_ptrs[ k >> 1 ];
+            m_node_ptrs[ k ]->heap_idx = k;
             k >>= 1;
         }
-        m_nodes[k] = v;
-        m_nodes[k]->heap_idx = k;
+        m_node_ptrs[k] = v;
+        m_node_ptrs[k]->heap_idx = k;
 
     }
 
@@ -91,30 +95,30 @@ namespace kortex {
         assert_pointer( cmp );
 
         size_t j;
-        HNode<HData>* v = m_nodes[k];
+        HNode<HData>* v = m_node_ptrs[k];
 
         while( k <= m_sz/2 ) {
             j = k << 1;
-            if( j < m_sz && (*cmp)( m_nodes[j+1], m_nodes[j] ) )
+            if( j < m_sz && (*cmp)( m_node_ptrs[j+1], m_node_ptrs[j] ) )
                 j++;
-            if( (*cmp)( v, m_nodes[j] ) )
+            if( (*cmp)( v, m_node_ptrs[j] ) )
                 break;
-            m_nodes[k] = m_nodes[j];
-            m_nodes[k]->heap_idx = k;
+            m_node_ptrs[k] = m_node_ptrs[j];
+            m_node_ptrs[k]->heap_idx = k;
             k = j;
         }
-        m_nodes[k] = v;
-        m_nodes[k]->heap_idx = k;
+        m_node_ptrs[k] = v;
+        m_node_ptrs[k]->heap_idx = k;
     }
 
     template<typename HData>
     HNode<HData>* Heap<HData>::pop( size_t k ) {
         assert_statement( k <= m_sz && k > 0, "oob" );
-        HNode<HData>* node_k = m_nodes[k];
+        HNode<HData>* node_k = m_node_ptrs[k];
         assert_statement( node_k->heap_idx == k, "invalid node" );
         if( m_sz > 0 ) {
-            m_nodes[k] = m_nodes[m_sz];
-            m_nodes[k]->heap_idx = k;
+            m_node_ptrs[k] = m_node_ptrs[m_sz];
+            m_node_ptrs[k]->heap_idx = k;
             m_sz--;
             update(k);
         }
@@ -130,10 +134,10 @@ namespace kortex {
     template<typename HData>
     HNode<HData>* Heap<HData>::pop() {
         if( m_sz == 0 ) return NULL;
-        HNode<HData>* top = m_nodes[1];
+        HNode<HData>* top = m_node_ptrs[1];
         if( m_sz > 0 ) {
-            m_nodes[1] = m_nodes[m_sz];
-            m_nodes[1]->heap_idx = 1;
+            m_node_ptrs[1] = m_node_ptrs[m_sz];
+            m_node_ptrs[1]->heap_idx = 1;
             m_sz--;
             downheap(1);
         }
@@ -144,7 +148,7 @@ namespace kortex {
     template<typename HData>
     HNode<HData>* Heap<HData>::pop_last() {
         if( m_sz == 0 ) return NULL;
-        HNode<HData>* last = m_nodes[m_sz];
+        HNode<HData>* last = m_node_ptrs[m_sz];
         m_sz--;
         return last;
     }
@@ -153,13 +157,13 @@ namespace kortex {
     HNode<HData>* Heap<HData>::peek( size_t k ) {
         if( m_sz == 0 ) return NULL;
         assert_statement( k>=1 && k<=m_sz, "invalid idx to pop" );
-        return m_nodes[k];
+        return m_node_ptrs[k];
     }
 
     template<typename HData>
     HNode<HData>* Heap<HData>::peek() {
         if( m_sz == 0 ) return NULL;
-        return m_nodes[1];
+        return m_node_ptrs[1];
     }
 
     template<typename HData>
@@ -181,17 +185,17 @@ namespace kortex {
     bool Heap<HData>::check_heap_condition( size_t k ) const {
         assert_pointer( cmp );
 
-        HNode<HData>* v = m_nodes[k];
+        HNode<HData>* v = m_node_ptrs[k];
         assert_statement_g( v->heap_idx == k, "invalid node! [k %d]", k );
 
         if( 2*k+2 <= m_sz ) {
-            if( (*cmp)( v, m_nodes[2*k+1] ) &&
-                (*cmp)( v, m_nodes[2*k+2] ) )
+            if( (*cmp)( v, m_node_ptrs[2*k+1] ) &&
+                (*cmp)( v, m_node_ptrs[2*k+2] ) )
                 return true;
             else
                 return false;
         } else if( 2*k+1 <= m_sz ) {
-            if( (*cmp)( v, m_nodes[2*k+1] ) )
+            if( (*cmp)( v, m_node_ptrs[2*k+1] ) )
                 return true;
             return false;
         }
@@ -201,13 +205,13 @@ namespace kortex {
     template<typename HData>
     HNode<HData>* Heap<HData>::end() {
         if( m_sz == 0 ) return NULL;
-        return m_nodes[0];
+        return m_node_ptrs[0];
     }
 
     template<typename HData>
     bool Heap<HData>::is_heap_healthy() const {
         for( size_t i=0; i<m_sz; i++ ) {
-            if( m_nodes[i]->heap_idx != i ) {
+            if( m_node_ptrs[i]->heap_idx != i ) {
                 logman_error_g( "heap error: node [%d]", i );
                 return false;
             }
