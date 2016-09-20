@@ -94,7 +94,10 @@ color_map.h \
 sparse_array_t.h \
 indexed_array.h \
 histogram.h \
-keyed_value.h
+keyed_value.h \
+heap.h \
+heap.tcc
+
 
 #
 # output info
