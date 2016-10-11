@@ -13,6 +13,11 @@
 //
 // ---------------------------------------------------------------------------
 
+#ifndef KORTEX_HEAP_TCC
+#define KORTEX_HEAP_TCC
+
+#include <cfloat>
+#include <kortex/check.h>
 #include "heap.h"
 
 namespace kortex {
@@ -26,7 +31,6 @@ namespace kortex {
     template<typename HData>
     Heap<HData>::~Heap() {
         m_node_ptrs.clear();
-        m_nodes.clear();
     }
 
     template<typename HData>
@@ -48,30 +52,25 @@ namespace kortex {
     void Heap<HData>::reserve( const size_t& new_cap ) {
         m_cap = new_cap;
         m_node_ptrs.resize( new_cap );
-        m_nodes.resize( new_cap );
     }
 
     template<typename HData>
     void Heap<HData>::release() {
         m_node_ptrs.clear();
-        m_nodes.clear();
         m_cap   = 0;
         m_sz    = 0;
     }
 
     template<typename HData>
-    void Heap<HData>::insert( HData& dobj, double value ) {
+    void Heap<HData>::insert( HNode<HData>* node ) {
         assert_pointer( cmp );
         m_sz++;
         if( is_full() ) {
             printf( "resizing heap! %d\n", (int)m_cap*2 );
             reserve( 2*m_cap );
         }
-        HNode<HData>* new_node = &m_nodes[m_sz];
-        new_node->data     = &dobj;
-        new_node->heap_val = value;
-
-        m_node_ptrs[m_sz] = new_node;
+        m_node_ptrs[m_sz] = node;
+        m_node_ptrs[m_sz]->heap_idx = m_sz;
         upheap(m_sz);
     }
 
@@ -81,13 +80,15 @@ namespace kortex {
         HNode<HData>* v = m_node_ptrs[k];
 
         while( (*cmp)( v, m_node_ptrs[k>>1] ) ) {
-            m_node_ptrs[ k ] = m_node_ptrs[ k >> 1 ];
-            m_node_ptrs[ k ]->heap_idx = k;
+            this->swap( m_node_ptrs[k], m_node_ptrs[k>>1] );
             k >>= 1;
         }
-        m_node_ptrs[k] = v;
-        m_node_ptrs[k]->heap_idx = k;
+    }
 
+    template<typename HData>
+    void Heap<HData>::swap( HNode<HData>* &p1, HNode<HData>* &p2 ) {
+        std::swap( p1, p2 );
+        std::swap( p1->heap_idx, p2->heap_idx );
     }
 
     template<typename HData>
@@ -103,12 +104,15 @@ namespace kortex {
                 j++;
             if( (*cmp)( v, m_node_ptrs[j] ) )
                 break;
-            m_node_ptrs[k] = m_node_ptrs[j];
-            m_node_ptrs[k]->heap_idx = k;
+
+            this->swap( m_node_ptrs[k], m_node_ptrs[j] );
+            // m_node_ptrs[k] = m_node_ptrs[j];
+            // m_node_ptrs[k]->heap_idx = k;
             k = j;
         }
-        m_node_ptrs[k] = v;
-        m_node_ptrs[k]->heap_idx = k;
+        // this->swap( m_node_ptrs[k], v );
+        // m_node_ptrs[k] = v;
+        // m_node_ptrs[k]->heap_idx = k;
     }
 
     template<typename HData>
@@ -156,7 +160,7 @@ namespace kortex {
     template<typename HData>
     HNode<HData>* Heap<HData>::peek( size_t k ) {
         if( m_sz == 0 ) return NULL;
-        assert_statement( k>=1 && k<=m_sz, "invalid idx to pop" );
+        assert_statement( k>=1 && k<=m_sz, "invalid idx to peek" );
         return m_node_ptrs[k];
     }
 
@@ -182,7 +186,7 @@ namespace kortex {
     }
 
     template<typename HData>
-    bool Heap<HData>::check_heap_condition( size_t k ) const {
+    bool Heap<HData>::check_heap_condition( size_t k ) {
         assert_pointer( cmp );
 
         HNode<HData>* v = m_node_ptrs[k];
@@ -222,5 +226,6 @@ namespace kortex {
 
 }
 
+#endif
 
 

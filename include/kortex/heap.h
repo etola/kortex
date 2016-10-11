@@ -16,7 +16,9 @@
 // A heap implementation that can be used as a priority queue. supports
 // ascending and descending sort. you need to define a HData object and use it
 // to initialize the HNode's you'll insert to the heap. Heap only allocates
-// memory to store the pointers to the HNode objects.
+// memory to store the pointers to the HNode objects. trying to keep nodes
+// locally is a bit troublesome if you don't know the size of the elements
+// you'll insert/pop.
 //
 #ifndef KORTEX_HEAP_H
 #define KORTEX_HEAP_H
@@ -31,13 +33,15 @@ namespace kortex {
         HNode() {
             heap_idx = 0;
             heap_val = 0;
-            data     = NULL;
+            // data     = NULL;
         }
+
+        void init( const double& hval ) { heap_val = hval; }
 
         size_t heap_idx;
         double heap_val;
 
-        HData* data;
+        HData  data;
     };
 
     template<typename HData>
@@ -45,13 +49,14 @@ namespace kortex {
     public:
         enum HeapType { HT_ASCENDING, HT_DESCENDING };
 
+        HNode<HData>    m_sentinel;
+
     private:
         size_t m_cap; // maximum number of nodes heap can use
         size_t m_sz;  // current number of nodes
 
         HeapType m_type;
 
-        HNode<HData>    m_sentinel;
 
         vector< HNode<HData>  > m_nodes;
         vector< HNode<HData>* > m_node_ptrs;
@@ -63,7 +68,7 @@ namespace kortex {
 
         void init( const size_t& init_cap, const HeapType& type );
 
-        void insert( HData& dobj, double value );
+        void insert( HNode<HData>* node );
 
         HNode<HData>* peek();
         HNode<HData>* peek( size_t k );
@@ -95,7 +100,7 @@ namespace kortex {
 
         void reserve( const size_t& new_cap );
 
-        bool check_heap_condition( size_t k ) const;
+        bool check_heap_condition( size_t k );
 
         static inline bool heap_min( HNode<HData>* &p1, HNode<HData>* &p2 ) {
             assert_pointer(p1);
@@ -109,6 +114,9 @@ namespace kortex {
         }
 
         bool (*cmp)( HNode<HData>* &p1, HNode<HData>* &p2 );
+
+        void swap( HNode<HData>* &p1, HNode<HData>* &p2 );
+
     };
 
 }
