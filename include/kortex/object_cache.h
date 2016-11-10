@@ -89,6 +89,10 @@ namespace kortex {
         void set_post_load_function( void (*f)( T& obj ) ) {
             post_load_func = f;
         }
+        void unset_post_load_function() {
+            post_load_func = NULL;
+        }
+
 
     private:
         int                      m_max_object_number;
