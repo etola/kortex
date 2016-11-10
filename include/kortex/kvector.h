@@ -104,6 +104,8 @@ namespace kortex {
         const T& y() const { assert_statement( 1<N, "dimension does not exist" ); return m_v[1]; }
         T&       z()       { assert_statement( 2<N, "dimension does not exist" ); return m_v[2]; }
         const T& z() const { assert_statement( 2<N, "dimension does not exist" ); return m_v[2]; }
+        T&       w()       { assert_statement( 3<N, "dimension does not exist" ); return m_v[3]; }
+        const T& w() const { assert_statement( 3<N, "dimension does not exist" ); return m_v[3]; }
 
     private:
         T m_v[N];
