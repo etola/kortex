@@ -464,6 +464,36 @@ namespace kortex {
         channel = get_channel_f(2); b = bicubic_interpolation( channel, m_w, m_h, 1, 0, x0, y0 );
     }
 
+    void Image::add( const int& x0, const int& y0, const float& v ) {
+        assert_type( IT_F_GRAY );
+        assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );
+        m_data_f[ y0*m_w + x0 ] += v;
+    }
+
+    void Image::add( const int& x0, const int& y0, const float& r, const float& g, const float& b ) {
+        assert_type( IT_F_PRGB || IT_F_IRGB );
+        assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );
+
+        size_t shft = 0;
+        switch( m_channel_type ) {
+        case ITC_PIXEL:
+            shft = (y0*m_w + x0)*m_ch;
+            m_data_f[ shft   ] += r;
+            m_data_f[ shft+1 ] += g;
+            m_data_f[ shft+2 ] += b;
+            break;
+        case ITC_IMAGE:
+            shft = y0*m_w + x0;
+            m_data_f[ shft             ] += r;
+            m_data_f[ shft + m_w*m_h   ] += g;
+            m_data_f[ shft + m_w*m_h*2 ] += b;
+            break;
+        default: switch_fatality();
+        }
+    }
+
+
+
     // 1-channel set
     void Image::set ( const int& x0, const int& y0, const float& v ) {
         assert_type( IT_F_GRAY );

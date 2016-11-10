@@ -852,40 +852,38 @@ namespace kortex {
     void image_add( const Image& im0, const Image& im1, Image& out ) {
         passert_statement( check_dimensions(im0,im1), "dimension mismatch" );
         passert_statement( check_dimensions(im0,out), "dimension mismatch" );
-        im0.passert_type( IT_F_GRAY );
-        im1.passert_type( IT_F_GRAY );
-        out.passert_type( IT_F_GRAY );
+        im0.passert_type( IT_F_GRAY | IT_F_PRGB | IT_F_IRGB );
+        im1.passert_type( IT_F_GRAY | IT_F_PRGB | IT_F_IRGB );
+        out.passert_type( IT_F_GRAY | IT_F_PRGB | IT_F_IRGB );
+        passert_statement( im0.type() == im1.type(), "type mismatch" );
+        passert_statement( im0.type() == out.type(), "type mismatch" );
 
-        int w = im0.w();
-        int h = im0.h();
-        for( int y=0; y<h; y++ ) {
-            const float* row0 = im0.get_row_f(y);
-            const float* row1 = im1.get_row_f(y);
-            float      * drow = out.get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                drow[x] = row0[x]+row1[x];
-            }
-        }
+        const float* ptr0 = im0.get_fptr();
+        const float* ptr1 = im1.get_fptr();
+        float      * optr = out.get_fptr();
+
+        size_t n_elems = im0.element_count();
+        for( size_t i=0; i<n_elems; i++ )
+            optr[i] = ptr0[i] + ptr1[i];
     }
 
     void image_add_par( const Image& im0, const Image& im1, Image& out ) {
         passert_statement( check_dimensions(im0,im1), "dimension mismatch" );
         passert_statement( check_dimensions(im0,out), "dimension mismatch" );
-        im0.passert_type( IT_F_GRAY );
-        im1.passert_type( IT_F_GRAY );
-        out.passert_type( IT_F_GRAY );
+        im0.passert_type( IT_F_GRAY | IT_F_PRGB | IT_F_IRGB );
+        im1.passert_type( IT_F_GRAY | IT_F_PRGB | IT_F_IRGB );
+        out.passert_type( IT_F_GRAY | IT_F_PRGB | IT_F_IRGB );
+        passert_statement( im0.type() == im1.type(), "type mismatch" );
+        passert_statement( im0.type() == out.type(), "type mismatch" );
 
-        int w = im0.w();
-        int h = im0.h();
+        const float* ptr0 = im0.get_fptr();
+        const float* ptr1 = im1.get_fptr();
+        float      * optr = out.get_fptr();
+
+        size_t n_elems = im0.element_count();
 #pragma omp parallel for
-        for( int y=0; y<h; y++ ) {
-            const float* row0 = im0.get_row_f(y);
-            const float* row1 = im1.get_row_f(y);
-            float      * drow = out.get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                drow[x] = row0[x]+row1[x];
-            }
-        }
+        for( size_t i=0; i<n_elems; i++ )
+            optr[i] = ptr0[i] + ptr1[i];
     }
 
     /// r = p/q for q(i,j) > 1e-6
