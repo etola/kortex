@@ -287,6 +287,7 @@ namespace kortex {
     typedef float (*PixelOperator)(float);
     void apply_pixelwise_operation( const Image& p, PixelOperator op, bool run_parallel, Image& q );
 
+    void insert_image_to_channel( const Image& im, int ch, Image& out );
 
 }
 

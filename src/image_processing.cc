@@ -1616,6 +1616,37 @@ namespace kortex {
         }
     }
 
+    void insert_image_to_channel( const Image& im, int cid, Image& out ) {
+        passert_statement( check_dimensions(im,out), "dimension mismatch" );
+        passert_statement( im.ch() == 1, "input image channel should be 1" );
+        passert_statement( out.ch() == 3, "output image channel need to be 3" );
+        passert_statement( im.precision() == out.precision(), "input output precisions differ" );
+        passert_boundary( cid, 0, 3 );
+        passert_statement( out.channel_type() == ITC_IMAGE, "output channel should be image ordered" );
+
+        switch( im.precision() ) {
+        case TYPE_FLOAT: {
+            const float* iptr = im.get_fptr();
+            float      * optr = out.get_channel_f(cid);
+            int pix_count = im.pixel_count();
+            for( int i=0; i<pix_count; i++ )
+                optr[i] = iptr[i];
+        } break;
+
+        case TYPE_UCHAR: {
+            const uchar* iptr = im.get_uptr();
+            uchar      * optr = out.get_channel_u(cid);
+            int pix_count = im.pixel_count();
+            for( int i=0; i<pix_count; i++ )
+                optr[i] = iptr[i];
+        } break;
+        default:
+            switch_fatality();
+            break;
+        }
+
+
+    }
 
 
 }
