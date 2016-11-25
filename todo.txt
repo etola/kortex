@@ -6,3 +6,5 @@
 
 - kmatrix/matrix and most math operations should really support float/double
   mixing
+
+- Histogram class might be doing something wrong for negative ranges. check.

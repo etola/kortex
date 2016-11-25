@@ -20,9 +20,10 @@ namespace kortex {
 
     void Histogram::reset( float mn_val, float mx_val, int num_bins ) {
         assert_statement( num_bins > 1, "invalid n_bins" );
+        m_n_samples = 0;
         m_min = mn_val;
         m_max = mx_val;
-        m_bin_step = ( mx_val - mn_val ) / num_bins;
+        m_bin_step = ( mx_val - mn_val ) / (num_bins-1);
         m_bins.clear();
         m_bins.resize( num_bins, 0 );
     }
@@ -43,7 +44,9 @@ namespace kortex {
     }
     void Histogram::insert( const float& val ) {
         int bid = bin_id( val );
+        assert_boundary( bid, 0, n_bins() );
         m_bins[bid]++;
+        m_n_samples++;
     }
     void Histogram::print() const {
         static const int bufsz = 2560;
@@ -57,11 +60,51 @@ namespace kortex {
             nstr += sprintf( buf+nstr, " % 6d", m_bins[i] );
         logman_log( buf );
     }
+
     void Histogram::compute( const vector<float>& arr ) {
         clear_bins();
         for( unsigned i=0; i<arr.size(); i++ ) {
             this->insert( arr[i] );
         }
+    }
+
+    void Histogram::compute( const vector<float>& arr, const float& min_value_th ) {
+        clear_bins();
+        for( unsigned i=0; i<arr.size(); i++ ) {
+            if( arr[i] <= min_value_th )
+                continue;
+            this->insert( arr[i] );
+        }
+    }
+
+    void Histogram::compute( const float* arr, const size_t& narr, const float& min_value_th ) {
+        assert_pointer( arr );
+        assert_statement( narr > 0, "passing 0 sized array" );
+        clear_bins();
+        for( size_t i=0; i<narr; i++ ) {
+            if( arr[i] <= min_value_th )
+                continue;
+            this->insert( arr[i] );
+        }
+    }
+
+
+    /// returns the approximate value of the percentage point. it returns the
+    /// closest lower bound of the bin which surpasses percentage of samples;
+    float Histogram::approximate_value( const float& percentage ) const {
+
+        assert_statement_g( percentage >= 0.0f && percentage <= 100.0f,
+                            "invalid percentage request [%f]", percentage );
+        passert_statement( m_n_samples > 0, "improper initialization" );
+        float rval = m_min;
+        float n = 0.0f;
+        for( int i=0; i<n_bins(); i++ ) {
+            if( n/m_n_samples > percentage/100.0f )
+                return rval;
+            n += m_bins[i];
+            rval = float(i)*m_bin_step + m_min;
+        }
+        return m_max;
     }
 
 }

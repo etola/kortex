@@ -15,6 +15,7 @@
 #ifndef KORTEX_HISTOGRAM_H
 #define KORTEX_HISTOGRAM_H
 
+#include <cstdlib>
 #include <vector>
 using std::vector;
 
@@ -26,6 +27,7 @@ namespace kortex {
         float       m_min;
         float       m_max;
         float       m_bin_step;
+        int         m_n_samples;
 
     public:
         Histogram();
@@ -38,10 +40,16 @@ namespace kortex {
         void insert( const float& val );
 
         void compute( const vector<float>& arr );
+        void compute( const vector<float>& arr, const float& min_value_th );
+        void compute( const float* arr, const size_t& narr, const float& min_value_th );
 
         int  bin_id( const float& val ) const;
 
         int  n_bins() const { return m_bins.size(); }
+
+        /// returns the approximate value of the percentage point. it returns the
+        /// closest lower bound of the bin which surpasses percentage of samples;
+        float approximate_value( const float& percentage ) const;
 
         void print() const;
     };
