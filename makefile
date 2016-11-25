@@ -49,7 +49,8 @@ object_cache.cc \
 color_map.cc \
 sparse_array_t.cc \
 indexed_array.cc \
-histogram.cc
+histogram.cc \
+pair_indexed_array.cc
 
 headers := \
 log_manager.h \
@@ -96,7 +97,8 @@ indexed_array.h \
 histogram.h \
 keyed_value.h \
 heap.h \
-heap.tcc
+heap.tcc \
+pair_indexed_array.h
 
 
 #
