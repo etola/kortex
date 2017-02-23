@@ -39,6 +39,11 @@ namespace kortex {
     }
 
     template <typename T>
+    bool IndexedArray<T>::is_present( const int& p ) const {
+        return bool( m_map.find(p) == m_map.end() );
+    }
+
+    template <typename T>
     bool IndexedArray<T>::get( int p, vector<T>& val ) const {
         auto it = m_map.find( p );
         if( it != m_map.end() ) {

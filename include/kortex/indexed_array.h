@@ -35,6 +35,8 @@ namespace kortex {
         void clear();
         int  size () const;
 
+        bool is_present( const int& p ) const;
+
         bool get   ( int p, vector<T>& val ) const;
         void insert( int p, const T& val );
         void remove( int p );
