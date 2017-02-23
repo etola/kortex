@@ -22,6 +22,22 @@ namespace kortex {
     // static const double  canonical_yd_r[] = {  0.0, -1.0,  0.0 };
     // static const double  canonical_zd_r[] = {  0.0,  0.0, -1.0 };
 
+    // rotates normal in referential frame to the world referential assuming R
+    // is the rotation matrix of the referential.
+    inline void normal_local_to_world( const double* R, const float lnormal[3], float wnormal[3] ) {
+        wnormal[0] = R[0] * lnormal[0] + R[3] * lnormal[1] + R[6] * lnormal[2];
+        wnormal[1] = R[1] * lnormal[0] + R[4] * lnormal[1] + R[7] * lnormal[2];
+        wnormal[2] = R[2] * lnormal[0] + R[5] * lnormal[1] + R[8] * lnormal[2];
+    }
+
+    // rotates normal in the world referential to referential frame assuming R
+    // is the rotation matrix of the referential.
+    inline void normal_world_to_local( const double* R, const float wnormal[3], float lnormal[3] ) {
+        lnormal[0] = R[0] * wnormal[0] + R[1] * wnormal[1] + R[2] * wnormal[2];
+        lnormal[1] = R[3] * wnormal[0] + R[4] * wnormal[1] + R[5] * wnormal[2];
+        lnormal[2] = R[6] * wnormal[0] + R[7] * wnormal[1] + R[8] * wnormal[2];
+    }
+
     /// computes the rotation matrix that rotates na to nb
     void rotate_normal_to_normal( const double* na, const double* nb, double* Rab );
 
