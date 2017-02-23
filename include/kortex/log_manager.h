@@ -124,6 +124,18 @@ namespace kortex {
     logman_log( buf );                                                          \
     }
 
+#define logman_info_gvi(prestr, int_arr, asz) {                                  \
+    static const int bufsz = 2560;                                              \
+    const int* arr = int_arr;                                                   \
+    char buf[bufsz];                                                            \
+    int nstr = sprintf( buf, "%s [", prestr );                                  \
+    for( int i=0; i<asz; i++, arr++ ) nstr += sprintf( buf+nstr, "%d ", *arr ); \
+    nstr += sprintf( buf+nstr, "]" );                                           \
+    assert_statement( nstr <= bufsz, "buffer overflow" );                       \
+    logman_info( buf );                                                          \
+    }
+
+
 #define logman_log_gvf(prestr, float_arr, asz) {                                \
     static const int bufsz = 2560;                                              \
     const float* arr = float_arr;                                               \
