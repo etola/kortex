@@ -15,11 +15,14 @@
 #ifndef KORTEX_PAIR_INDEXED_ARRAY_H
 #define KORTEX_PAIR_INDEXED_ARRAY_H
 
-#include <unordered_map>
-using std::unordered_map;
+// #include <unordered_map>
+// using std::unordered_map;
 
-// #include <map>
-// using std::map;
+#include <map>
+using std::map;
+
+#include <string>
+using std::string;
 
 #include <vector>
 using std::vector;
@@ -29,18 +32,18 @@ using std::pair;
 
 namespace kortex {
 
-    // std::hash does not have an implementation to hash pair<T1,T2> - below is
-    // a simple workaround
+    // // std::hash does not have an implementation to hash pair<T1,T2> - below is
+    // // a simple workaround
     typedef std::pair<int,int> ipair;
-    struct ipair_hash {
-        std::size_t operator ()( const ipair &p ) const {
-            auto h1 = std::hash<int>{}(p.first);
-            auto h2 = std::hash<int>{}(p.second);
-            // works but not a very good way of combining hashes
-            // return h1 ^ h2;
-            return 6501*h1+h2;
-        }
-    };
+    // struct ipair_hash {
+        // std::size_t operator ()( const ipair &p ) const {
+            // auto h1 = std::hash<int>{}(p.first);
+            // auto h2 = std::hash<int>{}(p.second);
+            // // works but not a very good way of combining hashes
+            // // return h1 ^ h2;
+            // return 6501*h1+h2;
+        // }
+    // };
 
     template< typename T >
     struct PairValue {
@@ -79,6 +82,8 @@ namespace kortex {
 
         bool is_present( const int& x, const int& y ) const;
 
+        void clear() { m_array.clear(); }
+
         void remove( const int& x, const int& y );
 
         void set( const int& x, const int& y, const T& val );
@@ -88,14 +93,27 @@ namespace kortex {
 
         void report( int mode = 0 ) const;
 
-        void export_pairs( vector< PairValue<T> >& pairs );
+        void export_pairs( vector< PairValue<T> >& pairs ) const;
 
         // void reserve( const int& n_samples );
 
-    private:
-        unordered_map< ipair, T, ipair_hash > m_array;
+        int  size() const { return m_array.size(); }
 
-        // map< ipair, T > m_array;
+        int filter_array( const T& th );
+
+        typename std::map<ipair,T>::iterator begin() { return m_array.begin(); }
+        typename std::map<ipair,T>::iterator end  () { return m_array.end();   }
+
+        typename std::map<ipair,T>::const_iterator begin() const { return m_array.begin(); }
+        typename std::map<ipair,T>::const_iterator end  () const { return m_array.end();   }
+
+        void load( const string& file );
+        void save( const string& file ) const;
+
+    private:
+        // unordered_map< ipair, T, ipair_hash > m_array;
+
+        std::map< ipair, T > m_array;
     };
 
 }

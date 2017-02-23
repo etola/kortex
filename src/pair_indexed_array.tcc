@@ -15,6 +15,8 @@
 
 #include <kortex/check.h>
 #include <kortex/string.h>
+#include <kortex/fileio.h>
+#include <kortex/types.h>
 
 namespace kortex {
 
@@ -95,7 +97,7 @@ namespace kortex {
     }
 
     template< typename T >
-    void PairIndexedArray<T>::export_pairs( vector< PairValue<T> >& pairs ) {
+    void PairIndexedArray<T>::export_pairs( vector< PairValue<T> >& pairs ) const {
         pairs.clear();
         int cnt = 0;
         pairs.resize( m_array.size() );
@@ -104,6 +106,60 @@ namespace kortex {
         }
     }
 
+    template< typename T >
+    int PairIndexedArray<T>::filter_array( const T& th ) {
+        int cnt = 0;
+        for( auto it=m_array.begin(); it!=m_array.end(); ++it ) {
+            if( it->second >= th )
+                continue;
+            m_array.erase( it );
+            cnt++;
+        }
+        return cnt;
+    }
+
+    template<typename T>
+    void PairIndexedArray<T>::save( const string& file ) const {
+        int sz = this->size();
+        ofstream fout;
+        open_or_fail( file, fout, true );
+        T t;
+        write_bparam( fout, get_type(t) );
+        write_bparam( fout, sz );
+        for( auto it=m_array.begin(); it != m_array.end(); ++it ) {
+            write_bparam( fout, it->first.first );
+            write_bparam( fout, it->first.second );
+            write_bparam( fout, it->second );
+        }
+        fout.close();
+    }
+
+    template<typename T>
+    void PairIndexedArray<T>::load( const string& file ) {
+        ifstream fin;
+        open_or_fail( file, fin, true );
+
+        this->clear();
+
+        int ft = 0;
+        read_bparam( fin, ft );
+        T t;
+        passert_statement( ft == get_type(t),
+                           "file data type and passed array type is different" );
+        int sz=0;
+        read_bparam( fin, sz );
+
+        int x, y;
+        T   val;
+        for( int i=0; i<sz; i++ ) {
+            read_bparam( fin, x );
+            read_bparam( fin, y );
+            read_bparam( fin, val );
+            this->set( x, y, val );
+        }
+
+        fin.close();
+    }
+
 
 }
-
