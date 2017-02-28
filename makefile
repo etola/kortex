@@ -50,7 +50,8 @@ color_map.cc \
 sparse_array_t.cc \
 indexed_array.cc \
 histogram.cc \
-pair_indexed_array.cc
+pair_indexed_array.cc \
+sorted_pair_map.cc
 
 headers := \
 log_manager.h \
@@ -98,7 +99,8 @@ histogram.h \
 keyed_value.h \
 heap.h \
 heap.tcc \
-pair_indexed_array.h
+pair_indexed_array.h \
+sorted_pair_map.h
 
 
 #
