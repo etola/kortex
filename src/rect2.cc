@@ -49,6 +49,12 @@ namespace kortex {
         if( x>=lx && x<ux ) return true;
         else                return false;
     }
+
+    void Rect2f::print() const {
+        printf( "Boundary: [x %f %f ] [y %f %f] [sz %f %f]\n",
+                lx, ux, ly, uy, dx, dy );
+    }
+
 //
 //
 //
@@ -72,6 +78,7 @@ namespace kortex {
         if( y>=ly && y<uy ) return true;
         else                return false;
     }
+
 
 //
 

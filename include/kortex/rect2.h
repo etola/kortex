@@ -68,10 +68,7 @@ namespace kortex {
         bool is_inside_y(int y) const;
         bool is_inside_x(int x) const;
 
-        void print() const {
-            printf( "Boundary: [x %f %f ] [y %f %f] [sz %f %f]\n",
-                    lx, ux, ly, uy, dx, dy );
-        }
+        void print() const;
     };
 
     struct Rect2i {
