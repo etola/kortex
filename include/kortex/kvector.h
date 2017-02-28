@@ -22,6 +22,10 @@ namespace kortex {
 
     template <typename T, int N> class KVector;
 
+    typedef KVector<int,2> Vec2i;
+    typedef KVector<int,3> Vec3i;
+    typedef KVector<int,4> Vec4i;
+
     typedef KVector<float,2> Vec2f;
     typedef KVector<float,3> Vec3f;
     typedef KVector<float,4> Vec4f;
