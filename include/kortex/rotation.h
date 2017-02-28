@@ -15,13 +15,6 @@
 
 namespace kortex {
 
-    // static const double  canonical_xd  [] = {  1.0,  0.0,  0.0 };
-    // static const double  canonical_yd  [] = {  0.0,  1.0,  0.0 };
-    // static const double  canonical_zd  [] = {  0.0,  0.0,  1.0 };
-    // static const double  canonical_xd_r[] = { -1.0,  0.0,  0.0 };
-    // static const double  canonical_yd_r[] = {  0.0, -1.0,  0.0 };
-    // static const double  canonical_zd_r[] = {  0.0,  0.0, -1.0 };
-
     // rotates normal in referential frame to the world referential assuming R
     // is the rotation matrix of the referential.
     inline void normal_local_to_world( const double* R, const float lnormal[3], float wnormal[3] ) {
@@ -86,6 +79,14 @@ namespace kortex {
 
     /// casts the r matrix to the closest rotation matrix - returns uncertainty.
     double enforce_rotation_matrix( double r[9] );
+
+    //
+    //
+    //
+    void angle_to_normal( const float& a_in_rad, const float& b_in_rad, float normal[3] );
+    void angle_to_normal( const float& a_in_rad, const float& b_in_rad, double normal[3] );
+    void normal_to_angle( const double n[3], float& a_in_rad, float& b_in_rad );
+    void normal_to_angle( const float  n[3], float& a_in_rad, float& b_in_rad );
 
 }
 

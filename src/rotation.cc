@@ -156,6 +156,30 @@ namespace kortex {
             az = 0.0;
     }
 
+    void angle_to_normal( const float& a_in_rad, const float& b_in_rad, float normal[3] ) {
+        float sinb = sin( b_in_rad );
+        normal[0] = cos( a_in_rad ) * sinb;
+        normal[1] = sin( a_in_rad ) * sinb;
+        normal[2] = cos( b_in_rad );
+    }
+
+    void angle_to_normal( const float& a_in_rad, const float& b_in_rad, double normal[3] ) {
+        double sinb = sin( b_in_rad );
+        normal[0] = cos( a_in_rad ) * sinb;
+        normal[1] = sin( a_in_rad ) * sinb;
+        normal[2] = cos( b_in_rad );
+    }
+
+    void normal_to_angle( const double n[3], float& a_in_rad, float& b_in_rad ) {
+        b_in_rad = atan2(sqrt( sq(n[0]) + sq(n[1]) ), n[2] );
+        a_in_rad = atan2( n[1], n[0] );
+    }
+
+    void normal_to_angle( const float  n[3], float& a_in_rad, float& b_in_rad ) {
+        b_in_rad = atan2(sqrt( sq(n[0]) + sq(n[1]) ), n[2] );
+        a_in_rad = atan2( n[1], n[0] );
+    }
+
     void construct_local_coordinate_frame(const double* z_normal, double* new_u, double* new_v) {
         assert_pointer( z_normal && new_u && new_v );
         passert_statement( (z_normal != new_u) && (z_normal != new_v) && (new_u != new_v),
@@ -188,7 +212,7 @@ namespace kortex {
         float canonical_yf[] = {  0.0f,  1.0f,  0.0f };
 
         const float *tmp_n = canonical_xf;
-        if( fabs(dot3(z_normal, tmp_n)) > 0.99f ) {
+        if( fabs(dot3(z_normal, tmp_n)) > 0.8f ) {
             tmp_n = canonical_yf;
             cross3_normalized(tmp_n, z_normal, new_u);
             cross3_normalized(z_normal, new_u, new_v);
