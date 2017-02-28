@@ -60,6 +60,18 @@ namespace kortex {
         return 0;
     }
 
+    struct int2 {
+        int2() { x=y=0; }
+        int2( const int& x_, const int& y_ ) : x(x_), y(y_) {}
+        int x, y;
+    };
+
+    struct int3 {
+        int3() { x = y = z = 0; }
+        int3( const int& x_, const int& y_, const int& z_ ) : x(x_), y(y_), z(z_) {}
+        int x, y, z;
+    };
+
 }
 
 #endif
