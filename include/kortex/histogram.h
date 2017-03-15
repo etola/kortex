@@ -47,6 +47,9 @@ namespace kortex {
 
         int  n_bins() const { return m_bins.size(); }
 
+        int  bin_value( int bid ) const;
+        int  max_value() const;
+
         /// returns the approximate value of the percentage point. it returns the
         /// closest lower bound of the bin which surpasses percentage of samples;
         float approximate_value( const float& percentage ) const;

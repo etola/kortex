@@ -14,6 +14,7 @@
 // ---------------------------------------------------------------------------
 
 #include <kortex/histogram.h>
+#include <kortex/minmax.h>
 #include <kortex/check.h>
 
 namespace kortex {
@@ -23,7 +24,8 @@ namespace kortex {
         m_n_samples = 0;
         m_min = mn_val;
         m_max = mx_val;
-        m_bin_step = ( mx_val - mn_val ) / (num_bins-1);
+        // m_bin_step = ( mx_val - mn_val ) / (num_bins-1);
+        m_bin_step = ( mx_val - mn_val ) / float(num_bins);
         m_bins.clear();
         m_bins.resize( num_bins, 0 );
     }
@@ -106,5 +108,17 @@ namespace kortex {
         }
         return m_max;
     }
+
+    int Histogram::bin_value( int bid ) const {
+        assert_boundary( bid, 0, n_bins() );
+        return m_bins[bid];
+    }
+
+    int Histogram::max_value() const {
+        int max_val=0;
+        kortex::max( m_bins, max_val );
+        return max_val;
+    }
+
 
 }
