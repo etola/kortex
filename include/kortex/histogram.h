@@ -35,6 +35,8 @@ namespace kortex {
             reset( mn_val, mx_val, num_bins );
         }
 
+        const vector<int>& get_bins() const { return m_bins; }
+
         void clear_bins();
         void reset( float mn_val, float mx_val, int num_bins );
         void insert( const float& val );
@@ -55,6 +57,9 @@ namespace kortex {
         float approximate_value( const float& percentage ) const;
 
         void print() const;
+
+        int   integrate_till( const int& bid ) const;
+
     };
 
 }

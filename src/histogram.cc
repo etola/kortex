@@ -120,5 +120,13 @@ namespace kortex {
         return max_val;
     }
 
+    int Histogram::integrate_till( const int& bid ) const {
+        int N = std::min( bid, n_bins() );
+        int sv = 0;
+        for( int i=0; i<N; i++ )
+            sv += m_bins[i];
+        return sv;
+    }
+
 
 }
