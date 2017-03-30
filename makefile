@@ -108,7 +108,7 @@ sorted_pair_map.h
 #
 installdir := ${HOME}/usr/local/kortex/
 external_sources :=
-external_libraries := libjpeg libpng12 blas
+external_libraries := libjpeg libpng12 lapack blas
 libdir := lib
 srcdir := src
 includedir:= include
