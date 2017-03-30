@@ -220,10 +220,8 @@ namespace kortex {
 
     const double* KMatrix::get_const_pointer() const {
         assert_statement( size() != 0, "matrix has not been initialized" );
-        switch( m_const ) {
-        case true : return m_ro_data;
-        case false: return m_data;
-        }
+        if( m_const ) return m_ro_data;
+        else          return m_data;
         passert_statement( 0, "should not have reached here" );
     }
 

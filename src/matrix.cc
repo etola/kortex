@@ -707,21 +707,18 @@ namespace kortex {
         assert_statement( nra == nca, "matrix needs to be square" );
         assert_statement_g( is_positive_number(nra), "[ar %d] should be positive", nra );
 
-        switch( keep_upper ) {
-        case true:
+        if( keep_upper ) {
             for(int r=0; r<nra; r++) {
                 for(int c=r+1; c<nra; c++) {
                     A[c*nra+r] = A[r*nra+c];
                 }
             }
-            break;
-        case false:
+        } else {
             for(int r=0; r<nra; r++) {
                 for(int c=r+1; c<nra; c++) {
                     A[r*nra+c] = A[c*nra+r];
                 }
             }
-            break;
         }
     }
 

@@ -21,10 +21,8 @@ namespace kortex {
 
     float sse_dot_128( const float* a, const float* b ) {
         bool st = (is_16_byte_aligned(a) && is_16_byte_aligned(b));
-        switch( st ) {
-        case true : return sse_dot_128a(a,b); break;
-        case false: return sse_dot_128u(a,b); break;
-        }
+        if( st ) return sse_dot_128a(a,b);
+        else     return sse_dot_128u(a,b);
         passert_statement( 0, "should not have reached here" );
     }
     float sse_dot_128a( const float* a, const float* b ) {
@@ -124,10 +122,8 @@ namespace kortex {
     }
 
     float sse_sq_sum( const float* a, int sz ) {
-        switch( is_16_byte_aligned(a) ) {
-        case true : return sse_sq_sum_a(a,sz); break;
-        case false: return sse_sq_sum_u(a,sz); break;
-        }
+        if( is_16_byte_aligned(a) ) return sse_sq_sum_a(a,sz);
+        else                        return sse_sq_sum_u(a,sz);
         passert_statement(0, "should not have reached here");
     }
 
@@ -194,18 +190,14 @@ namespace kortex {
     }
 
     void sse_scale( float* a, int asz, float v ) {
-        switch( is_16_byte_aligned(a) ) {
-        case true : return sse_scale_a(a,asz,v); break;
-        case false: return sse_scale_u(a,asz,v); break;
-        }
+        if( is_16_byte_aligned(a) ) return sse_scale_a(a,asz,v);
+        else                        return sse_scale_u(a,asz,v);
         passert_statement( 0, "should not have reached here" );
     }
 
     float sse_sum( const float* a, int sz ) {
-        switch( is_16_byte_aligned(a) ) {
-        case true : return sse_sum_a(a,sz); break;
-        case false: return sse_sum_u(a,sz); break;
-        }
+        if( is_16_byte_aligned(a) ) return sse_sum_a(a,sz);
+        else                        return sse_sum_u(a,sz);
         passert_statement(0, "should not have reached here");
     }
 
@@ -297,10 +289,8 @@ namespace kortex {
 
     float sse_sq_sum( const float* a, const float* b, int sz ) {
         bool st = is_16_byte_aligned(a) && is_16_byte_aligned(b);
-        switch( st ) {
-        case true : return sse_sq_sum_a(a,b,sz); break;
-        case false: return sse_sq_sum_u(a,b,sz); break;
-        }
+        if( st ) return sse_sq_sum_a(a,b,sz);
+        else     return sse_sq_sum_u(a,b,sz);
         passert_statement(0, "should not have reached here");
     }
 

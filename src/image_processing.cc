@@ -598,21 +598,19 @@ namespace kortex {
     }
 
     void image_resize_coarse( const Image& src, const int& nw, const int& nh, bool run_parallel, Image& dst ) {
-        switch( run_parallel ) {
-        case true: {
+
+        if( run_parallel ) {
             switch( src.ch() ) {
             case 1: image_resize_coarse_g_par  ( src, nw, nh, dst ); break;
             case 3: image_resize_coarse_rgb_par( src, nw, nh, dst ); break;
             default: switch_fatality();
             }
-        } break;
-        case false: {
+        } else {
             switch( src.ch() ) {
             case 1: image_resize_coarse_g  ( src, nw, nh, dst ); break;
             case 3: image_resize_coarse_rgb( src, nw, nh, dst ); break;
             default: switch_fatality();
             }
-        } break;
         }
     }
     void image_resize_coarse( const Image& img, int max_img_dim, bool run_parallel, Image& rimg ) {
@@ -763,21 +761,18 @@ namespace kortex {
 
 
     void image_resize_fine( const Image& src, const int& nw, const int& nh, bool run_parallel, Image& dst ) {
-        switch( run_parallel ) {
-        case true: {
+        if( run_parallel ) {
             switch( src.ch() ) {
             case 1: image_resize_fine_g_par  ( src, nw, nh, dst ); break;
             case 3: image_resize_fine_rgb_par( src, nw, nh, dst ); break;
             default: switch_fatality();
             }
-        } break;
-        case false: {
+        } else {
             switch( src.ch() ) {
             case 1: image_resize_fine_g  ( src, nw, nh, dst ); break;
             case 3: image_resize_fine_rgb( src, nw, nh, dst ); break;
             default: switch_fatality();
             }
-        } break;
         }
     }
 
@@ -1030,17 +1025,14 @@ namespace kortex {
         const float* pptr = p.get_fptr();
         float      * qptr = q.get_fptr();
 
-        switch( run_parallel ) {
-        case false: {
-            for( size_t i=0; i<psz; i++ )
-                qptr[i] = s * pptr[i];
-        } break;
-        case true: {
+        if( run_parallel ) {
 #pragma omp parallel for
             for( size_t i=0; i<psz; i++ ) {
                 qptr[i] = s * pptr[i];
             }
-        } break;
+        } else {
+            for( size_t i=0; i<psz; i++ )
+                qptr[i] = s * pptr[i];
         }
 
     }
@@ -1249,18 +1241,16 @@ namespace kortex {
         const float* yptr = dy.get_row_f(0);
         float      * mptr = mag.get_row_f(0);
         int pc = src.pixel_count();
-        switch( run_parallel ) {
-        case false: {
-            for( int i=0; i<pc; i++ ) {
-                mptr[i] = sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
-            }
-        } break;
-        case true: {
+
+        if( run_parallel ) {
 #pragma omp parallel for
             for( int i=0; i<pc; i++ ) {
                 mptr[i] = sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
             }
-        } break;
+        } else {
+            for( int i=0; i<pc; i++ ) {
+                mptr[i] = sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
+            }
         }
     }
 
@@ -1271,18 +1261,15 @@ namespace kortex {
         const float* sptr = src.get_row_f(0);
         float*       optr = out.get_row_f(0);
 
-        switch( run_parallel ) {
-        case false:
+        if( !run_parallel ) {
             for( int i=0; i<src.pixel_count(); i++ ) {
                 optr[i] = std::max( min_v, sptr[i] );
             }
-            break;
-        case true:
+        } else {
 #pragma omp parallel for
             for( int i=0; i<src.pixel_count(); i++ ) {
                 optr[i] = std::max( min_v, sptr[i] );
             }
-            break;
         }
     }
 
@@ -1294,18 +1281,15 @@ namespace kortex {
         const float* sptr = src.get_row_f(0);
         float*       optr = out.get_row_f(0);
 
-        switch( run_parallel ) {
-        case false:
+        if( !run_parallel ) {
             for( int i=0; i<src.pixel_count(); i++ ) {
                 optr[i] = std::max( min_v, std::min( sptr[i], max_v ) );
             }
-            break;
-        case true:
+        } else {
 #pragma omp parallel for
             for( int i=0; i<src.pixel_count(); i++ ) {
                 optr[i] = std::max( min_v, std::min( sptr[i], max_v ) );
             }
-            break;
         }
     }
 
@@ -1350,17 +1334,14 @@ namespace kortex {
         const float* iptr = img.get_fptr();
         float      * optr = out.get_fptr();
 
-        switch( run_parallel ) {
-        case false: {
+        if( !run_parallel ) {
             for( size_t i=0; i<psz; i++ )
                 optr[i] = fabs( iptr[i] );
-        } break;
-        case true: {
+        } else {
 #pragma omp parallel for
             for( size_t i=0; i<psz; i++ ) {
                 optr[i] = fabs( iptr[i] );
             }
-        } break;
         }
     }
 
@@ -1588,18 +1569,15 @@ namespace kortex {
         const float* src = p.get_row_f(0);
         float      * dst = q.get_row_f(0);
 
-        switch( run_parallel ) {
-        case true:
+        if( run_parallel ) {
 #pragma omp parallel for
             for( int i=0; i<sz; i++ ) {
                 dst[i] = op( src[i] );
             }
-            break;
-        case false:
+        } else {
             for( int i=0; i<sz; i++ ) {
                 dst[i] = op( src[i] );
             }
-            break;
         }
     }
 

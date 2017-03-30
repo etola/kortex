@@ -148,7 +148,7 @@ namespace kortex {
 
     template<typename T>
     void ObjectCache<T>::prep_cache_for_new_files( const vector<int>& to_be_loaded ) {
-        passert_statement( to_be_loaded.size() <= m_max_object_number, "insufficient cache size" )
+        passert_statement( (int)to_be_loaded.size() <= m_max_object_number, "insufficient cache size" )
         assert_statement( has_unique_elements(to_be_loaded), "array does not have unique elements" );
 
         int n_new_loads = 0;

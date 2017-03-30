@@ -48,10 +48,8 @@ namespace kortex {
     void filter_hv_par( const Image& img, const float* kernel, const int& ksz, Image& out );
 
     inline void filter_hv( const Image& img, const float* kernel, const int& ksz, const bool& run_parallel, Image& out ) {
-        switch( run_parallel ) {
-        case false: filter_hv    ( img, kernel, ksz, out ); break;
-        case true : filter_hv_par( img, kernel, ksz, out ); break;
-        }
+        if( run_parallel ) filter_hv_par( img, kernel, ksz, out );
+        else               filter_hv    ( img, kernel, ksz, out );
     }
     inline void filter_hv( Image& img, const float* kernel, const int& ksz, const bool& run_parallel ) {
         filter_hv( img, kernel, ksz, run_parallel, img );
@@ -79,10 +77,8 @@ namespace kortex {
         filter_gaussian_par( img, sigma, img );
     }
     inline void filter_gaussian( const Image& img, const float& sigma, const bool& run_parallel, Image& out ) {
-        switch( run_parallel ) {
-        case false: filter_gaussian    ( img, sigma, out ); break;
-        case true : filter_gaussian_par( img, sigma, out ); break;
-        }
+        if( run_parallel ) filter_gaussian_par( img, sigma, out );
+        else               filter_gaussian    ( img, sigma, out );
     }
 
     void combine_horizontally(const Image& im0, const Image& im1, Image& out);
@@ -112,10 +108,8 @@ namespace kortex {
     void image_subtract    ( const Image& im0, const Image& im1, Image& out );
     void image_subtract_par( const Image& im0, const Image& im1, Image& out );
     inline void image_subtract( const Image& im0, const Image& im1, bool run_parallel, Image& out ) {
-        switch( run_parallel ) {
-        case false: image_subtract    ( im0, im1, out ); break;
-        case true : image_subtract_par( im0, im1, out ); break;
-        }
+        if( run_parallel ) image_subtract_par( im0, im1, out );
+        else               image_subtract    ( im0, im1, out );
     }
 
     /// adds v to every pixel
@@ -127,20 +121,16 @@ namespace kortex {
     void image_add    ( const Image& im0, const Image& im1, Image& out );
     void image_add_par( const Image& im0, const Image& im1, Image& out );
     inline void image_add( const Image& im0, const Image& im1, bool run_parallel, Image& out ) {
-        switch( run_parallel ) {
-        case false: image_add    ( im0, im1, out ); break;
-        case true : image_add_par( im0, im1, out ); break;
-        }
+        if( run_parallel ) image_add_par( im0, im1, out );
+        else               image_add    ( im0, im1, out );
     }
 
     /// r = p/q for q>1e-6 else 0
     void image_divide    ( const Image& p, const Image& q, Image& r );
     void image_divide_par( const Image& p, const Image& q, Image& r );
     inline void image_divide( const Image& p, const Image& q, bool run_parallel, Image& r ) {
-        switch( run_parallel ) {
-        case false: image_divide    ( p, q, r ); break;
-        case true : image_divide_par( p, q, r ); break;
-        }
+        if( run_parallel ) image_divide_par( p, q, r );
+        else               image_divide    ( p, q, r );
     }
 
 
@@ -148,20 +138,16 @@ namespace kortex {
     void image_multiply    ( const Image& p, const Image& q, Image& r );
     void image_multiply_par( const Image& p, const Image& q, Image& r );
     inline void image_multiply( const Image& p, const Image& q, bool run_parallel, Image& r ) {
-        switch( run_parallel ) {
-        case false: image_multiply    ( p, q, r ); break;
-        case true : image_multiply_par( p, q, r ); break;
-        }
+        if( run_parallel ) image_multiply_par( p, q, r );
+        else               image_multiply    ( p, q, r );
     }
 
     /// o = p*q + r
     void image_multiply_add    ( const Image& p, const Image& q, const Image& r, Image& o );
     void image_multiply_add_par( const Image& p, const Image& q, const Image& r, Image& o );
     inline void image_multiply_add( const Image& p, const Image& q, const Image& r, bool run_parallel, Image& o ) {
-        switch( run_parallel ) {
-        case false: image_multiply_add    ( p, q, r, o ); break;
-        case true : image_multiply_add_par( p, q, r, o ); break;
-        }
+        if( run_parallel ) image_multiply_add_par( p, q, r, o );
+        else               image_multiply_add    ( p, q, r, o );
     }
 
     /// q = s*p

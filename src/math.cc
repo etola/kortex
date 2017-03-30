@@ -212,10 +212,8 @@ namespace kortex {
     float l2norm_128( const float* a ) {
         assert_pointer( a );
 #ifdef WITH_SSE
-        switch( is_16_byte_aligned(a) ) {
-        case true:  return sqrt( sse_sq_sum_128a(a) ); break;
-        case false: return sqrt( sse_sq_sum_128u(a) ); break;
-        }
+        if( is_16_byte_aligned(a) ) return sqrt( sse_sq_sum_128a(a) );
+        else                        return sqrt( sse_sq_sum_128u(a) );
         passert_statement( 0, "should not have reached here" );
 #else
         float nrm = 0.0f;
