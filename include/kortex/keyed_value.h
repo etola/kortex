@@ -47,7 +47,7 @@ namespace kortex {
 
     template<typename KeyType, typename DataType >
     void print( const vector< KeyedValue<KeyType,DataType> >& arr ) {
-        for( int i=0; i<arr.size(); i++ )
+        for( unsigned i=0; i<arr.size(); i++ )
             arr[i].print();
     }
 
