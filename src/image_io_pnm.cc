@@ -32,7 +32,7 @@ namespace kortex {
         int bitshift = -1;
         for (int pos = 0; pos < size; pos++) {
             if (bitshift == -1) {
-                c = f.get();
+                c = static_cast<uchar>(f.get());
                 bitshift = 7;
             }
             data[pos] = (c >> bitshift) & 1;

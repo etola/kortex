@@ -47,7 +47,7 @@ namespace kortex {
 
         int  bin_id( const float& val ) const;
 
-        int  n_bins() const { return m_bins.size(); }
+        int  n_bins() const { return (int)m_bins.size(); }
 
         int  bin_value( int bid ) const;
         int  max_value() const;

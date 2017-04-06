@@ -53,7 +53,7 @@ namespace kortex {
 
     template<typename T>
     int min( const vector<T>& arr, T& min_val ) {
-        int narr = arr.size();
+        int narr = (int)arr.size();
         if( narr == 0 ) return -1;
         int min_ind = 0;
         min_val = arr[0];
@@ -67,7 +67,7 @@ namespace kortex {
 
     template<typename T>
     int max( const vector<T>& arr, T& max_val ) {
-        int narr = arr.size();
+        int narr = (int)arr.size();
         if( narr == 0 ) return -1;
         int max_ind = 0;
         max_val = arr[0];

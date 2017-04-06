@@ -46,7 +46,7 @@ namespace kortex {
 
         DataType val( const KeyType& key ) const; // read value - asserts that the key with id exists
 
-        int  size() const { return m_data.size(); }
+        int  size() const { return (int)m_data.size(); }
 
         /// returns the item with the minimum value. returns false if no element
         /// exists

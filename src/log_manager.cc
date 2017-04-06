@@ -53,10 +53,10 @@ namespace kortex {
     void print_trace() {
 #ifdef __GNUC__
         void *array[50];
-        size_t size    = backtrace (array, 50);
+        int size    = backtrace (array, 50);
         char** strings = backtrace_symbols (array, size);
-        fprintf( stderr, "\nObtained %zu stack frames.\n", size );
-        for(size_t i = 0; i<size; i++) {
+        fprintf( stderr, "\nObtained %d stack frames.\n", size );
+        for( int i = 0; i<size; i++ ) {
             fprintf(stderr, "[ %04d ] [ %s ]\n", int(size-i), demangle(strings[i]).c_str() );
         }
         free(strings);

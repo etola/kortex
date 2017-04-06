@@ -25,7 +25,7 @@ namespace kortex {
     }
 
     template <typename T>
-    void IndexedArray<T>::get_keys( vector<T>& keys ) const {
+    void IndexedArray<T>::get_keys( vector<int>& keys ) const {
         keys.clear();
         keys.reserve( m_map.size() );
         for( auto it=m_map.begin(); it!=m_map.end(); it++ ) {
@@ -35,7 +35,7 @@ namespace kortex {
 
     template <typename T>
     int  IndexedArray<T>::size() const {
-        return m_map.size();
+        return (int)m_map.size();
     }
 
     template <typename T>

@@ -71,12 +71,12 @@ namespace kortex {
         }
         void scale( const double& s ) {
             for( int i=0; i<N; i++ )
-                m_v[i] *= s;
+                m_v[i] *= static_cast<T>(s);
         }
-        void add( const double* a, int asz ) {
+        void add( const double* a, const int& asz ) {
             assert_statement( asz == N, "invalid sized add vector" );
             for( int i=0; i<asz; i++ )
-                m_v[i] += a[i];
+                m_v[i] += static_cast<T>(a[i]);
         }
 
         void print( const char* str ) const {
@@ -191,7 +191,7 @@ namespace kortex {
         T nrm_sq = T(0.0);
         for( int i=0; i<N; i++ )
             nrm_sq += m_v[i]*m_v[i];
-        return sqrt(nrm_sq);
+        return std::sqrt(nrm_sq);
     }
 
     template<typename T, int N>
@@ -317,11 +317,11 @@ namespace kortex {
     template <typename T, int N>
     void compute_mean( const vector< KVector<T,N> >& pnts, KVector<T,N>& mean_val ) {
         mean_val.zero();
-        int psz = pnts.size();
+        int psz = (int)pnts.size();
         assert_statement( psz != 0, "invalid op" );
         for( int i=0; i<psz; i++ )
             mean_val += pnts[i];
-        mean_val.scale( 1.0/psz);
+        mean_val.scale( 1.0/psz );
     }
 
 }

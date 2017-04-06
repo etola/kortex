@@ -254,7 +254,7 @@ namespace kortex {
                 vec_l, &n, vec_r, &n, work_sz, &lwork, &info );
 
         MemUnit mem;
-        lwork = work_sz[0];
+        lwork = (int)work_sz[0];
         mem.resize( lwork*sizeof(double) );
         double* work = (double*)mem.get_buffer();
 
@@ -304,7 +304,7 @@ namespace kortex {
         // printf( "te3 %f\n", tr.elapsed() );
 
         // tr.end();
-        int sz = cols.size();
+        int sz = (int)cols.size();
         eval.resize( sz, 1 );
         double      * ev  = eval.get_pointer();
         const double* per = er();

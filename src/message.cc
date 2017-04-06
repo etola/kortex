@@ -63,7 +63,7 @@ namespace kortex {
 
     void display_similarity_matrix( const vector<int>& dmatrix, int scale ) {
 
-        int nf = sqrt(dmatrix.size());
+        int nf = (int)std::sqrt( dmatrix.size() );
         assert_statement( nf*nf == (int)dmatrix.size(), "invalid matrix data" );
 
         const int interval = 10;
@@ -104,7 +104,7 @@ namespace kortex {
 
     void print_similarity_matrix( const vector<int>& dmatrix, int scale ) {
 
-        int nf = sqrt(dmatrix.size());
+        int nf = (int)std::sqrt(dmatrix.size());
         assert_statement( nf > 0, "empty matrix" );
         assert_statement( nf*nf == (int)dmatrix.size(), "matrix has to be square" );
 

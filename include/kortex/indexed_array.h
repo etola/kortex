@@ -41,7 +41,7 @@ namespace kortex {
         void insert( int p, const T& val );
         void remove( int p );
 
-        void get_keys( vector<T>& keys ) const;
+        void get_keys( vector<int>& keys ) const;
     private:
         map<int, vector<T> > m_map;
     };

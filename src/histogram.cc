@@ -30,7 +30,7 @@ namespace kortex {
         m_bins.resize( num_bins, 0 );
     }
     void Histogram::clear_bins() {
-        int nbins = m_bins.size();
+        int nbins = (int)m_bins.size();
         m_bins.clear();
         m_bins.resize( nbins, 0 );
     }
@@ -38,7 +38,7 @@ namespace kortex {
     int  Histogram::bin_id( const float& val ) const {
         if( val >= m_max-m_bin_step ) return n_bins()-1;
         if( val <= m_min            ) return 0;
-        int bid = (val-m_min)/m_bin_step;
+        int bid = (int) ( (val-m_min)/m_bin_step );
         assert_statement_g( bid >= 0 && bid < n_bins(),
                             "oob [%d/%d] [val %f] [mn/mx %f %f]",
                             bid, n_bins(), val, m_min, m_max );
@@ -55,7 +55,7 @@ namespace kortex {
         int  nstr = 0;
         char buf[bufsz];
         for( int i=0; i<=n_bins(); i++ )
-            nstr += sprintf( buf+nstr, " %6.2f", m_min + i *m_bin_step );
+            nstr += sprintf( buf+nstr, " %6.2f", m_min + float(i)*m_bin_step );
         logman_log( buf );
         nstr = 0;
         for( int i=0; i<n_bins(); i++ )
@@ -101,9 +101,9 @@ namespace kortex {
         float rval = m_min;
         float n = 0.0f;
         for( int i=0; i<n_bins(); i++ ) {
-            if( n/m_n_samples > percentage/100.0f )
+            if( n/float(m_n_samples) > percentage/100.0f )
                 return rval;
-            n += m_bins[i];
+            n += float(m_bins[i]);
             rval = float(i)*m_bin_step + m_min;
         }
         return m_max;

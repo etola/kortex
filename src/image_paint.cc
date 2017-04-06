@@ -31,7 +31,7 @@ namespace kortex {
         im.assert_type( IT_U_PRGB | IT_U_IRGB );
         float dx = float( x1 - x0 );
         float dy = float( y1 - y0 );
-        float sz = sqrt(dx*dx + dy*dy);
+        float sz = std::sqrt(dx*dx + dy*dy);
         dx /= sz;
         dy /= sz;
         uchar cr, cg, cb;
@@ -106,7 +106,7 @@ namespace kortex {
 
         uchar cr, cg, cb;
         get_color(color, cr, cg, cb);
-        int sy = int(y + dr);
+        int sy = int( static_cast<float>(y) + dr );
         int sx = x;
 
         for(int a=5; a<=360; a+=5 ) {

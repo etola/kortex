@@ -26,10 +26,10 @@ namespace kortex {
         }
         h /= 60.0f;
         int   i = (int)floor(h);
-        float f = h - i;
-        float p = v * ( 1 - s );
-        float q = v * ( 1 - s * f );
-        float t = v * ( 1 - s * ( 1 - f ) );
+        float f = h - float(i);
+        float p = v * ( 1.0f - s );
+        float q = v * ( 1.0f - s * f );
+        float t = v * ( 1.0f - s * ( 1.0f - f ) );
 
         switch( i ) {
         case  0: r = v; g = t; b = p; break;

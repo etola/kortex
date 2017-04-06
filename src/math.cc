@@ -106,7 +106,7 @@ namespace kortex {
             memset( c, 0, sizeof(*c)* 3 );
             return;
         }
-        double one_over_norm_c = 1.0 / sqrt( d );
+        double one_over_norm_c = 1.0 / std::sqrt( d );
         passert_statement_g( is_a_number(one_over_norm_c), "[d %f] 1 / dot product resulted in NaN", d );
         c[0] *= one_over_norm_c;
         c[1] *= one_over_norm_c;
@@ -120,7 +120,7 @@ namespace kortex {
             memset( c, 0, sizeof(*c)* 3 );
             return;
         }
-        float one_over_norm_c = 1.0f / sqrt(d); // inv_sqrt( d );
+        float one_over_norm_c = 1.0f / std::sqrt(d); // inv_sqrt( d );
         passert_statement_g( is_a_number(one_over_norm_c), "[d %f] 1 / dot product resulted in NaN", d );
         c[0] *= one_over_norm_c;
         c[1] *= one_over_norm_c;
@@ -198,22 +198,22 @@ namespace kortex {
 
     float l2norm ( const float* a, int asz ) {
 #ifdef WITH_SSE
-        return sqrt( sse_sq_sum(a, asz) );
+        return std::sqrt( sse_sq_sum(a, asz) );
 #else
         float nrm = 0.0f;
         for( int k=0; k<asz; k++ ) {
             nrm += *a * *a;
             a++;
         }
-        return sqrt(nrm);
+        return std::sqrt(nrm);
 #endif
     }
 
     float l2norm_128( const float* a ) {
         assert_pointer( a );
 #ifdef WITH_SSE
-        if( is_16_byte_aligned(a) ) return sqrt( sse_sq_sum_128a(a) );
-        else                        return sqrt( sse_sq_sum_128u(a) );
+        if( is_16_byte_aligned(a) ) return std::sqrt( sse_sq_sum_128a(a) );
+        else                        return std::sqrt( sse_sq_sum_128u(a) );
         passert_statement( 0, "should not have reached here" );
 #else
         float nrm = 0.0f;
@@ -221,7 +221,7 @@ namespace kortex {
             nrm += *a * *a;
             a++;
         }
-        return sqrt(nrm);
+        return std::sqrt(nrm);
 #endif
     }
 
@@ -244,7 +244,7 @@ namespace kortex {
         assert_pointer( a && b );
         assert_pointer_size( asz );
 #ifdef WITH_SSE
-        return sqrt( sse_sq_sum(a,b,asz) );
+        return std::sqrt( sse_sq_sum(a,b,asz) );
 #else
         float nrm = 0.0f;
         for( int k=0; k<asz; k++ ) {
@@ -252,7 +252,7 @@ namespace kortex {
             a++;
             b++;
         }
-        return sqrt(nrm);
+        return std::sqrt(nrm);
 #endif
     }
 
@@ -287,15 +287,15 @@ namespace kortex {
         passert_statement( sigma > 0.0f, "sigma should be positive" );
         int sz = (fsz-1)/2;
         int counter=-1;
-        float sum = 0.0;
+        float sum = 0.0f;
         float v = 2*sigma*sigma;
         for( int x=-sz; x<=sz; x++ ) {
             counter++;
-            fltr[counter] = exp((-(x-mean)*(x-mean))/v);
+            fltr[counter] = std::exp( -sq(static_cast<float>(x)-mean)/v );
             sum += fltr[counter];
         }
-        if( sum != 0 ) {
-            float isum = 1/sum;
+        if( sum != 0.0f ) {
+            float isum = 1.0f/sum;
             for( int x=0; x<fsz; x++ )
                 fltr[x] *= isum;
         }
@@ -305,7 +305,7 @@ namespace kortex {
     // assuming p(x) = c0 + c1 x + c2 x^2 + ...
     bool find_real_roots_of_polynomial( const vector<double>& coeffs, vector<double>& real_roots ) {
         real_roots.clear();
-        int csz = coeffs.size();
+        int csz = (int)coeffs.size();
         if( csz <= 1 ) {
             return false;
         } else if( csz == 2 ) {

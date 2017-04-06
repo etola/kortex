@@ -69,7 +69,7 @@ namespace kortex {
     template<typename T>
     void write_array( ofstream& fout, const char* param_name, const vector<T>& arr ) {
         write_param( fout, param_name, (int)arr.size() );
-        int n_arr = arr.size();
+        int n_arr = (int)arr.size();
         if( n_arr == 0 ) return;
         for( int i=0; i<n_arr-1; i++ )
             fout << in_str(arr[i]) << " ";
@@ -184,7 +184,7 @@ namespace kortex {
 
     template<> inline
     void write_bparam( ofstream& fout, const string& v ) {
-        int nsz = v.size();
+        int nsz = (int)v.size();
         write_bparam( fout, nsz );
         fout.write( (const char*)v.c_str(), sizeof(char)*nsz );
         check_file_stream_error(fout);
@@ -197,14 +197,14 @@ namespace kortex {
     }
 
     template<typename T>
-    void write_barray( ofstream& fout, const T* varr, const int& nv ) {
+    void write_barray( ofstream& fout, const T* varr, const size_t& nv ) {
         fout.write( (const char*)varr, sizeof(*varr)*nv );
         check_file_stream_error(fout);
     }
 
     template<typename T>
     void write_barray( ofstream& fout, const vector<T>& varr ) {
-        int nv = varr.size();
+        int nv = (int)varr.size();
         write_bparam( fout, nv );
         for( int i=0; i<nv; i++ )
             write_bparam( fout, varr[i] );
@@ -241,7 +241,7 @@ namespace kortex {
     }
 
     template<typename T>
-    void read_barray( ifstream& fin, T* varr, const int& nv ) {
+    void read_barray( ifstream& fin, T* varr, const size_t& nv ) {
         passert_pointer( varr );
         passert_pointer_size( nv );
         fin.read( (char*)varr, sizeof(*varr)*nv );

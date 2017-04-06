@@ -662,8 +662,8 @@ namespace kortex {
     void mat_copy_columns( const KMatrix& A, const vector<int>& cols, KMatrix& fA ) {
         int h = A.h();
         int w = A.w();
-        fA.resize( h, cols.size() );
-        int faw = cols.size();
+        int faw = (int)cols.size();
+        fA.resize( h, faw );
         for( unsigned int i=0; i<cols.size(); i++ ) {
             int j = cols[i];
             assert_boundary( j, 0, w );

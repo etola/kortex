@@ -14,6 +14,7 @@
 
 #include <limits>
 #include <cstring>
+#include <cstdlib>
 
 #include <kortex/image_processing.h>
 #include <kortex/types.h>
@@ -115,7 +116,7 @@ namespace kortex {
         for( int y=ys; y<ye; y++ ) {
             const float* row = img.get_row_f(y);
             for( int x=xs; x<xe; x++ ) {
-                const float& v = fabs(row[x]);
+                const float& v = std::fabs( row[x] );
                 if( is_a_number(v) ) {
                     min_v = std::min(v,min_v);
                     max_v = std::max(v,max_v);
@@ -448,7 +449,7 @@ namespace kortex {
         for( int y=0; y<h; y++ ) {
             uchar* row = img.get_row_u(y);
             for( int x=0; x<w; x++ ) {
-                row[x] = 255-row[x];
+                row[x] = static_cast<uchar> ( 255-static_cast<int>(row[x]) );
             }
         }
     }
@@ -474,18 +475,20 @@ namespace kortex {
         dst.create( nw, nh, src.type() );
         dst.zero();
 
-        float ratioy = src.h() / (float)nh;
-        float ratiox = src.w() / (float)nw;
+        float ratioy = static_cast<float>( src.h() ) / static_cast<float>(nh);
+        float ratiox = static_cast<float>( src.w() ) / static_cast<float>(nw);
+        float max_y = static_cast<float>( src.h()-1 );
+        float max_x = static_cast<float>( src.w()-1 );
 
         DataType dtype = image_precision( src.type() );
 
         float r, g, b;
         for( int y=0; y<nh; y++ ) {
-            float ny = y*ratioy;
-            if( ny >= src.h()-1 ) ny = src.h()-1;
+            float ny = static_cast<float>(y)*ratioy;
+            if( ny >= max_y ) ny = max_y;
             for( int x=0; x<nw; x++ ) {
-                float nx = x*ratiox;
-                if( nx >= src.w()-1 ) nx = src.w()-1;
+                float nx = static_cast<float>(x)*ratiox;
+                if( nx >= max_x ) nx = max_x;
                 src.get_bilinear(nx, ny, r, g, b);
                 switch( dtype ) {
                 case TYPE_FLOAT: dst.set(x, y, r, g, b); break;
@@ -508,18 +511,20 @@ namespace kortex {
         dst.create( nw, nh, src.type() );
         dst.zero();
 
-        float ratioy = src.h() / (float)nh;
-        float ratiox = src.w() / (float)nw;
+        float ratioy = static_cast<float>( src.h() ) / static_cast<float>(nh);
+        float ratiox = static_cast<float>( src.w() ) / static_cast<float>(nw);
+        float max_y  = static_cast<float>( src.h()-1 );
+        float max_x  = static_cast<float>( src.w()-1 );
 
         DataType dtype = image_precision( src.type() );
 
 #pragma omp parallel for
         for( int y=0; y<nh; y++ ) {
-            float ny = y*ratioy;
-            if( ny >= src.h()-1 ) ny = src.h()-1;
+            float ny = static_cast<float>(y)*ratioy;
+            if( ny >= max_y ) ny = max_y;
             for( int x=0; x<nw; x++ ) {
-                float nx = x*ratiox;
-                if( nx >= src.w()-1 ) nx = src.w()-1;
+                float nx = static_cast<float>(x)*ratiox;
+                if( nx >= max_x ) nx = max_x;
                 float r, g, b;
                 src.get_bilinear(nx, ny, r, g, b);
                 switch( dtype ) {
@@ -542,17 +547,19 @@ namespace kortex {
         dst.create( nw, nh, src.type() );
         dst.zero();
 
-        float ratioy = src.h() / (float)nh;
-        float ratiox = src.w() / (float)nw;
+        float ratioy = static_cast<float>( src.h() ) / static_cast<float>(nh);
+        float ratiox = static_cast<float>( src.w() ) / static_cast<float>(nw);
+        float max_y  = static_cast<float>( src.h()-1 );
+        float max_x  = static_cast<float>( src.w()-1 );
 
         DataType dtype = image_precision( src.type() );
 
         for( int y=0; y<nh; y++ ) {
-            float ny = y*ratioy;
-            if( ny >= src.h()-1 ) ny = src.h()-1;
+            float ny = static_cast<float>(y)*ratioy;
+            if( ny >= max_y ) ny = max_y;
             for( int x=0; x<nw; x++ ) {
-                float nx = x*ratiox;
-                if( nx >= src.w()-1 ) nx = src.w()-1;
+                float nx = static_cast<float>(x)*ratiox;
+                if( nx >= max_x ) nx = max_x;
                 float v = src.get_bilinear(nx, ny);
                 switch( dtype ) {
                 case TYPE_FLOAT: dst.set(x, y, v); break;
@@ -572,18 +579,20 @@ namespace kortex {
         dst.create( nw, nh, src.type() );
         dst.zero();
 
-        float ratioy = src.h() / (float)nh;
-        float ratiox = src.w() / (float)nw;
+        float ratioy = static_cast<float>( src.h() ) / static_cast<float>(nh);
+        float ratiox = static_cast<float>( src.w() ) / static_cast<float>(nw);
+        float max_y  = static_cast<float>( src.h()-1 );
+        float max_x  = static_cast<float>( src.w()-1 );
 
         DataType dtype = image_precision( src.type() );
 
 #pragma omp parallel for
         for( int y=0; y<nh; y++ ) {
-            float ny = y*ratioy;
-            if( ny >= src.h()-1 ) ny = src.h()-1;
+            float ny = static_cast<float>(y)*ratioy;
+            if( ny >= max_y ) ny = max_y;
             for( int x=0; x<nw; x++ ) {
-                float nx = x*ratiox;
-                if( nx >= src.w()-1 ) nx = src.w()-1;
+                float nx = static_cast<float>(x)*ratiox;
+                if( nx >= max_x ) nx = max_x;
                 float v = src.get_bilinear(nx, ny);
                 switch( dtype ) {
                 case TYPE_FLOAT: dst.set(x, y, v); break;
@@ -635,17 +644,19 @@ namespace kortex {
         dst.create( nw, nh, src.type() );
         dst.zero();
 
-        float ratioy = src.h() / (float)nh;
-        float ratiox = src.w() / (float)nw;
+        float ratioy = static_cast<float>( src.h() ) / static_cast<float>(nh);
+        float ratiox = static_cast<float>( src.w() ) / static_cast<float>(nw);
+        float max_y  = static_cast<float>( src.h()-1 );
+        float max_x  = static_cast<float>( src.w()-1 );
 
         DataType dtype = image_precision( src.type() );
 
         for( int y=0; y<nh; y++ ) {
-            float ny = y*ratioy;
-            if( ny >= src.h()-1 ) ny = src.h()-1;
+            float ny = static_cast<float>(y)*ratioy;
+            if( ny >= max_y ) ny = max_y;
             for( int x=0; x<nw; x++ ) {
-                float nx = x*ratiox;
-                if( nx >= src.w()-1 ) nx = src.w()-1;
+                float nx = static_cast<float>(x)*ratiox;
+                if( nx >= max_x ) nx = max_x;
                 if( !src.is_inside_margin(nx, ny, 2) ) continue;
                 float v = src.get_bicubic(nx, ny);
                 switch( dtype ) {
@@ -666,18 +677,20 @@ namespace kortex {
         dst.create( nw, nh, src.type() );
         dst.zero();
 
-        float ratioy = src.h() / (float)nh;
-        float ratiox = src.w() / (float)nw;
+        float ratioy = static_cast<float>( src.h() ) / static_cast<float>(nh);
+        float ratiox = static_cast<float>( src.w() ) / static_cast<float>(nw);
+        float max_y  = static_cast<float>( src.h()-1 );
+        float max_x  = static_cast<float>( src.w()-1 );
 
         DataType dtype = image_precision( src.type() );
 
 #pragma omp parallel for
         for( int y=0; y<nh; y++ ) {
-            float ny = y*ratioy;
-            if( ny >= src.h()-1 ) ny = src.h()-1;
+            float ny = static_cast<float>(y)*ratioy;
+            if( ny >= max_y ) ny = max_y;
             for( int x=0; x<nw; x++ ) {
-                float nx = x*ratiox;
-                if( nx >= src.w()-1 ) nx = src.w()-1;
+                float nx = static_cast<float>(x)*ratiox;
+                if( nx >= max_x ) nx = max_x;
                 if( !src.is_inside_margin(nx, ny, 2) ) continue;
                 float v = src.get_bicubic(nx, ny);
                 switch( dtype ) {
@@ -699,15 +712,15 @@ namespace kortex {
         dst.create( nw, nh, src.type() );
         dst.zero();
 
-        float ratioy = src.h() / (float)nh;
-        float ratiox = src.w() / (float)nw;
+        float ratioy = static_cast<float>( src.h() ) / static_cast<float>(nh);
+        float ratiox = static_cast<float>( src.w() ) / static_cast<float>(nw);
 
         DataType dtype = image_precision( src.type() );
 
         for( int y=0; y<nh; y++ ) {
-            float ny = y*ratioy;
+            float ny = static_cast<float>(y)*ratioy;
             for( int x=0; x<nw; x++ ) {
-                float nx = x*ratiox;
+                float nx = static_cast<float>(x)*ratiox;
                 if( !src.is_inside_margin(nx, ny, 2) ) continue;
                 float r, g, b;
                 src.get_bicubic(nx, ny, r, g, b);
@@ -732,16 +745,16 @@ namespace kortex {
         dst.create( nw, nh, src.type() );
         dst.zero();
 
-        float ratioy = src.h() / (float)nh;
-        float ratiox = src.w() / (float)nw;
+        float ratioy = static_cast<float>( src.h() ) / static_cast<float>(nh);
+        float ratiox = static_cast<float>( src.w() ) / static_cast<float>(nw);
 
         DataType dtype = image_precision( src.type() );
 
 #pragma omp parallel for
         for( int y=0; y<nh; y++ ) {
-            float ny = y*ratioy;
+            float ny = static_cast<float>(y)*ratioy;
             for( int x=0; x<nw; x++ ) {
-                float nx = x*ratiox;
+                float nx = static_cast<float>(x)*ratiox;
                 if( !src.is_inside_margin(nx, ny, 2) ) continue;
                 float r, g, b;
                 src.get_bicubic(nx, ny, r, g, b);
@@ -1118,20 +1131,24 @@ namespace kortex {
         int h = mask.h();
         int d = std::max(w,h)/2+1;
         vector<float> exp_vals(d, 0.0f);
-        float sigma = d / 2.0f;
-        float v = sqrt(254.0f); // 1.0f / ( sqrt(PI2) * sigma );
+        float sigma2 = sq( static_cast<float>(d) / 2.0f );
+        float v = std::sqrt(254.0f); // 1.0f / ( sqrt(PI2) * sigma );
         for( int i=0; i<d; i++ ) {
-            exp_vals[i] = v * exp( -0.5f * i*i / sigma / sigma );
+            float i2 = static_cast<float>( sq(i) );
+            exp_vals[i] = v * std::exp( -0.5f * i2 / sigma2 );
         }
+
+        float h_2 = static_cast<float>(h)/2.0f;
+        float w_2 = static_cast<float>(w)/2.0f;
 
 #pragma omp parallel for
         for( int y=0; y<h; y++ ) {
             float* mrow = mask.get_row_f(y);
-            int yd = (int)fabs(y-h/2.0f);
+            int yd = (int)fabs(static_cast<float>(y)-h_2);
             assert_statement_g( yd>=0 && yd < d, "[oob %d %d]", yd, d );
             float ey = exp_vals[ yd ];
             for( int x=0; x<w; x++ ) {
-                int xd =  (int)fabs(x-w/2.0f);
+                int xd =  (int)fabs(static_cast<float>(x)-w_2);
                 assert_statement_g( xd>=0 && xd < d, "[oob %d %d]", xd, d );
                 mrow[x] = ey * exp_vals[ xd ] + 1.0f;
             }
@@ -1144,12 +1161,15 @@ namespace kortex {
         int w = mask.w();
         int h = mask.h();
 
+        float hp = static_cast<float>(h) - 1.0f;
+        float wp = static_cast<float>(w) - 1.0f;
+
 #pragma omp parallel for
         for(int y=0; y<h; y++) {
             float* mrow = mask.get_row_f(y);
-            float y_w = 1.0f - fabs(2.0f*float(y)/(h-1.0f)-1.0f);
+            float y_w = 1.0f - std::fabs( 2.0f*static_cast<float>(y)/hp - 1.0f );
             for( int x=0; x<w; x++ ) {
-                float x_w = 1.0f - fabs(2.0f*float(x)/(w-1.0f)-1.0f);
+                float x_w = 1.0f - std::fabs(2.0f*static_cast<float>(x)/wp - 1.0f);
                 mrow[x] = 254.0f * (y_w*x_w) + 1.0f;
             }
         }
@@ -1211,7 +1231,7 @@ namespace kortex {
         if( !standard ) {
             float minv, maxv;
             image_min_max( src, minv, maxv );
-            nrm = std::max( fabs(minv), fabs(maxv) );
+            nrm = std::max( std::fabs(minv), std::fabs(maxv) );
             assert_statement( nrm > 1e-16, "nrm is dangerously close to 0" );
             nrm = 1.0f/nrm;
         }
@@ -1245,11 +1265,11 @@ namespace kortex {
         if( run_parallel ) {
 #pragma omp parallel for
             for( int i=0; i<pc; i++ ) {
-                mptr[i] = sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
+                mptr[i] = std::sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
             }
         } else {
             for( int i=0; i<pc; i++ ) {
-                mptr[i] = sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
+                mptr[i] = std::sqrt( sq( xptr[i] ) + sq( yptr[i] ) );
             }
         }
     }
@@ -1336,11 +1356,11 @@ namespace kortex {
 
         if( !run_parallel ) {
             for( size_t i=0; i<psz; i++ )
-                optr[i] = fabs( iptr[i] );
+                optr[i] = std::fabs( iptr[i] );
         } else {
 #pragma omp parallel for
             for( size_t i=0; i<psz; i++ ) {
-                optr[i] = fabs( iptr[i] );
+                optr[i] = std::fabs( iptr[i] );
             }
         }
     }

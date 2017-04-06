@@ -37,7 +37,7 @@ namespace kortex {
     enum ChannelType { ITC_PIXEL=1,   // pixel-ordered  [ r0g0b0 r1g1b1...]
                        ITC_IMAGE=2 }; // image-ordered  [ r0r1r2 g0g1g2...]
 
-    inline size_t      image_no_channels  ( const ImageType& it );
+    inline int         image_no_channels  ( const ImageType& it );
     inline DataType    image_precision    ( const ImageType& it );
     inline size_t      image_pixel_size   ( const ImageType& it );
     inline ChannelType image_channel_type ( const ImageType& it );
@@ -311,7 +311,7 @@ namespace kortex {
     }
 
 
-    size_t      image_no_channels ( const ImageType& it ) {
+    int image_no_channels ( const ImageType& it ) {
         switch( it ) {
         case IT_U_GRAY  : return 1;
         case IT_F_GRAY  : return 1;

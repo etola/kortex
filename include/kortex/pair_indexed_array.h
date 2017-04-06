@@ -97,7 +97,7 @@ namespace kortex {
 
         // void reserve( const int& n_samples );
 
-        int  size() const { return m_array.size(); }
+        int  size() const { return (int)m_array.size(); }
 
         int filter_array( const T& th );
 

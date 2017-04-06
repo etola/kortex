@@ -18,17 +18,17 @@ namespace kortex {
     // rotates normal in referential frame to the world referential assuming R
     // is the rotation matrix of the referential.
     inline void normal_local_to_world( const double* R, const float lnormal[3], float wnormal[3] ) {
-        wnormal[0] = R[0] * lnormal[0] + R[3] * lnormal[1] + R[6] * lnormal[2];
-        wnormal[1] = R[1] * lnormal[0] + R[4] * lnormal[1] + R[7] * lnormal[2];
-        wnormal[2] = R[2] * lnormal[0] + R[5] * lnormal[1] + R[8] * lnormal[2];
+        wnormal[0] = (float)R[0] * lnormal[0] + (float)R[3] * lnormal[1] + (float)R[6] * lnormal[2];
+        wnormal[1] = (float)R[1] * lnormal[0] + (float)R[4] * lnormal[1] + (float)R[7] * lnormal[2];
+        wnormal[2] = (float)R[2] * lnormal[0] + (float)R[5] * lnormal[1] + (float)R[8] * lnormal[2];
     }
 
     // rotates normal in the world referential to referential frame assuming R
     // is the rotation matrix of the referential.
     inline void normal_world_to_local( const double* R, const float wnormal[3], float lnormal[3] ) {
-        lnormal[0] = R[0] * wnormal[0] + R[1] * wnormal[1] + R[2] * wnormal[2];
-        lnormal[1] = R[3] * wnormal[0] + R[4] * wnormal[1] + R[5] * wnormal[2];
-        lnormal[2] = R[6] * wnormal[0] + R[7] * wnormal[1] + R[8] * wnormal[2];
+        lnormal[0] = (float)R[0] * wnormal[0] + (float)R[1] * wnormal[1] + (float)R[2] * wnormal[2];
+        lnormal[1] = (float)R[3] * wnormal[0] + (float)R[4] * wnormal[1] + (float)R[5] * wnormal[2];
+        lnormal[2] = (float)R[6] * wnormal[0] + (float)R[7] * wnormal[1] + (float)R[8] * wnormal[2];
     }
 
     /// computes the rotation matrix that rotates na to nb

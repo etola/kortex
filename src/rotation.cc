@@ -90,17 +90,17 @@ namespace kortex {
     }
 
     void rotation_matrix_around_z( const float& angle_in_degrees, float R[9] ) {
-        float in_plane = angle_in_degrees * RADIANS;
-        R[0] = cos(in_plane);  R[1] = -sin(in_plane); R[2] = 0;
-        R[3] = sin(in_plane);  R[4] =  cos(in_plane); R[5] = 0;
-        R[6] = 0;              R[7] =  0;             R[8] = 1;
+        float in_plane = static_cast<float>(angle_in_degrees * RADIANS);
+        R[0] = std::cos(in_plane);  R[1] = -std::sin(in_plane); R[2] = 0.0f;
+        R[3] = std::sin(in_plane);  R[4] =  std::cos(in_plane); R[5] = 0.0f;
+        R[6] = 0.0f;                R[7] =  0.0f;               R[8] = 1.0f;
     }
 
     void rotation_matrix_around_z( const double& angle_in_degrees, double R[9] ) {
         double in_plane = angle_in_degrees * RADIANS;
-        R[0] = cos(in_plane);  R[1] = -sin(in_plane); R[2] = 0;
-        R[3] = sin(in_plane);  R[4] =  cos(in_plane); R[5] = 0;
-        R[6] = 0;              R[7] =  0;             R[8] = 1;
+        R[0] = cos(in_plane);  R[1] = -sin(in_plane); R[2] = 0.0;
+        R[3] = sin(in_plane);  R[4] =  cos(in_plane); R[5] = 0.0;
+        R[6] = 0.0;            R[7] =  0.0;           R[8] = 1.0;
     }
 
     void euler_to_rotation( double theta, double phi, double psi, double R[9] ) {
@@ -157,10 +157,10 @@ namespace kortex {
     }
 
     void angle_to_normal( const float& a_in_rad, const float& b_in_rad, float normal[3] ) {
-        float sinb = sin( b_in_rad );
-        normal[0] = cos( a_in_rad ) * sinb;
-        normal[1] = sin( a_in_rad ) * sinb;
-        normal[2] = cos( b_in_rad );
+        float sinb = std::sin( b_in_rad );
+        normal[0] = std::cos( a_in_rad ) * sinb;
+        normal[1] = std::sin( a_in_rad ) * sinb;
+        normal[2] = std::cos( b_in_rad );
     }
 
     void angle_to_normal( const float& a_in_rad, const float& b_in_rad, double normal[3] ) {
@@ -171,13 +171,13 @@ namespace kortex {
     }
 
     void normal_to_angle( const double n[3], float& a_in_rad, float& b_in_rad ) {
-        b_in_rad = atan2(sqrt( sq(n[0]) + sq(n[1]) ), n[2] );
-        a_in_rad = atan2( n[1], n[0] );
+        b_in_rad = (float)std::atan2( sqrt( sq(n[0]) + sq(n[1]) ), n[2] );
+        a_in_rad = (float)std::atan2( n[1], n[0] );
     }
 
     void normal_to_angle( const float  n[3], float& a_in_rad, float& b_in_rad ) {
-        b_in_rad = atan2(sqrt( sq(n[0]) + sq(n[1]) ), n[2] );
-        a_in_rad = atan2( n[1], n[0] );
+        b_in_rad = std::atan2( std::sqrt( sq(n[0]) + sq(n[1]) ), n[2] );
+        a_in_rad = std::atan2( n[1], n[0] );
     }
 
     void construct_local_coordinate_frame(const double* z_normal, double* new_u, double* new_v) {

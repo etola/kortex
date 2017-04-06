@@ -56,7 +56,7 @@ namespace kortex {
             set_cache_size( n_max_object_number );
         }
 
-        int n_files() const { return m_file_paths.size(); }
+        int n_files() const { return (int)m_file_paths.size(); }
 
         /// loads specified objects into cache. indices are regarding the order
         /// of the m_file_paths.

@@ -69,7 +69,7 @@ namespace kortex {
         void remove( int f0, int f1 );
         bool find  ( int f0, int f1 ) const;
 
-        int  size() const { return m_map.size(); }
+        int  size() const { return (int)m_map.size(); }
 
         // exports the pairs present in the map
         void export_pairs( std::vector<SortedPair> &fpairs ) const;

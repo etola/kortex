@@ -58,35 +58,35 @@ namespace kortex {
         passert_statement( ptr == NULL, "passed non-NULL pointer" );
         size_t memsz = n_elem * sizeof(*ptr);
         ptr = (int*)( allocate(memsz) );
-        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", n_elem/GB );
+        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", double(n_elem)/GB );
     }
     void allocate( float*& ptr, const size_t& n_elem ) {
         passert_pointer_size( n_elem );
         passert_statement( ptr == NULL, "passed non-NULL pointer" );
         size_t memsz = n_elem * sizeof(*ptr);
         ptr = (float*)( allocate(memsz) );
-        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", n_elem/GB );
+        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", double(n_elem)/GB );
     }
     void allocate( double*& ptr, const size_t& n_elem ) {
         passert_pointer_size( n_elem );
         passert_statement( ptr == NULL, "passed non-NULL pointer" );
         size_t memsz = n_elem * sizeof(*ptr);
         ptr = (double*)( allocate(memsz) );
-        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", n_elem/GB );
+        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", double(n_elem)/GB );
     }
     void allocate( uchar*& ptr, const size_t& n_elem ) {
         passert_pointer_size( n_elem );
         passert_statement( ptr == NULL, "passed non-NULL pointer" );
         size_t memsz = n_elem * sizeof(*ptr);
         ptr = (uchar*)( allocate(memsz) );
-        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", n_elem/GB );
+        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", double(n_elem)/GB );
     }
     void allocate( uint64_t*& ptr, const size_t& n_elem ) {
         passert_pointer_size( n_elem );
         passert_statement( ptr == NULL, "passed non-NULL pointer" );
         size_t memsz = n_elem * sizeof(*ptr);
         ptr = (uint64_t*)( allocate(memsz) );
-        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", n_elem/GB );
+        if( ptr == NULL ) logman_fatal_g( "cannot allocate memory [%f]", double(n_elem)/GB );
     }
 
     void deallocate( uint64_t*& ptr ) { deallocate( (void*) ptr ); ptr = NULL; }

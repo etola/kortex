@@ -99,8 +99,8 @@ namespace kortex {
         assert_statement_g( is_positive_number(selection_limit),      "selection_limit must be > 0 [%d]", selection_limit);
 
         int   prosac_start = 32;
-        float prosac_inc   = 0.5;
-        int allowed_range = std::min( selection_limit, prosac_start + (int)(prosac_iter*prosac_inc) );
+        // float prosac_inc   = 0.5f;
+        int allowed_range = std::min( selection_limit, prosac_start + (prosac_iter/2) );
         assert_statement_g( no_samples_to_select < selection_limit, "[no_samples %d] [iter %d], [n_max_samples %d] [allowed range %d] > [no_samples %d]", no_samples_to_select, prosac_iter, selection_limit, allowed_range, no_samples_to_select );
         assert_statement_g( allowed_range > no_samples_to_select,   "[no_samples %d] [iter %d], [n_max_samples %d] [allowed range %d] > [no_samples %d]", no_samples_to_select, prosac_iter, selection_limit, allowed_range, no_samples_to_select );
         if( !select_random_samples(0, allowed_range, no_samples_to_select, selected_samples) )

@@ -295,9 +295,9 @@ namespace kortex {
         //receive the file info.
         png_read_info(png_ptr, info_ptr);
 
-        h  = png_get_image_height(png_ptr, info_ptr);
-        w  = png_get_image_width(png_ptr, info_ptr);
-        nc = png_get_channels(png_ptr, info_ptr);
+        h  = (int)png_get_image_height(png_ptr, info_ptr);
+        w  = (int)png_get_image_width(png_ptr, info_ptr);
+        nc = (int)png_get_channels(png_ptr, info_ptr);
 
         /* clean up after the read, and free any memory allocated - REQUIRED */
         png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
@@ -355,11 +355,11 @@ namespace kortex {
         // At this point you have read the entire image
 
         png_bytep* row_pointers = png_get_rows(png_ptr, info_ptr);
-        int h  = png_get_image_height(png_ptr, info_ptr);
-        int w  = png_get_image_width(png_ptr, info_ptr);
-        int ch = png_get_channels(png_ptr, info_ptr);
+        int h  = (int)png_get_image_height(png_ptr, info_ptr);
+        int w  = (int)png_get_image_width(png_ptr, info_ptr);
+        int ch = (int)png_get_channels(png_ptr, info_ptr);
 
-        int rb = png_get_rowbytes(png_ptr, info_ptr);
+        int rb = (int)png_get_rowbytes(png_ptr, info_ptr);
 
         if     ( ch == 1 ) img->create( w, h, IT_U_GRAY );
         else if( ch == 3 ) img->create( w, h, IT_U_PRGB );
@@ -422,7 +422,7 @@ namespace kortex {
 
         uchar* tmp_buffer = new uchar[ rowbytes ];
 
-        for(long j = 0; j < wpng_info.height; j++) {
+        for(int j = 0; j < wpng_info.height; j++) {
             switch( img->type() ) {
             case IT_U_GRAY:
             case IT_U_PRGB: memcpy( tmp_buffer, img->get_row_u(j), rowbytes ); break;

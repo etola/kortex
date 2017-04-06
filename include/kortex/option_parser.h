@@ -34,7 +34,7 @@ namespace kortex {
         void   clear() { value.clear(); }
 
         string get_value( int i ) const { assert_boundary(i,0,n_values()); return value[i];     }
-        int    n_values()         const { return value.size(); }
+        int    n_values()         const { return (int)value.size(); }
 
         void push_value( const string& str ) { value.push_back( str ); }
 
@@ -68,7 +68,7 @@ namespace kortex {
         void print_help   () const;
         void print_options() const;
 
-        int  n_options    () const { return m_options.size(); }
+        int  n_options    () const { return (int)m_options.size(); }
 
         int get_option( const string& str ) const;
         const OptionItem& get_option( int i ) const {

@@ -63,19 +63,19 @@ namespace kortex {
         return false;
     }
 
-    inline bool is_unit_norm_3( const float  a[3], float  eps = 1e-5 ) {
-        if( fabs( dot3(a,a) - 1.0 ) < eps )
+    inline bool is_unit_norm_3( const float  a[3], float  eps = 1e-5f ) {
+        if( fabs( dot3(a,a) - 1.0f ) < eps )
             return true;
         return false;
     }
 
-    inline bool is_unit_norm_128( const float a[128], float eps = 1e-5 ) {
+    inline bool is_unit_norm_128( const float a[128], float eps = 1e-5f ) {
         if( fabs( dot128(a,a)-1.0f ) < eps )
             return true;
         return false;
     }
 
-    bool is_unit_norm( const float* a, int asz, float eps = 1e-5 );
+    bool is_unit_norm( const float* a, int asz, float eps = 1e-5f );
 
     inline float  l2norm_sq3( const float * a ) { return dot3(a,a); }
     inline double l2norm_sq3( const double* a ) { return dot3(a,a); }
@@ -88,8 +88,8 @@ namespace kortex {
     }
 
 
-    inline float  l2norm3( const float * a ) { return sqrt(dot3(a,a)); }
-    inline double l2norm3( const double* a ) { return sqrt(dot3(a,a)); }
+    inline float  l2norm3( const float * a ) { return sqrtf( dot3(a,a) ); }
+    inline double l2norm3( const double* a ) { return sqrt ( dot3(a,a) ); }
 
     float l2norm_128( const float* a );
     float normalize_l2norm_128(float* arr);
