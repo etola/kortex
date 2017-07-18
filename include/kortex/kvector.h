@@ -92,6 +92,8 @@ namespace kortex {
         T*       operator()()       { return m_v; }
         const T* operator()() const { return m_v; }
 
+        KVector<T,N> square() const;
+
         KVector<T,N> operator*( const T& s ) const;
         KVector<T,N> operator/( const T& s ) const;
         KVector<T,N> operator-( const KVector<T,N>& rhs ) const;
@@ -251,6 +253,15 @@ namespace kortex {
             rval.m_v[i] = m_v[i] - rhs.m_v[i];
         return rval;
     }
+
+    template <typename T, int N>
+    KVector<T,N>  KVector<T,N>::square() const {
+        KVector<T,N> rval;
+        for( int i=0; i<N; i++ )
+            rval.m_v[i] = m_v[i]*m_v[i];
+        return rval;
+    }
+
 
     template <typename T, int N>
     KVector<T,N>  KVector<T,N>::operator+( const KVector<T,N>& rhs ) const {
