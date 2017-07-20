@@ -773,5 +773,53 @@ namespace kortex {
         return true;
     }
 
+    void mat_scale_col( double* A, int nr, int nc, int cid, double v ) {
+        assert_pointer( A );
+        assert_statement( nr > 0 && nc > 0, "invalid input" );
+        assert_boundary( cid, 0, nc );
+        assert_number( v );
+        for( int r=0; r<nr; r++ ) {
+            A[ r*nc+cid ] *= v;
+        }
+    }
+
+    void mat_scale_row( double* A, int nr, int nc, int rid, double v ) {
+        assert_pointer( A );
+        assert_statement( nr > 0 && nc > 0, "invalid input" );
+        assert_boundary( rid, 0, nr );
+        assert_number( v );
+        for( int c=0; c<nc; c++ ) {
+            A[ rid*nc+c ] *= v;
+        }
+    }
+
+    void mat_swap_col( double* S, int nr, int nc, int cid0, int cid1 ) {
+        assert_pointer( S );
+        assert_statement( nr>0 && nc>0, "invalid input" );
+        assert_boundary( cid0, 0, nc );
+        assert_boundary( cid1, 0, nc );
+
+        double* col0 = S + cid0;
+        double* col1 = S + cid1;
+
+        for( int r=0; r<nr; r++ ) {
+            std::swap( col0[r*nc], col1[r*nc] );
+        }
+    }
+
+    void mat_print( const double* A, int nr, int nc, const char* str ) {
+        assert_pointer( A );
+        assert_statement( nr>0 && nc>0, "invalid input" );
+        if( str )
+            printf( "%s:\n", str );
+        for( int i=0; i<nr; i++ ) {
+            for( int j=0; j<nc; j++ ) {
+                printf( "%f ", A[i*nc+j] );
+            }
+            printf( "\n" );
+        }
+        printf( "\n" );
+    }
+
 
 }
