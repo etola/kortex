@@ -16,6 +16,7 @@
 #include <climits>
 
 #include <kortex/rect2.h>
+#include <kortex/check.h>
 
 namespace kortex {
 
@@ -60,6 +61,7 @@ namespace kortex {
 //
 
     void Rect2i::reset_max_region() {
+        logman_warning( "there is a possible bug here - below min/max should be flipped" );
         init( INT_MIN, INT_MAX, INT_MIN, INT_MAX );
         id = 0;
     }

@@ -101,7 +101,7 @@ namespace kortex {
         mat_transpose( m_U,  Uw );
         mat_transpose( m_Vt, Vw );
 
-        static const double tolerance = 1e-24;
+        static const double tolerance = 1e-10;
         double sd_max = m_Sd[    0];
         double sd_min = m_Sd[m_d-1];
         double cond = ( sd_min<tolerance ) ? sd_max/tolerance : sd_max/sd_min;
