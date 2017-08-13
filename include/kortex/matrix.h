@@ -323,6 +323,12 @@ namespace kortex {
                        const double* B, int br, int bc,
                        const double& eps=1e-12 );
 
+    void mat_scale_col( double* A, int nr, int nc, int cid,  double v );
+    void mat_scale_row( double* A, int nr, int nc, int rid,  double v );
+    void mat_swap_col ( double* S, int nr, int nc, int cid0, int cid1 );
+
+    void mat_print( const double* A, int nr, int nc, const char* str=NULL );
+
 }
 
 #endif
