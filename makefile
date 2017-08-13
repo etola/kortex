@@ -9,7 +9,7 @@ licence := see licence.txt
 #........................................
 installdir := /home/tola/usr/local/kortex/
 external_sources :=
-external_libraries := libjpeg libpng12 lapack blas
+external_libraries := libjpeg libpng12 blas
 libdir := lib
 srcdir := src
 includedir:= include
@@ -126,6 +126,9 @@ ifneq (,$(findstring opencv,$(external_libraries)))
   define_flags += -DWITH_OPENCV
 endif
 ifneq (,$(findstring blas,$(external_libraries)))
+  define_flags += -DWITH_LAPACK
+endif
+ifneq (,$(findstring lapack,$(external_libraries)))
   define_flags += -DWITH_LAPACK
 endif
 ifneq (,$(findstring eigen3,$(external_libraries)))
