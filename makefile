@@ -7,7 +7,7 @@ author := Engin Tola
 description := base components of the kortex vision library developed by Aurvis R&D
 licence := see licence.txt
 #........................................
-installdir := /home/tola/usr/local/kortex/
+installdir := ${HOME}/usr/local/kortex/
 external_sources :=
 external_libraries := libjpeg libpng12 blas
 libdir := lib
@@ -15,12 +15,12 @@ srcdir := src
 includedir:= include
 define_flags := -DWITH_LIBPNG -DWITH_LIBJPEG -DWITH_LAPACK -DWITH_SSE
 #........................................
-optimize := false
-parallelize := false
+optimize := true
+parallelize := true
 f77 := false
 sse := true
 multi-threading := false
-profile := true
+profile := false
 #........................................
 specialize := true
 platform := native
