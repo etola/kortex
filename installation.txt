@@ -4,7 +4,7 @@
 //
 // ---------------------------------------------------------------------------
 
-1. install dependency packages : liblapack-dev libblas-dev libjpeg-dev libpng12-dev git
+1. install dependency packages : pkg-config liblapack-dev libblas-dev libjpeg-dev libpng12-dev git
 
 $ sudo apt-get -y --force-yes --install-recommends install pkg-config libjpeg-dev libpng12-dev liblapack-dev libblas-dev git
 $ mkdir -p ${HOME}/usr/lib/pkgconfig
