@@ -7,13 +7,14 @@ author := Engin Tola
 description := base components of the kortex vision library developed by Aurvis R&D
 licence := see licence.txt
 #........................................
+main_build_dir := ${HOME}/build/
 installdir := ${HOME}/usr/local/kortex/
 external_sources :=
-external_libraries := libjpeg libpng12 blas
+external_libraries := libjpeg libpng12 lapack blas
 libdir := lib
 srcdir := src
 includedir:= include
-define_flags := -DWITH_LIBPNG -DWITH_LIBJPEG -DWITH_LAPACK -DWITH_SSE
+define_flags := -DWITH_LIBPNG -DWITH_LIBJPEG -DWITH_LAPACK -DWITH_LAPACK -DWITH_SSE
 #........................................
 optimize := true
 parallelize := true
@@ -29,7 +30,7 @@ sources := log_manager.cc check.cc filter.cc mem_manager.cc mem_unit.cc image.cc
 
 #........................................
 
-define_flags := -DWITH_LIBPNG -DWITH_LIBJPEG -DWITH_LAPACK -DWITH_SSE
+define_flags := -DWITH_LIBPNG -DWITH_LIBJPEG -DWITH_LAPACK -DWITH_LAPACK -DWITH_SSE
 custom_ld_flags :=
 custom_cflags := -std=c++0x
 #........................................
@@ -162,6 +163,7 @@ ifeq ($(optimize),false)
   external_libraries := $(patsubst kortex,kortexd,$(external_libraries))
   external_libraries := $(patsubst kortex-ext-advanced,kortex-ext-advancedd,$(external_libraries))
   external_libraries := $(patsubst kortex-ext-opencv,kortex-ext-opencvd,$(external_libraries))
+  external_libraries := $(patsubst kortex-ext-dronedeploy,kortex-ext-dronedeployd,$(external_libraries))
   external_libraries := $(patsubst ceres,ceres,$(external_libraries))
   external_libraries := $(patsubst coldet,coldetd,$(external_libraries))
 endif
