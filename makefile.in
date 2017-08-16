@@ -51,7 +51,8 @@ sparse_array_t.cc \
 indexed_array.cc \
 histogram.cc \
 pair_indexed_array.cc \
-sorted_pair_map.cc
+sorted_pair_map.cc \
+geometry.cc
 
 headers := \
 log_manager.h \
@@ -100,7 +101,8 @@ keyed_value.h \
 heap.h \
 heap.tcc \
 pair_indexed_array.h \
-sorted_pair_map.h
+sorted_pair_map.h \
+geometry.h
 
 
 #

@@ -25,7 +25,7 @@ profile := true
 specialize := true
 platform := native
 #........................................
-sources := log_manager.cc check.cc filter.cc mem_manager.cc mem_unit.cc image.cc image_processing.cc image_conversion.cc image_io.cc image_io_pnm.cc image_io_png.cc image_io_jpg.cc image_paint.cc sse_extensions.cc string.cc fileio.cc message.cc color.cc minmax.cc math.cc progress_bar.cc random.cc rect2.cc linear_algebra.cc matrix.cc kmatrix.cc rotation.cc svd.cc sorting.cc timer.cc eigen_conversion.cc option_parser.cc object_cache.cc color_map.cc sparse_array_t.cc indexed_array.cc histogram.cc pair_indexed_array.cc sorted_pair_map.cc
+sources := log_manager.cc check.cc filter.cc mem_manager.cc mem_unit.cc image.cc image_processing.cc image_conversion.cc image_io.cc image_io_pnm.cc image_io_png.cc image_io_jpg.cc image_paint.cc sse_extensions.cc string.cc fileio.cc message.cc color.cc minmax.cc math.cc progress_bar.cc random.cc rect2.cc linear_algebra.cc matrix.cc kmatrix.cc rotation.cc svd.cc sorting.cc timer.cc eigen_conversion.cc option_parser.cc object_cache.cc color_map.cc sparse_array_t.cc indexed_array.cc histogram.cc pair_indexed_array.cc sorted_pair_map.cc geometry.cc
 
 #........................................
 
@@ -144,6 +144,7 @@ ifeq ($(optimize),false)
   external_libraries := $(patsubst kortex,kortexd,$(external_libraries))
   external_libraries := $(patsubst kortex-ext-advanced,kortex-ext-advancedd,$(external_libraries))
   external_libraries := $(patsubst kortex-ext-opencv,kortex-ext-opencvd,$(external_libraries))
+  external_libraries := $(patsubst kortex-ext-dronedeploy,kortex-ext-dronedeployd,$(external_libraries))
   external_libraries := $(patsubst ceres,ceres-debug,$(external_libraries))
   external_libraries := $(patsubst coldet,coldetd,$(external_libraries))
 endif
