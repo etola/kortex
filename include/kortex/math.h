@@ -91,6 +91,20 @@ namespace kortex {
     inline float  l2norm3( const float * a ) { return sqrtf( dot3(a,a) ); }
     inline double l2norm3( const double* a ) { return sqrt ( dot3(a,a) ); }
 
+    inline float  l2norm3( const float * a, const float* b ) {
+        return std::sqrt( sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] ) );
+    }
+    inline double l2norm3( const double * a, const float* b ) {
+        return std::sqrt( sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] ) );
+    }
+    inline double l2norm3( const float * a, const double* b ) {
+        return std::sqrt( sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] ) );
+    }
+    inline double l2norm3( const double * a, const double* b ) {
+        return std::sqrt( sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] ) );
+    }
+
+
     float l2norm_128( const float* a );
     float normalize_l2norm_128(float* arr);
 

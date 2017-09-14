@@ -3,5 +3,4 @@ debug
 release
 test_in
 test_out
-*.pc
 old
