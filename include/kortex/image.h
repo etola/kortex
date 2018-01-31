@@ -25,13 +25,14 @@ using std::ifstream;
 
 namespace kortex {
 
-    enum ImageType { IT_U_GRAY=1,    // uchar 1-channel
-                     IT_F_GRAY=2,    // float 1-channel
-                     IT_U_PRGB=4,    // uchar 3-channel pixel-ordered
-                     IT_F_PRGB=8,    // float 3-channel pixel-ordered
-                     IT_U_IRGB=16,   // uchar 3-channel image-ordered
-                     IT_F_IRGB=32,   // float 3-channel image-ordered
-                     IT_I_GRAY=64    // int   1-channel
+    enum ImageType { IT_U_GRAY=1,    // uchar  1-channel
+                     IT_F_GRAY=2,    // float  1-channel
+                     IT_U_PRGB=4,    // uchar  3-channel pixel-ordered
+                     IT_F_PRGB=8,    // float  3-channel pixel-ordered
+                     IT_U_IRGB=16,   // uchar  3-channel image-ordered
+                     IT_F_IRGB=32,   // float  3-channel image-ordered
+                     IT_I_GRAY=64,   // int    1-channel
+                     IT_J_GRAY=128   // 16-bit 1-channel - UINT16
     };
 
     enum ChannelType { ITC_PIXEL=1,   // pixel-ordered  [ r0g0b0 r1g1b1...]
@@ -62,6 +63,7 @@ namespace kortex {
         uchar*      m_data_u;
         float*      m_data_f;
         int  *      m_data_i;
+        uint16_t*   m_data_u16;
         MemUnit     m_memory;
         bool        m_wrapper;
 
@@ -127,17 +129,19 @@ namespace kortex {
         void set( const float& v );
         void set( const uchar& v );
         void set( const int  & v );
+        void set( const uint16_t& v );
 
         ///
         /// get raw pointers
         ///
-        const float* get_fptr() const { return m_data_f; }
-        const uchar* get_uptr() const { return m_data_u; }
-        const int  * get_iptr() const { return m_data_i; }
-        float      * get_fptr()       { return m_data_f; }
-        uchar      * get_uptr()       { return m_data_u; }
-        int        * get_iptr()       { return m_data_i; }
-
+        const float   * get_fptr    () const { return m_data_f;   }
+        const uchar   * get_uptr    () const { return m_data_u;   }
+        const int     * get_iptr    () const { return m_data_i;   }
+        const uint16_t* get_u16_ptr () const { return m_data_u16; }
+        float         * get_fptr    ()       { return m_data_f;   }
+        uchar         * get_uptr    ()       { return m_data_u;   }
+        int           * get_iptr    ()       { return m_data_i;   }
+        uint16_t      * get_u16_ptr ()       { return m_data_u16; }
 
         ///
         /// get image channels
@@ -148,6 +152,8 @@ namespace kortex {
         const float* get_channel_f( int cid ) const;
         int        * get_channel_i( int cid );
         const int  * get_channel_i( int cid ) const;
+        uint16_t   * get_channel_u16( int cid );
+        const uint16_t* get_channel_u16( int cid ) const;
 
         /// 1-channel get
 
@@ -155,9 +161,10 @@ namespace kortex {
         /// easy access get/set functions - use the row pointers for performance
         /// critical stuff
         ///
-        int   geti( int x0, int y0 ) const;
-        float getf( int x0, int y0 ) const;
-        uchar getu( int x0, int y0 ) const;
+        int      geti( int x0, int y0 ) const;
+        float    getf( int x0, int y0 ) const;
+        uchar    getu( int x0, int y0 ) const;
+        uint16_t getu16( int x0, int y0 ) const;
 
         /// accesses the pixel val of whatever type. use for convenience - not
         /// efficient at all.
@@ -202,11 +209,13 @@ namespace kortex {
         void  set( const int& x0, const int& y0, const float& v );
         void  set( const int& x0, const int& y0, const uchar& v );
         void  set( const int& x0, const int& y0, const int  & v );
+        void  set( const int& x0, const int& y0, const uint16_t& v );
 
         /// sets a (2*hsz+1)^2 patch with value v
         void  set( const int& x0, const int& y0, const int& hsz, const uchar& v );
         void  set( const int& x0, const int& y0, const int& hsz, const float& v );
         void  set( const int& x0, const int& y0, const int& hsz, const int  & v );
+        void  set( const int& x0, const int& y0, const int& hsz, const uint16_t& v );
 
         /// 3-channel set functions - not access efficient - use for convenience
         void  set ( const int& x0, const int& y0, const float& r, const float& g, const float& b );
@@ -244,6 +253,8 @@ namespace kortex {
         /// int data row pointer - use for i gray
         int  * get_row_i ( int y0 );
 
+        uint16_t* get_row_u16( int y0 );
+
         /// cid'th channel y0'th row - u gray/prgb
         uchar* get_row_ui( int y0, int cid );
         /// cid'th channel y0'th row - f gray/prgb
@@ -253,6 +264,7 @@ namespace kortex {
         const uchar* get_row_u ( int y0 ) const; // use for u gray, prgb
         const float* get_row_f ( int y0 ) const; // use for f gray, prgb
         const int  * get_row_i ( int y0 ) const; // use for i gray
+        const uint16_t* get_row_u16( int y0 ) const; // use for uint16_t
 
         /// const versions
         const uchar* get_row_ui( int y0, int cid ) const; // cid'th channel y0'th row
@@ -305,6 +317,7 @@ namespace kortex {
         case IT_F_PRGB  : return "IT_F_PRGB";
         case IT_U_IRGB  : return "IT_U_IRGB";
         case IT_F_IRGB  : return "IT_F_IRGB";
+        case IT_J_GRAY  : return "IT_J_GRAY";
         default         : switch_fatality();
         }
         return 0;
@@ -320,6 +333,7 @@ namespace kortex {
         case IT_F_PRGB  : return 3;
         case IT_U_IRGB  : return 3;
         case IT_F_IRGB  : return 3;
+        case IT_J_GRAY  : return 1;
         default         : switch_fatality();
         }
         return 0;
@@ -333,6 +347,7 @@ namespace kortex {
         case IT_F_PRGB  :
         case IT_F_IRGB  : return TYPE_FLOAT;
         case IT_I_GRAY  : return TYPE_INT;
+        case IT_J_GRAY  : return TYPE_UINT16;
         default         : switch_fatality();
         }
         return TYPE_UCHAR;
@@ -345,6 +360,7 @@ namespace kortex {
         case IT_U_GRAY  :
         case IT_F_GRAY  :
         case IT_I_GRAY  :
+        case IT_J_GRAY  :
         case IT_U_PRGB  :
         case IT_F_PRGB  : return ITC_PIXEL;
         case IT_U_IRGB  :
@@ -358,10 +374,11 @@ namespace kortex {
         switch( n_channels ) {
         case 1:
             switch( precision ) {
-            case TYPE_UCHAR: return IT_U_GRAY;
-            case TYPE_FLOAT: return IT_F_GRAY;
-            case TYPE_INT  : return IT_I_GRAY;
-            default        : switch_fatality();
+            case TYPE_UCHAR : return IT_U_GRAY;
+            case TYPE_FLOAT : return IT_F_GRAY;
+            case TYPE_INT   : return IT_I_GRAY;
+            case TYPE_UINT16: return IT_J_GRAY;
+            default         : switch_fatality();
             } break;
         case 3:
             switch( precision ) {
@@ -391,6 +408,7 @@ namespace kortex {
         case 16  : return IT_U_IRGB;
         case 32  : return IT_F_IRGB;
         case 64  : return IT_I_GRAY;
+        case 128 : return IT_J_GRAY;
         default: switch_fatality();
         }
     }

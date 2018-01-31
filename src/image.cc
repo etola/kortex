@@ -31,6 +31,7 @@ namespace kortex {
         m_data_i       = NULL;
         m_data_u       = NULL;
         m_data_f       = NULL;
+        m_data_u16     = NULL;
         m_wrapper      = false;
     }
 
@@ -64,9 +65,11 @@ namespace kortex {
         }
         m_memory.resize( sz );
         switch( image_precision(type) ) {
-        case TYPE_UCHAR: m_data_u = (uchar*) m_memory.get_buffer(); break;
-        case TYPE_FLOAT: m_data_f = (float*) m_memory.get_buffer(); break;
-        case TYPE_INT  : m_data_i = (int  *) m_memory.get_buffer(); break;
+        case TYPE_UCHAR  : m_data_u   = (uchar   *) m_memory.get_buffer(); break;
+        case TYPE_FLOAT  : m_data_f   = (float   *) m_memory.get_buffer(); break;
+        case TYPE_INT    : m_data_i   = (int     *) m_memory.get_buffer(); break;
+        case TYPE_UINT16 : m_data_u16 = (uint16_t*) m_memory.get_buffer(); break;
+
         default        : switch_fatality();
         }
         m_w    = w;
@@ -117,6 +120,7 @@ namespace kortex {
         std::swap( m_data_i       , img->m_data_i       );
         std::swap( m_data_u       , img->m_data_u       );
         std::swap( m_data_f       , img->m_data_f       );
+        std::swap( m_data_u16     , img->m_data_u16     );
         m_memory.swap( &(img->m_memory) );
     }
 
@@ -126,20 +130,22 @@ namespace kortex {
         create( img->w(), img->h(), img->type() );
         size_t imsz = size_t(m_w) * size_t(m_h) * size_t(m_ch);
         switch( image_precision(m_type) ) {
-        case TYPE_UCHAR: memcpy( m_data_u, img->m_data_u, sizeof(*m_data_u)* imsz ); break;
-        case TYPE_FLOAT: memcpy( m_data_f, img->m_data_f, sizeof(*m_data_f)* imsz ); break;
-        case TYPE_INT  : memcpy( m_data_i, img->m_data_i, sizeof(*m_data_i)* imsz ); break;
-        default        : switch_fatality();
+        case TYPE_UCHAR  : memcpy( m_data_u, img->m_data_u, sizeof(*m_data_u)* imsz ); break;
+        case TYPE_FLOAT  : memcpy( m_data_f, img->m_data_f, sizeof(*m_data_f)* imsz ); break;
+        case TYPE_INT    : memcpy( m_data_i, img->m_data_i, sizeof(*m_data_i)* imsz ); break;
+        case TYPE_UINT16 : memcpy( m_data_u16, img->m_data_u16, sizeof(*m_data_u16)* imsz ); break;
+        default          : switch_fatality();
         }
     }
 
     void Image::zero() {
         size_t im_sz = size_t(m_w) * size_t(m_h) * size_t(m_ch);
         switch( precision() ) {
-        case TYPE_UCHAR: memset( m_data_u, 0, sizeof(*m_data_u)*im_sz ); break;
-        case TYPE_FLOAT: memset( m_data_f, 0, sizeof(*m_data_f)*im_sz ); break;
-        case TYPE_INT  : memset( m_data_i, 0, sizeof(*m_data_i)*im_sz ); break;
-        default        : switch_fatality();
+        case TYPE_UCHAR  : memset( m_data_u, 0, sizeof(*m_data_u)*im_sz ); break;
+        case TYPE_FLOAT  : memset( m_data_f, 0, sizeof(*m_data_f)*im_sz ); break;
+        case TYPE_INT    : memset( m_data_i, 0, sizeof(*m_data_i)*im_sz ); break;
+        case TYPE_UINT16 : memset( m_data_u16, 0, sizeof(*m_data_u16)*im_sz ); break;
+        default          : switch_fatality();
         }
     }
 
@@ -170,6 +176,17 @@ namespace kortex {
         passert_type( IT_I_GRAY );
         for( int y=0; y<m_h; y++ ) {
             int* row = get_row_i( y );
+            for( int x=0; x<m_w; x++ ) {
+                row[x] = v;
+            }
+        }
+    }
+
+    void Image::set( const uint16_t& v ) {
+        passert_statement( !is_empty(), "empty image" );
+        passert_type( IT_J_GRAY );
+        for( int y=0; y<m_h; y++ ) {
+            uint16_t* row = get_row_u16( y );
             for( int x=0; x<m_w; x++ ) {
                 row[x] = v;
             }
@@ -210,7 +227,11 @@ namespace kortex {
         assert_boundary( cid, 0, m_ch );
         return m_data_i + cid*m_h*m_w;
     }
-
+    const uint16_t* Image::get_channel_u16( int cid ) const {
+        assert_type( IT_J_GRAY );
+        assert_boundary( cid, 0, m_ch );
+        return m_data_u16 + cid*m_h*m_w;
+    }
 
     //
     // row pointers
@@ -219,6 +240,11 @@ namespace kortex {
         assert_type( IT_I_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
         return m_data_i + y0 * m_w * m_ch;
+    }
+    uint16_t* Image::get_row_u16( int y0 ) { // use for int gray
+        assert_type( IT_J_GRAY );
+        assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
+        return m_data_u16 + y0 * m_w * m_ch;
     }
     uchar* Image::get_row_u ( int y0 ) { // use for u gray, prgb
         assert_type( IT_U_GRAY | IT_U_PRGB );
@@ -230,7 +256,6 @@ namespace kortex {
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
         return m_data_f + y0 * m_w * m_ch;
     }
-
     uchar* Image::get_row_ui( int y0, int cid ) { // cid'th channel y0'th row
         assert_type( IT_U_IRGB | IT_U_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
@@ -246,6 +271,11 @@ namespace kortex {
         assert_type( IT_I_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
         return m_data_i + y0 * m_w * m_ch;
+    }
+    const uint16_t* Image::get_row_u16( int y0 ) const { // use for u gray, prgb
+        assert_type( IT_J_GRAY );
+        assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
+        return m_data_u16 + y0 * m_w * m_ch;
     }
     const uchar* Image::get_row_u ( int y0 ) const { // use for u gray, prgb
         assert_type( IT_U_GRAY | IT_U_PRGB );
@@ -287,6 +317,11 @@ namespace kortex {
         assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
         return m_data_i[ y0*m_w+x0 ];
     }
+    uint16_t Image::getu16( int x0, int y0 ) const {
+        assert_type  ( IT_J_GRAY );
+        assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
+        return m_data_u16[ y0*m_w+x0 ];
+    }
 
 
     float Image::get( int x0, int y0 ) const {
@@ -295,6 +330,7 @@ namespace kortex {
         case IT_U_GRAY: return static_cast<float>(m_data_u[ y0*m_w+x0 ]); break;
         case IT_F_GRAY: return m_data_f[ y0*m_w+x0 ]; break;
         case IT_I_GRAY: return static_cast<float>(m_data_i[ y0*m_w+x0 ]); break;
+        case IT_J_GRAY: return static_cast<float>(m_data_u16[ y0*m_w+x0 ]); break;
         default       : switch_fatality();
         }
     }
@@ -510,6 +546,11 @@ namespace kortex {
         assert_statement_g( is_inside(x0,y0), "[x0 %d] [y0 %d] oob", x0, y0 );
         m_data_i[ y0*m_w + x0 ] = v;
     }
+    void Image::set ( const int& x0, const int& y0, const uint16_t  & v ) {
+        assert_type( IT_J_GRAY );
+        assert_statement_g( is_inside(x0,y0), "[x0 %d] [y0 %d] oob", x0, y0 );
+        m_data_u16[ y0*m_w + x0 ] = v;
+    }
 
 
     /// sets a patch centered at (x,y) with half_width = hsz to v
@@ -548,6 +589,20 @@ namespace kortex {
             }
         }
     }
+
+    /// sets a patch centered at (x,y) with half_width = hsz to v
+    void Image::set( const int& x0, const int& y0, const int& hsz, const uint16_t & v ) {
+        assert_type( IT_J_GRAY );
+        for(int y=y0-hsz; y<=y0+hsz; y++) {
+            if( y<0 || y>=m_h ) continue;
+            uint16_t* row_y = get_row_u16(y);
+            for(int x=x0-hsz; x<=x0+hsz; x++) {
+                if( x<0 || x>=m_w ) continue;
+                row_y[x] = v;
+            }
+        }
+    }
+
 
 
     // 3-channel set
@@ -671,7 +726,7 @@ namespace kortex {
             for( int y=0; y<rh; y++ ) {
                 const float* sptr =  src->get_row_f(sy0+y) + sx0*m_ch;
                 float*       dptr = this->get_row_f(dy0+y) + dx0*m_ch;
-                memcpy( dptr, sptr, sizeof(float)*rw*m_ch );
+                memcpy( dptr, sptr, sizeof(*sptr)*rw*m_ch );
             }
             break;
         case IT_U_GRAY:
@@ -679,7 +734,7 @@ namespace kortex {
             for( int y=0; y<rh; y++ ) {
                 const uchar* sptr =  src->get_row_u(sy0+y) + sx0*m_ch;
                 uchar*       dptr = this->get_row_u(dy0+y) + dx0*m_ch;
-                memcpy( dptr, sptr, sizeof(uchar)*rw*m_ch );
+                memcpy( dptr, sptr, sizeof(*sptr)*rw*m_ch );
             }
             break;
         case IT_F_IRGB:
@@ -687,7 +742,7 @@ namespace kortex {
                 for( int y=0; y<rh; y++ ) {
                     const float* sptr =  src->get_row_fi(sy0+y, c) + sx0;
                     float*       dptr = this->get_row_fi(dy0+y, c) + dx0;
-                    memcpy( dptr, sptr, sizeof(float)*rw );
+                    memcpy( dptr, sptr, sizeof(*sptr)*rw );
                 }
             }
             break;
@@ -696,7 +751,7 @@ namespace kortex {
                 for( int y=0; y<rh; y++ ) {
                     const uchar* sptr =  src->get_row_ui(sy0+y, c) + sx0;
                     uchar*       dptr = this->get_row_ui(dy0+y, c) + dx0;
-                    memcpy( dptr, sptr, sizeof(uchar)*rw );
+                    memcpy( dptr, sptr, sizeof(*sptr)*rw );
                 }
             }
             break;
@@ -704,10 +759,15 @@ namespace kortex {
             for( int y=0; y<rh; y++ ) {
                 const int* sptr =  src->get_row_i(sy0+y) + sx0*m_ch;
                 int*       dptr = this->get_row_i(dy0+y) + dx0*m_ch;
-                memcpy( dptr, sptr, sizeof(int)*rw*m_ch );
+                memcpy( dptr, sptr, sizeof(*sptr)*rw*m_ch );
             }
             break;
-
+        case IT_J_GRAY:
+            for( int y=0; y<rh; y++ ) {
+                const uint16_t* sptr =  src->get_row_u16(sy0+y) + sx0*m_ch;
+                uint16_t*       dptr = this->get_row_u16(dy0+y) + dx0*m_ch;
+                memcpy( dptr, sptr, sizeof(*sptr)*rw*m_ch );
+            }
             break;
         default: switch_fatality(); break;
         }
@@ -731,13 +791,13 @@ namespace kortex {
                 case IT_F_PRGB: {
                     const float* sptr =  src->get_row_f(sy0+y) + (sx0+x)*m_ch;
                     float*       dptr = this->get_row_f(dy0+y) + (dx0+x)*m_ch;
-                    memcpy( dptr, sptr, sizeof(float)*m_ch );
+                    memcpy( dptr, sptr, sizeof(*sptr)*m_ch );
                 } break;
                 case IT_U_GRAY:
                 case IT_U_PRGB: {
                     const uchar* sptr =  src->get_row_u(sy0+y) + (sx0+x)*m_ch;
                     uchar*       dptr = this->get_row_u(dy0+y) + (dx0+x)*m_ch;
-                    memcpy( dptr, sptr, sizeof(uchar)*m_ch );
+                    memcpy( dptr, sptr, sizeof(*sptr)*m_ch );
                 } break;
                 case IT_F_IRGB: {
                     for( int c=0; c<3; c++ ) {
@@ -756,7 +816,12 @@ namespace kortex {
                 case IT_I_GRAY: {
                     const int* sptr =  src->get_row_i(sy0+y) + (sx0+x)*m_ch;
                     int*       dptr = this->get_row_i(dy0+y) + (dx0+x)*m_ch;
-                    memcpy( dptr, sptr, sizeof(int)*m_ch );
+                    memcpy( dptr, sptr, sizeof(*sptr)*m_ch );
+                } break;
+                case IT_J_GRAY: {
+                    const uint16_t* sptr =  src->get_row_u16(sy0+y) + (sx0+x)*m_ch;
+                    uint16_t*       dptr = this->get_row_u16(dy0+y) + (dx0+x)*m_ch;
+                    memcpy( dptr, sptr, sizeof(*sptr)*m_ch );
                 } break;
                 default:
                     switch_fatality();

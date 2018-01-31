@@ -302,6 +302,26 @@ namespace kortex {
                 drow[x] = cast_to_gray_range( srow[x] );
         }
     }
+
+    void gray_to_gray_fu16( const Image* src, Image* dst ) {
+        assert_pointer( src && dst );
+        src->passert_type( IT_F_GRAY );
+        dst->passert_type( IT_J_GRAY );
+        passert_statement( src-> w() == dst-> w(), "image dimensions do not agree" );
+        passert_statement( src-> h() == dst-> h(), "image dimensions do not agree" );
+        int h = src->h();
+        int w = src->w();
+#pragma omp parallel for
+        for( int y=0; y<h; y++ ) {
+            const float* srow = src->get_row_f(y);
+            uint16_t*    drow = dst->get_row_u16(y);
+            for( int x=0; x<w; x++ ) {
+                drow[x] = static_cast<uint16_t>( std::min( 65535.0f, std::max(0.0f, srow[x]+0.5f) ) );
+            }
+        }
+    }
+
+
     void gray_to_gray_fi( const Image* src, Image* dst ) {
         assert_pointer( src && dst );
         src->assert_type( IT_F_GRAY );
@@ -537,6 +557,7 @@ namespace kortex {
         case IT_F_GRAY:
             switch( dtype ) {
             case IT_U_GRAY: gray_to_gray_fu(src, dst); break;
+            case IT_J_GRAY: gray_to_gray_fu16(src, dst); break;
             case IT_I_GRAY: gray_to_gray_fi(src, dst); break;
             case IT_F_PRGB: gray_to_rgb(src, dst);     break;
             case IT_U_PRGB: gray_to_rgb(src, dst);     break;

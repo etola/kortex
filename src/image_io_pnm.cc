@@ -142,15 +142,35 @@ namespace kortex {
 
     void save_pgm(const string& file, const Image* img) {
         passert_pointer( img  );
-        img->passert_type( IT_U_GRAY, file.c_str() );
-        ofstream fout(file.c_str(), std::ios::out | std::ios::binary);
-        fout << "P5\n" << img->w() << " " << img->h() << "\n" << UCHAR_MAX << "\n";
-        for( int y = 0; y < img->h(); y++ ) {
-            const uchar* row = img->get_row_u(y);
-            for( int x = 0; x < img->w(); x++ )
-                fout << row[x];
+        img->passert_type( IT_U_GRAY | IT_J_GRAY, file.c_str() );
+
+        int vmax = 0;
+        if( img->type() == IT_U_GRAY ) {
+            vmax = UCHAR_MAX;
+        } else if( img->type() == IT_J_GRAY ) {
+            vmax = 65535;
         }
-        fout.close();
+
+        FILE* fp = fopen( file.c_str(), "wb" );
+        passert_statement_g( fp, "cannot open file [%s]", file.c_str() );
+
+        const char* magic_head = "P5";
+        fprintf( fp, "%s\n%d %d %d\n", magic_head, img->w(), img->h(), vmax );
+
+        if( img->type() == IT_U_GRAY ) {
+            for( int y = 0; y < img->h(); y++ ) {
+                const uchar* irow = img->get_row_u(y);
+                fwrite( (const void*)irow, sizeof(*irow), img->w(), fp );
+            }
+        } else {
+            for( int y = 0; y < img->h(); y++ ) {
+                const uint16_t* irow = img->get_row_u16(y);
+                fwrite( (const void*)irow, sizeof(*irow), img->w(), fp );
+            }
+        }
+
+        fclose( fp );
+
     }
 
     void save_ppm(const string& file, const Image* img) {
@@ -171,4 +191,3 @@ namespace kortex {
 
 
 }
-

@@ -86,7 +86,7 @@ namespace kortex {
 #define passert_statement_g(statement, msg, ...) { if( !(statement) ) { logman_fatal_g(msg, __VA_ARGS__); } }
 #define passert_pointer(statement)               { if( !(statement) ) { logman_fatal("passed null pointer"); } }
 #define passert_pointer_size(psz)                { if( !is_valid_number(psz) || psz<=0 ) { logman_fatal_g("passed nonpositive array size [%d]", psz); } }
-#define passert_boundary(val,minval,maxval)      { if( !(val>=minval && val<maxval ) ) logman_fatal("out of bounds"); }
+#define passert_boundary(val,minval,maxval)      { if( !(val>=minval && val<maxval ) ) logman_fatal_g("out of bounds: %f not in [%f,%f)", float(val), float(minval), float(maxval) ); }
 #define passert_number(v)                        { if( !is_valid_number(v) ) { logman_fatal("nan/inf test failed"); } }
 #define passert_noalias(obj1,obj2)               { if( &obj1 == &obj2 ) { logman_fatal("aliasing is not allowed"); } }
 #define passert_noalias_p(obj1,obj2)             { if(  obj1 ==  obj2 ) { logman_fatal("aliasing is not allowed"); } }
