@@ -108,7 +108,7 @@ geometry.h
 #
 # output info
 #
-main_build_dir := ${HOME}/build/
+main_build_dir :=
 installdir := ${HOME}/usr/local/kortex/
 external_sources :=
 external_libraries := libjpeg libpng12 lapack blas
