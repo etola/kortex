@@ -1,8 +1,11 @@
 set(kortex_SOURCES
   src/check.cc
   src/color.cc
+  src/color_map.cc
   src/fileio.cc
   src/filter.cc
+  src/geometry.cc
+  src/histogram.cc
   src/image.cc
   src/image_conversion.cc
   src/image_io.cc
@@ -11,7 +14,7 @@ set(kortex_SOURCES
   src/image_io_pnm.cc
   src/image_paint.cc
   src/image_processing.cc
-  src/indexed_types.cc
+  src/indexed_array.cc
   src/kmatrix.cc
   src/linear_algebra.cc
   src/log_manager.cc
@@ -21,11 +24,16 @@ set(kortex_SOURCES
   src/mem_unit.cc
   src/message.cc
   src/minmax.cc
+  src/object_cache.cc
+  src/option_parser.cc
+  src/pair_indexed_array.cc
   src/progress_bar.cc
   src/random.cc
   src/rect2.cc
   src/rotation.cc
+  src/sorted_pair_map.cc
   src/sorting.cc
+  src/sparse_array_t.cc
   src/sse_extensions.cc
   src/string.cc
   src/svd.cc
@@ -36,9 +44,15 @@ set(kortex_HEADERS
   kortex/include/bit_operations.h
   kortex/include/check.h
   kortex/include/color.h
+  kortex/include/color_map.h
   kortex/include/defs.h
+  kortex/include/eigen_conversion.h
   kortex/include/fileio.h
   kortex/include/filter.h
+  kortex/include/geometry.h
+  kortex/include/heap.h
+  kortex/include/heap.tcc
+  kortex/include/histogram.h
   kortex/include/image_conversion.h
   kortex/include/image.h
   kortex/include/image_io.h
@@ -47,10 +61,13 @@ set(kortex_HEADERS
   kortex/include/image_io_pnm.h
   kortex/include/image_paint.h
   kortex/include/image_processing.h
-  kortex/include/indexed_types.h
+  kortex/include/indexed_array.h
+  kortex/include/keyed_value.h
   kortex/include/kmatrix.h
+  kortex/include/kvector.h
   kortex/include/lapack_externs.h
   kortex/include/linear_algebra.h
+  kortex/include/linux_windows_defs.h
   kortex/include/log_manager.h
   kortex/include/math.h
   kortex/include/matrix.h
@@ -58,11 +75,16 @@ set(kortex_HEADERS
   kortex/include/mem_unit.h
   kortex/include/message.h
   kortex/include/minmax.h
+  kortex/include/object_cache.h
+  kortex/include/option_parser.h
+  kortex/include/pair_indexed_array.h
   kortex/include/progress_bar.h
   kortex/include/random.h
   kortex/include/rect2.h
   kortex/include/rotation.h
+  kortex/include/sorted_pair_map.h
   kortex/include/sorting.h
+  kortex/include/sparse_array_t.h
   kortex/include/sse_extensions.h
   kortex/include/string.h
   kortex/include/svd.h

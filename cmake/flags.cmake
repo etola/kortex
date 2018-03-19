@@ -2,7 +2,7 @@
 add_definitions(-DWITH_LIBJPEG)
 add_definitions(-DWITH_SSE)
 add_definitions(-DWITH_LIBPNG)
-
+add_definitions(-DWITH_LAPACK)
 
 set(KORTEX_FLAGS_DEBUG    "-DDEBUG  -Wno-write-strings -Wall -Wno-deprecated -fno-strict-aliasing -fPIC  -g")
 set(KORTEX_FLAGS_RELEASE  "-DNDEBUG -Wno-write-strings -Wall -Wno-deprecated -fno-strict-aliasing -fPIC -O3")
