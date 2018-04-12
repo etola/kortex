@@ -18,7 +18,11 @@
 #include <kortex/types.h>
 #include <kortex/defs.h>
 
+#ifdef _MSC_VER
+#include <Windows.h> // mkdir
+#else
 #include <sys/stat.h> // mkdir
+#endif
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
@@ -43,6 +47,8 @@ namespace kortex {
 #ifdef __GNUC__
         mode_t perm=0777;
         return mkdir( path.c_str(), perm );
+#elif defined _MSC_VER
+        return CreateDirectory( path.c_str(), NULL );
 #else
         logman_fatal_g( "folder creation not supported in this OS [%s]", path.c_str() );
 #endif
