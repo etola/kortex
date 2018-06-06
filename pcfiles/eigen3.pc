@@ -1,0 +1,14 @@
+Name: Eigen3
+Description: A C++ template library for linear algebra: vectors, matrices, and related algorithms
+Requires:
+Version: 3.2.0
+Libs:
+Cflags: -I/usr/include/eigen3
+
+prefix=/home/tola/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Libs: -L${libdir}
+Cflags: -I${includedir}
