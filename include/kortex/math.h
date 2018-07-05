@@ -86,6 +86,9 @@ namespace kortex {
     inline double l2norm_sq3( const double * a, const double * b ) {
         return sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] );
     }
+    inline double l2norm_sq3( const float * a, const double * b ) {
+        return sq( a[0]-b[0] ) + sq( a[1]-b[1] ) + sq( a[2]-b[2] );
+    }
 
 
     inline float  l2norm3( const float * a ) { return sqrtf( dot3(a,a) ); }
