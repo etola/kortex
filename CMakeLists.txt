@@ -9,7 +9,7 @@ project(kortex)
 set( CMAKE_VERBOSE_MAKEFILE on )
 
 set(VERSION 1.0)
-set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/usr/local/kortex/")
+set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/usr/local/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR} )
 
 find_package(PNG REQUIRED)
