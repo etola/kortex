@@ -23,6 +23,10 @@
 typedef unsigned char uchar;
 #endif
 
+#ifndef ulong
+typedef unsigned long ulong;
+#endif
+
 using std::string;
 
 namespace kortex {

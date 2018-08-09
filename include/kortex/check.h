@@ -19,36 +19,35 @@
 #include <string>
 #include <set>
 #include <vector>
+#include <algorithm>
 using std::string;
 using std::vector;
 
-#ifdef _WIN32
-#ifndef isnan
-#define isnan(x) _isnan(x)
-#endif
-#ifndef isinf
-#define isinf(x) (!_finite(x))
-#endif
-#endif
-
-#ifdef __GNUC__
 #ifdef isnan
 #undef isnan
 #endif
 #ifdef isinf
 #undef isinf
 #endif
-#endif
 
 namespace kortex {
+
     template <typename T>
-    inline bool is_finite( const T& v ) {
+    inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type is_finite( const T& v ) {
         return std::isfinite(v);
+    }
+    template <typename T>
+    inline typename std::enable_if<std::is_integral<T>::value, bool>::type is_finite( const T& v ) {
+        return true;
     }
 
     template <typename T>
-    inline bool is_a_number( const T& v ) {
-        return ( std::isnan(v) ) ? false : true;
+    inline typename std::enable_if<std::is_floating_point<T>::value, bool>::type is_a_number( const T& v ) {
+        return !std::isnan(v);
+    }
+    template <typename T>
+    inline typename std::enable_if<std::is_integral<T>::value, bool>::type is_a_number( const T& v ) {
+        return true;
     }
 
     template <typename T>

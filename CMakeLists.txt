@@ -25,12 +25,13 @@ include(cmake/flags.cmake)
 # set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE Release)
 
-add_library(kortex STATIC ${kortex_SOURCES})
+add_library(kortex SHARED ${kortex_SOURCES})
 # add_library(kortex SHARED ${kortex_SOURCES})
 
 set_target_properties(kortex PROPERTIES ARCHIVE_OUTPUT_DIRECTORY lib)
-target_link_libraries(kortex ${EXTERNAL_LIBS})
-include_directories(include)
+target_link_libraries(kortex "${EXTERNAL_LIBS};${JPEG_LIBRARIES};${PNG_LIBRARIES}")
+include_directories("include;${JPEG_INCLUDE_DIR};${PNG_INCLUDE_DIR}")
+# include_directories(include)
 
 configure_file(${CMAKE_SOURCE_DIR}/cmake/kortex.pc.in ${CMAKE_BINARY_DIR}/kortex.pc @ONLY)
 

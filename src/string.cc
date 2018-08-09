@@ -18,12 +18,23 @@
 #include <limits.h>
 #include <stdlib.h>
 
+#ifdef _MSC_VER
+#include <windows.h>
+#ifndef PATH_MAX
+#define PATH_MAX _MAX_PATH
+#endif
+#endif
+
 namespace kortex {
 
     string resolve_full_path( const string& istr ) {
         char resolve_path[PATH_MAX];
-        char* rpath = realpath( istr.c_str(), resolve_path );
-        passert_statement_g( rpath != NULL, "realpath cannot resolve path [%s]", istr.c_str() );
+#ifdef _MSC_VER
+        bool success( GetFullPathName(istr.c_str(), PATH_MAX, resolve_path, NULL) != 0 );
+#else
+        bool success( realpath( istr.c_str(), resolve_path ) != NULL );
+#endif
+        passert_statement_g( success, "realpath cannot resolve path [%s]", istr.c_str() );
         return string(resolve_path);
     }
 

@@ -23,6 +23,14 @@ extern "C" {
 #include "png.h"
 }
 
+#ifdef _MSC_VER
+#ifndef Z_BEST_COMPRESSION
+#define Z_BEST_COMPRESSION 6
+#endif
+#define png_infopp_NULL NULL
+#define png_voidp_NULL NULL
+#endif
+
 #ifndef png_jmpbuf
 #  define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
 #endif
@@ -62,7 +70,7 @@ namespace kortex {
 
     void writepng_version_info(void) {
         fprintf(stderr, "   Compiled with libpng %s; using libpng %s.\n", PNG_LIBPNG_VER_STRING, png_libpng_ver);
-        fprintf(stderr, "   Compiled with zlib %s; using zlib %s.\n",     ZLIB_VERSION, zlib_version);
+        // fprintf(stderr, "   Compiled with zlib %s; using zlib %s.\n",     ZLIB_VERSION, zlib_version);
     }
 
     /*  returns 0 for success, 2 for libpng problem, 4 for out of memory, 11 for
