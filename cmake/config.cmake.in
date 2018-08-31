@@ -1,0 +1,24 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/@TARGETS_EXPORT_NAME@.cmake")
+check_required_components("@PROJECT_NAME@")
+
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/@TARGETS_EXPORT_NAME@.cmake")
+check_required_components("@PROJECT_NAME@")
+
+# Compute paths
+get_filename_component(KORTEX_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(KORTEX_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+set(KORTEX_LIBRARY_DIRS "@CONF_LIB_DIR@")
+set(KORTEX_CXX_FLAGS "-std=c++0x")
+set(KORTEX_CFLAGS_OTHER "${KORTEX_CXX_FLAGS}")
+set(KORTEX_LIBRARIES kortex "@CONF_EXTERNAL_LIBS@" )
+set(KORTEX_DEFINITIONS "@CONF_COMP_DEFINITIONS@" )
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET kortex AND NOT KORTEX_BINARY_DIR)
+	include("${KORTEX_CMAKE_DIR}/kortexTargets.cmake")
+endif()
+
