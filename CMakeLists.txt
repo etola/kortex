@@ -11,7 +11,7 @@ include(GNUInstallDirs)
 set( CMAKE_VERBOSE_MAKEFILE on )
 
 set(VERSION 1.0)
-set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/usr/local/")
+# set(CMAKE_INSTALL_PREFIX "$ENV{HOME}/usr/local/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR} )
 
 find_package(PNG REQUIRED)
@@ -19,7 +19,10 @@ find_package(JPEG REQUIRED)
 find_package(LAPACK REQUIRED)
 find_package(BLAS REQUIRED)
 
-set(EXTERNAL_LIBS png jpeg blas lapack)
+# set(EXTERNAL_LIBS png jpeg blas lapack)
+INCLUDE_DIRECTORIES(${PNG_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${JPEG_INCLUDE_DIR})
+set(EXTERNAL_LIBS ${PNG_LIBRARIES} ${JPEG_LIBRARIES} ${LAPACK_LIBRARIES} ${BLAS_LIBRARIES})
 
 include(cmake/sources.cmake)
 include(cmake/flags.cmake)
@@ -27,11 +30,11 @@ include(cmake/flags.cmake)
 # set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE Release)
 
-add_library(kortex SHARED ${kortex_SOURCES})
 # add_library(kortex SHARED ${kortex_SOURCES})
+add_library(kortex STATIC ${kortex_SOURCES})
 
 set_target_properties(kortex PROPERTIES ARCHIVE_OUTPUT_DIRECTORY lib)
-target_link_libraries(kortex "${EXTERNAL_LIBS};${JPEG_LIBRARIES};${PNG_LIBRARIES}")
+target_link_libraries(kortex "${EXTERNAL_LIBS}")
 
 target_include_directories(
     kortex PUBLIC
