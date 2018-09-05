@@ -888,9 +888,9 @@ namespace kortex {
         const float* ptr1 = im1.get_fptr();
         float      * optr = out.get_fptr();
 
-        size_t n_elems = im0.element_count();
+        omp_size_t n_elems = (omp_size_t)im0.element_count();
 #pragma omp parallel for
-        for( size_t i=0; i<n_elems; i++ )
+        for( omp_size_t i=0; i<n_elems; i++ )
             optr[i] = ptr0[i] + ptr1[i];
     }
 
@@ -1040,7 +1040,7 @@ namespace kortex {
 
         if( run_parallel ) {
 #pragma omp parallel for
-            for( size_t i=0; i<psz; i++ ) {
+            for( omp_size_t i=0; i<(omp_size_t)psz; i++ ) {
                 qptr[i] = s * pptr[i];
             }
         } else {
@@ -1359,7 +1359,7 @@ namespace kortex {
                 optr[i] = std::fabs( iptr[i] );
         } else {
 #pragma omp parallel for
-            for( size_t i=0; i<psz; i++ ) {
+            for( omp_size_t i=0; i<(omp_size_t)psz; i++ ) {
                 optr[i] = std::fabs( iptr[i] );
             }
         }

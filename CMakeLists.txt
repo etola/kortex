@@ -2,10 +2,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
 
 PROJECT(kortex VERSION 1.2.3 )
 
-include(GNUInstallDirs)
-
-message( "is it working ? : " ${PROJECT_NAME} )
-
 # fix CMake IntDir variable
 if(MSVC AND "${MSVC_VERSION}" STRGREATER "1500")
 	SET(CMAKE_CFG_INTDIR "$(Platform)/$(Configuration)")
@@ -72,7 +68,7 @@ if(PROJECT_WITH_JPEG)
   if(JPEG_FOUND)
     message("-- JPEG found")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${JPEG_CXX_FLAGS}")
-    include_directories(${JPEG_INCLUDE_DIRS})
+    include_directories(${JPEG_INCLUDE_DIR})
     link_directories(${JPEG_LIBRARY_DIRS})
     set(EXTERNAL_LIBS ${EXTERNAL_LIBS} ${JPEG_LIBRARIES})
     set(WITH_JPEG TRUE)
@@ -112,9 +108,11 @@ if(PROJECT_WITH_LAPACK)
   endif()
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-parameter")
-
+set(CMAKE_CXX_STANDARD 11)
+if(NOT MSVC)
+  include(GNUInstallDirs)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-parameter")
+endif()
 
 # Set defines
 SET(PROJECT_DEFINITIONS "")

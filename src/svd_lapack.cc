@@ -24,7 +24,7 @@ namespace kortex {
         char jobvt = 'N'; if( m_compute_vt ) jobvt = 'A';
 
         double* work     = (double*)m_memory.get_buffer();
-        int     work_sz  = m_memory.capacity()/sizeof(double);
+        int     work_sz  = (int)(m_memory.capacity()/sizeof(double));
         int     proxy_ld = nc;
         int     m = nr;
         int     n = nc;

@@ -27,6 +27,12 @@ typedef unsigned char uchar;
 typedef unsigned long ulong;
 #endif
 
+#ifdef _MSC_VER
+typedef int omp_size_t;
+#else
+typedef size_t omp_size_t;
+#endif
+
 using std::string;
 
 namespace kortex {
