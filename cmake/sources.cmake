@@ -1,4 +1,4 @@
-set(kortex_SOURCES
+set(PROJECT_SOURCES
   src/check.cc
   src/color.cc
   src/color_map.cc
@@ -40,7 +40,7 @@ set(kortex_SOURCES
   src/timer.cc
 )
 
-set(kortex_HEADERS
+set(PROJECT_HEADERS
   kortex/include/bit_operations.h
   kortex/include/check.h
   kortex/include/color.h
