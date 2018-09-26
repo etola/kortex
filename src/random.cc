@@ -25,22 +25,27 @@
 
 namespace kortex {
 
-    void initialize_random_seed() {
-        srand( time_seed() );
-    }
+    // void initialize_random_seed() {
+        // srand( time_seed() );
+    // }
 
-    unsigned int time_seed() {
-        struct timeb one; ftime(&one);
-        time_t now = (one.millitm) * (one.millitm+42) * (one.millitm+1981);
-        unsigned char *p = (unsigned char *)&now;
-        unsigned int seed = 0;
-        for ( size_t i = 0; i < sizeof(now); i++ )
-            seed = seed * ( UCHAR_MAX + 2U ) + p[i];
-        return seed;
-    }
+    // unsigned int time_seed() {
+        // struct timeb one; ftime(&one);
+        // time_t now = (one.millitm) * (one.millitm+42) * (one.millitm+1981);
+        // unsigned char *p = (unsigned char *)&now;
+        // unsigned int seed = 0;
+        // for ( size_t i = 0; i < sizeof(now); i++ )
+            // seed = seed * ( UCHAR_MAX + 2U ) + p[i];
+        // return seed;
+    // }
 
     double uniform_sample() {
-        return double(rand())/RAND_MAX;
+        // return double(rand())/RAND_MAX;
+        return random_generator()->uniform_sample();
+    }
+
+    double normal_sample() {
+        return random_generator()->normal_sample();
     }
 
     bool select_random_samples(const int& minval, const int& maxval, const int& no_samples,

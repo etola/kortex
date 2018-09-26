@@ -15,18 +15,18 @@
 #define KORTEX_RANDOM_H
 
 #include <vector>
+#include <kortex/random_generator.h>
 
 namespace kortex {
 
-    void initialize_random_seed();
+    // void initialize_random_seed();
 
-    // http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx
-    /// generates a seed to feed to srand. better than time(NULL)
-    unsigned int time_seed();
+    // // http://www.eternallyconfuzzled.com/arts/jsw_art_rand.aspx
+    // /// generates a seed to feed to srand. better than time(NULL)
+    // unsigned int time_seed();
 
-    /// returns a number in the range [0,1] -> not a very good random number
-    /// generated but good enough for very simple stuff.
     double  uniform_sample();
+    double  normal_sample();
 
     /// selects no_samples random in [minval maxval). returns false if samples cannot be selected
     bool select_random_samples(const int& minval, const int& maxval, const int& no_samples, int *selected_samples);

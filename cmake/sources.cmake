@@ -29,6 +29,7 @@ set(PROJECT_SOURCES
   src/pair_indexed_array.cc
   src/progress_bar.cc
   src/random.cc
+  src/random_generator.cc
   src/rect2.cc
   src/rotation.cc
   src/sorted_pair_map.cc
@@ -38,7 +39,7 @@ set(PROJECT_SOURCES
   src/string.cc
   src/svd.cc
   src/timer.cc
-)
+  )
 
 set(PROJECT_HEADERS
   kortex/include/bit_operations.h
@@ -80,6 +81,7 @@ set(PROJECT_HEADERS
   kortex/include/pair_indexed_array.h
   kortex/include/progress_bar.h
   kortex/include/random.h
+  kortex/include/random_generator.h
   kortex/include/rect2.h
   kortex/include/rotation.h
   kortex/include/sorted_pair_map.h
