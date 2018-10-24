@@ -52,7 +52,8 @@ indexed_array.cc \
 histogram.cc \
 pair_indexed_array.cc \
 sorted_pair_map.cc \
-geometry.cc
+geometry.cc \
+random_generator.cc
 
 headers := \
 log_manager.h \
@@ -102,7 +103,8 @@ heap.h \
 heap.tcc \
 pair_indexed_array.h \
 sorted_pair_map.h \
-geometry.h
+geometry.h \
+random_generator.h
 
 
 #
