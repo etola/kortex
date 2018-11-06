@@ -35,49 +35,47 @@ namespace kortex {
         // m_array.reserve( n_samples );
     // }
 
-    template< typename T >
-    void PairIndexedArray<T>::report( int mode ) const {
+    // template< typename IndexType, typename T >
+    // void PairIndexedArray<IndexType,T>::report( int mode ) const {
+        // int prec = 6;
+        // for( auto it=m_array.begin(); it !=m_array.end(); ++it ) {
+            // switch( mode ) {
+            // case 0:
+                // printf( "%-5d %-5d : %s\n", it->first.first, it->first.second, interp_val( it->second, prec ).c_str() );
+                // break;
+            // case 1:
+                // logman_log_g( "%-5d %-5d : %s", it->first.first, it->first.second, interp_val( it->second, prec ).c_str() );
+                // break;
+            // case 2:
+                // logman_info_g( "%-5d %-5d : %s", it->first.first, it->first.second, interp_val( it->second, prec ).c_str() );
+                // break;
+            // default:
+                // switch_fatality();
+                // break;
+            // }
+        // }
+    // }
 
-        int prec = 6;
-
-        for( auto it=m_array.begin(); it !=m_array.end(); ++it ) {
-            switch( mode ) {
-            case 0:
-                printf( "%-5d %-5d : %s\n", it->first.first, it->first.second, interp_val( it->second, prec ).c_str() );
-                break;
-            case 1:
-                logman_log_g( "%-5d %-5d : %s", it->first.first, it->first.second, interp_val( it->second, prec ).c_str() );
-                break;
-            case 2:
-                logman_info_g( "%-5d %-5d : %s", it->first.first, it->first.second, interp_val( it->second, prec ).c_str() );
-                break;
-            default:
-                switch_fatality();
-                break;
-            }
-        }
-    }
-
-    template< typename T >
-    bool PairIndexedArray<T>::is_present( const int& x, const int& y ) const {
-        if( m_array.find( ipair(x,y) ) == m_array.end() )
+    template< typename IndexType, typename T >
+    bool PairIndexedArray<IndexType,T>::is_present( const IndexType& x, const IndexType& y ) const {
+        if( m_array.find( itpair(x,y) ) == m_array.end() )
             return false;
         return true;
     }
 
-    template< typename T >
-    void PairIndexedArray<T>::remove( const int& x, const int& y ) {
-        m_array.erase( ipair(x,y) );
+    template< typename IndexType, typename T >
+    void PairIndexedArray<IndexType,T>::remove( const IndexType& x, const IndexType& y ) {
+        m_array.erase( itpair(x,y) );
     }
 
-    template< typename T >
-    void PairIndexedArray<T>::set( const int& x, const int& y, const T& val ) {
-        m_array[ ipair(x,y) ] = val;
+    template< typename IndexType, typename T >
+    void PairIndexedArray<IndexType,T>::set( const IndexType& x, const IndexType& y, const T& val ) {
+        m_array[ itpair(x,y) ] = val;
     }
 
-    template< typename T >
-    void PairIndexedArray<T>::add( const int& x, const int& y, const T& val ) {
-        ipair p = ipair(x,y);
+    template< typename IndexType, typename T >
+    const T& PairIndexedArray<IndexType,T>::add( const IndexType& x, const IndexType& y, const T& val ) {
+        itpair p = itpair(x,y);
         auto it = m_array.find( p );
         if( it == m_array.end() ) {
             m_array[ p ] = val;
@@ -88,16 +86,18 @@ namespace kortex {
             // m_array[ p ] += val;
         // else
             // m_array[ p ] = val;
+
+        return it->second;
     }
 
-    template< typename T >
-    T PairIndexedArray<T>::get( const int& x, const int& y ) const {
+    template< typename IndexType, typename T >
+    T PairIndexedArray<IndexType,T>::get( const IndexType& x, const IndexType& y ) const {
         assert_statement_g( is_present(x,y), "key does not exist [x,y] = [%d,%d]", x, y );
-        return m_array.at( ipair(x,y) );
+        return m_array.at( itpair(x,y) );
     }
 
-    template< typename T >
-    void PairIndexedArray<T>::export_pairs( vector< PairValue<T> >& pairs ) const {
+    template< typename IndexType, typename T >
+    void PairIndexedArray<IndexType,T>::export_pairs( vector< PairValue<IndexType,T> >& pairs ) const {
         pairs.clear();
         int cnt = 0;
         pairs.resize( m_array.size() );
@@ -106,8 +106,8 @@ namespace kortex {
         }
     }
 
-    template< typename T >
-    int PairIndexedArray<T>::filter_array( const T& th ) {
+    template< typename IndexType, typename T >
+    int PairIndexedArray<IndexType,T>::filter_array( const T& th ) {
         int cnt = 0;
         for( auto it=m_array.begin(); it!=m_array.end(); ++it ) {
             if( it->second >= th )
@@ -118,8 +118,8 @@ namespace kortex {
         return cnt;
     }
 
-    template<typename T>
-    void PairIndexedArray<T>::save( const string& file ) const {
+    template< typename IndexType, typename T >
+    void PairIndexedArray<IndexType,T>::save( const string& file ) const {
         int sz = this->size();
         ofstream fout;
         open_or_fail( file, fout, true );
@@ -134,8 +134,8 @@ namespace kortex {
         fout.close();
     }
 
-    template<typename T>
-    void PairIndexedArray<T>::load( const string& file ) {
+    template< typename IndexType, typename T >
+    void PairIndexedArray<IndexType,T>::load( const string& file ) {
         ifstream fin;
         open_or_fail( file, fin, true );
 

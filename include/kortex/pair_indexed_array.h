@@ -15,8 +15,8 @@
 #ifndef KORTEX_PAIR_INDEXED_ARRAY_H
 #define KORTEX_PAIR_INDEXED_ARRAY_H
 
-// #include <unordered_map>
-// using std::unordered_map;
+#include <unordered_map>
+using std::unordered_map;
 
 #include <map>
 using std::map;
@@ -45,55 +45,56 @@ namespace kortex {
         // }
     // };
 
-    template< typename T >
+    template< typename IndexType, typename T >
     struct PairValue {
-        int id0;
-        int id1;
+        IndexType id0;
+        IndexType id1;
         T   val;
-        void init( const int& id0_, const int& id1_, const T& val_ ) {
+        void init( const IndexType& id0_, const IndexType& id1_, const T& val_ ) {
             id0 = id0_;
             id1 = id1_;
             val = val_;
         }
     };
-    template< typename T >
-    inline bool pair_value_cmp_l( const PairValue<T>& l,
-                                  const PairValue<T>& r ) {
+    template< typename IndexType, typename T >
+    inline bool pair_value_cmp_l( const PairValue<IndexType,T>& l,
+                                  const PairValue<IndexType,T>& r ) {
         return l.val > r.val;
     }
-    template< typename T >
-    inline bool pair_value_cmp_s( const PairValue<T>& l,
-                                  const PairValue<T>& r ) {
+    template< typename IndexType, typename T >
+    inline bool pair_value_cmp_s( const PairValue<IndexType,T>& l,
+                                  const PairValue<IndexType,T>& r ) {
         return l.val < r.val;
     }
-    template< typename T >
-    void sort_ascending( vector< PairValue<T> >& arr ) {
-        sort( arr.begin(), arr.end(), pair_value_cmp_s<T> );
+    template< typename IndexType, typename T >
+    void sort_ascending( vector< PairValue<IndexType, T> >& arr ) {
+        sort( arr.begin(), arr.end(), pair_value_cmp_s<IndexType,T> );
     }
-    template< typename T >
-    void sort_descending( vector< PairValue<T> >& arr ) {
-        sort( arr.begin(), arr.end(), pair_value_cmp_l<T> );
+    template< typename IndexType, typename T >
+    void sort_descending( vector< PairValue<IndexType, T> >& arr ) {
+        sort( arr.begin(), arr.end(), pair_value_cmp_l<IndexType,T> );
     }
 
 
-    template< typename T >
+    template< typename IndexType, typename T >
     class PairIndexedArray {
     public:
 
-        bool is_present( const int& x, const int& y ) const;
+        typedef std::pair<IndexType,IndexType> itpair;
+
+        bool is_present( const IndexType& x, const IndexType& y ) const;
 
         void clear() { m_array.clear(); }
 
-        void remove( const int& x, const int& y );
+        void remove( const IndexType& x, const IndexType& y );
 
-        void set( const int& x, const int& y, const T& val );
-        void add( const int& x, const int& y, const T& val );
+        void     set( const IndexType& x, const IndexType& y, const T& val );
+        const T& add( const IndexType& x, const IndexType& y, const T& val );
+        T        get( const IndexType& x, const IndexType& y ) const;
 
-        T    get( const int& x, const int& y ) const;
+        // void report( int mode = 0 ) const;
 
-        void report( int mode = 0 ) const;
-
-        void export_pairs( vector< PairValue<T> >& pairs ) const;
+        void export_pairs( vector< PairValue<IndexType,T> >& pairs ) const;
 
         // void reserve( const int& n_samples );
 
@@ -101,11 +102,10 @@ namespace kortex {
 
         int filter_array( const T& th );
 
-        typename std::map<ipair,T>::iterator begin() { return m_array.begin(); }
-        typename std::map<ipair,T>::iterator end  () { return m_array.end();   }
-
-        typename std::map<ipair,T>::const_iterator begin() const { return m_array.begin(); }
-        typename std::map<ipair,T>::const_iterator end  () const { return m_array.end();   }
+        typename std::map<itpair,T>::iterator begin() { return m_array.begin(); }
+        typename std::map<itpair,T>::iterator end  () { return m_array.end();   }
+        typename std::map<itpair,T>::const_iterator begin() const { return m_array.begin(); }
+        typename std::map<itpair,T>::const_iterator end  () const { return m_array.end();   }
 
         void load( const string& file );
         void save( const string& file ) const;
@@ -113,7 +113,7 @@ namespace kortex {
     private:
         // unordered_map< ipair, T, ipair_hash > m_array;
 
-        std::map< ipair, T > m_array;
+        std::map< itpair, T > m_array;
     };
 
 }

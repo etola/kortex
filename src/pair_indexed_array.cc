@@ -18,8 +18,10 @@
 
 namespace kortex {
 
-    template class PairIndexedArray<int>;
-    template class PairIndexedArray<float>;
-    template class PairIndexedArray<double>;
+    template class PairIndexedArray<int,int>;
+    template class PairIndexedArray<int,float>;
+    template class PairIndexedArray<int,double>;
+
+    template class PairIndexedArray<uint64_t,int>;
 
 }
