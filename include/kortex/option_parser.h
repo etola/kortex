@@ -56,6 +56,8 @@ namespace kortex {
         void add_option( const string& name, const string& explanation, const string& type, OptionType opt_type, const string& default_value="" );
         void add_separator();
 
+        bool is_an_option( const string& name ) const;
+
         void set_default( const string& name, ... );
 
         void set_default( const string& name, const string& v0 );

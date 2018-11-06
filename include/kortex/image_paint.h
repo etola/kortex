@@ -36,6 +36,12 @@ namespace kortex {
     void draw_region( Image& im, int xs, int ys, int xe, int ye, ColorName col, int thickness=0 );
     void draw_region_filled( Image& im, int xs, int ys, int xe, int ye, ColorName col );
 
+    void colorize_gray_image( const Image& img, Image& cimg );
+    void map_to_gray_range( const Image& img,
+                            const float& v_min, const float& v_max,
+                            const float& invalid_value,
+                            Image& gimg );
+
 }
 
 #endif

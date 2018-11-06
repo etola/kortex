@@ -18,6 +18,22 @@ using std::vector;
 
 namespace kortex {
 
+    //
+    //
+    //
+    inline bool double_cmp_l(const double& l, const double& r) { return l > r; }
+    inline bool double_cmp_s(const double& l, const double& r) { return l < r; }
+    void sort_ascending( vector<double>& arr) {
+        std::sort( arr.begin(), arr.end(), double_cmp_s );
+    }
+
+    void sort_descending( vector<double>& arr ) {
+        std::sort( arr.begin(), arr.end(), double_cmp_l );
+    }
+
+    //
+    //
+    //
     inline bool float_cmp_l(const float& l, const float& r) { return l > r; }
     inline bool float_cmp_s(const float& l, const float& r) { return l < r; }
     void sort_ascending( vector<float>& arr) {

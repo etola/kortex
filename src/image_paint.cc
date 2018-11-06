@@ -14,6 +14,7 @@
 #include <kortex/image_paint.h>
 #include <kortex/image.h>
 #include <kortex/color.h>
+#include <kortex/color_map.h>
 #include <kortex/defs.h>
 #include <kortex/rect2.h>
 
@@ -176,6 +177,56 @@ namespace kortex {
         }
     }
 
+    void colorize_gray_image( const Image& img, Image& cimg ) {
+
+        img.passert_type( IT_U_GRAY );
+        int h = img.h();
+        int w = img.w();
+
+        cimg.create( w, h, IT_U_PRGB );
+        cimg.zero();
+
+        ColorMap cmap;
+        cmap.set_type("jet");
+        for( int y=0; y<h; y++ ) {
+            const uchar* yrow = img.get_row_u(y);
+            for( int x=0; x<w; x++ ) {
+                if( yrow[x] <= 0 ) continue;
+
+                float r, g, b;
+                cmap.get_color( yrow[x]/255.0f, r, g, b );
+                uchar ur = cast_to_gray_range(r*255.0f);
+                uchar ug = cast_to_gray_range(g*255.0f);
+                uchar ub = cast_to_gray_range(b*255.0f);
+                cimg.set( x, y, ur, ug, ub );
+            }
+        }
+
+    }
+
+    void map_to_gray_range( const Image& img,
+                            const float& v_min, const float& v_max,
+                            const float& invalid_value,
+                            Image& gimg ) {
+
+        gimg.create( img.w(), img.h(), IT_U_GRAY );
+        gimg.zero();
+        float max_out = 220.0;
+        float min_out =  40.0;
+        gimg.create( img.w(), img.h(), IT_U_GRAY );
+        gimg.zero();
+        for( int y=0; y<img.h(); y++ ) {
+            const float* yrow = img.get_row_f(y);
+            uchar      * orow = gimg.get_row_u(y);
+            for( int x=0; x<img.w(); x++ ) {
+                // if( yrow[x] <= 0.0f ) continue;
+                if( yrow[x] == invalid_value ) continue;
+
+                float v = std::max( 0.0f, ( yrow[x]-v_min ) / ( v_max-v_min ) * ( max_out-min_out ) ) + min_out;
+                orow[x] = cast_to_gray_range( v );
+            }
+        }
+    }
 
 
 }

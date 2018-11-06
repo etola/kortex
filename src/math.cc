@@ -408,5 +408,17 @@ namespace kortex {
             cov[j] /= (m-1);
     }
 
+    int get_closest_sample_index( const vector<float>& samples, const float& val ) {
+        passert_statement( samples.size() > 0, "invalid input" );
+        int   idx  = 0;
+        float dist = fabs( samples[0] - val );
+        for( size_t i=1; i<samples.size(); i++ ) {
+            float d = fabs( samples[i]-val );
+            if( d > dist ) continue;
+            dist = d;
+            idx  = i;
+        }
+        return idx;
+    }
 
 }

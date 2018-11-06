@@ -38,6 +38,12 @@ namespace kortex {
         return str;
     }
 
+    bool OptionParser::is_an_option( const string& name ) const {
+        if( get_option( name ) == -1 )
+            return false;
+        return true;
+    }
+
     void OptionParser::add_option( const string& name, const string& explanation, const string& type, OptionType opt_type, const string& default_value ) {
 
         passert_statement( name.size() != 0, "option name could not be left blank" );

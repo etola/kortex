@@ -17,7 +17,12 @@
 #include <cmath>
 #include <vector>
 using std::vector;
+#include <set>
+using std::set;
 
+#include <algorithm>
+
+#include <kortex/defs.h>
 #include <kortex/types.h>
 
 namespace kortex {
@@ -27,8 +32,6 @@ namespace kortex {
 
     /// returns integer y such that 2^y >= x
     int cast_to_upper_power_2( int x );
-
-    template <typename T> int sign(T v) { return (T(0) < v) - (v<T(0)); }
 
     inline float  sq(const float&  v) { return v*v; }
     inline double sq(const double& v) { return v*v; }
@@ -148,6 +151,45 @@ namespace kortex {
 
     void compute_covariance_3( const double* Xs, int m, int n, double cov[9] );
 
+
+    template <typename T> inline int sign(T v) { return (T(0) < v) - (v<T(0)); }
+
+    inline void boolean_to_index_array( const vector<bool>& bool_array, vector<int>& index_array ) {
+        index_array.clear();
+        for( int i=0; i<(int)bool_array.size(); ++i ) {
+            if( !bool_array[i] ) continue;
+            index_array.push_back(i);
+        }
+    }
+    template<typename T> inline
+    void set_to_vector( const std::set<T>& a_set, vector<T>& a_vector ) {
+        a_vector.insert( a_vector.end(), a_set.begin(), a_set.end() );
+    }
+    template<typename T> inline
+    void vector_to_set( const std::vector<T>& a_vector, std::set<T>& a_set ) {
+        a_set.insert( a_vector.begin(), a_vector.end() );
+    }
+
+
+    template<typename T1, typename T2> inline
+    double sym_angle_between_in_dot( const T1* n0, const T2* n1 ) {
+        return std::min( (T1)fabs(dot3(n0,n1)), T1(1.0) );
+    }
+
+    template<typename T1, typename T2> inline
+    double sym_angle_between( const T1* n0, const T2* n1 ) {
+        double dp =  sym_angle_between_in_dot(n0,n1);
+        return acos(dp) * DEGREES;
+    }
+
+    template<typename T> inline
+    void make_unique( vector<T>& arr ) {
+        std::sort(arr.begin(), arr.end());
+        auto last = std::unique( arr.begin(), arr.end() );
+        arr.erase(last, arr.end());
+    }
+
+    int get_closest_sample_index( const vector<float>& samples, const float& val );
 
 }
 
