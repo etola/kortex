@@ -25,10 +25,11 @@ namespace kortex {
     bool image_min_max( const Image& img,
                         const int& xmin, const int& ymin,
                         const int& xmax, const int& ymax,
+                        const float& invalid_value,
                         float& min_v, float& max_v );
 
-    inline bool image_min_max( const Image& img, float& min_v, float& max_v ) {
-        return image_min_max( img, -1, -1, -1, -1, min_v, max_v );
+    inline bool image_min_max( const Image& img, const float& invalid_value, float& min_v, float& max_v ) {
+        return image_min_max( img, -1, -1, -1, -1, invalid_value, min_v, max_v );
     }
 
     bool abs_image_min_max( const Image& img,

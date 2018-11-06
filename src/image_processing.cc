@@ -15,6 +15,7 @@
 #include <limits>
 #include <cstring>
 #include <cstdlib>
+#include <cfloat>
 
 #include <kortex/image_processing.h>
 #include <kortex/types.h>
@@ -37,6 +38,7 @@ namespace kortex {
     bool image_min_max( const Image& img,
                         const int& xmin, const int& ymin,
                         const int& xmax, const int& ymax,
+                        const float& invalid_value,
                         float& min_v, float& max_v ) {
         img.passert_type( IT_F_GRAY | IT_U_GRAY );
 
@@ -62,10 +64,10 @@ namespace kortex {
                 const float* row = img.get_row_f(y);
                 for( int x=xs; x<xe; x++ ) {
                     const float& v = row[x];
-                    if( is_a_number(v) ) {
-                        min_v = std::min(v,min_v);
-                        max_v = std::max(v,max_v);
-                    }
+                    if( !is_a_number(v)    ) continue;
+                    if( v == invalid_value ) continue;
+                    min_v = std::min(v,min_v);
+                    max_v = std::max(v,max_v);
                 }
             }
             break;
@@ -1204,7 +1206,7 @@ namespace kortex {
         assert_statement( !src.is_empty(), "empty image" );
 
         float mins, maxs;
-        image_min_max( src, 0, 0, src.w(), src.h(), mins, maxs );
+        image_min_max( src, -FLT_MAX, mins, maxs );
 
         float srange = maxs - mins;
         if( fabs(srange ) < 1e-8 ) {
@@ -1230,7 +1232,7 @@ namespace kortex {
         float nrm = 1.0f/255.0f;
         if( !standard ) {
             float minv, maxv;
-            image_min_max( src, minv, maxv );
+            image_min_max( src, -FLT_MAX, minv, maxv );
             nrm = std::max( std::fabs(minv), std::fabs(maxv) );
             assert_statement( nrm > 1e-16, "nrm is dangerously close to 0" );
             nrm = 1.0f/nrm;
@@ -1319,7 +1321,7 @@ namespace kortex {
 
         float scale = 1.0f;
         if( minv == 0.0f && maxv == 0.0f ) {
-            if( !image_min_max( src, 0, 0, src.w(), src.h(), minv, maxv ) ) {
+            if( !image_min_max( src, -FLT_MAX, minv, maxv ) ) {
                 logman_error("min max range for the image could not be found");
                 minv = 0.0f;
                 maxv = 0.0f;
