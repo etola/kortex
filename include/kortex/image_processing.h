@@ -276,6 +276,9 @@ namespace kortex {
 
     void insert_image_to_channel( const Image& im, int ch, Image& out );
 
+    // get the max value in the patch
+    float image_get_max( const Image& img, int x0, int y0, int hsz );
+
 }
 
 #endif

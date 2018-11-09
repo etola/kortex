@@ -1648,5 +1648,24 @@ namespace kortex {
 
     }
 
+    float image_get_max( const Image& img, int x0, int y0, int hsz ) {
+        img.passert_type( IT_F_GRAY );
+        assert_statement( img.is_inside(x0,y0), "invalid request" );
+        int h = img.h();
+        int w = img.w();
+
+        float v = img.getf(x0,y0);
+        for( int y=y0-hsz; y<=y0+hsz; y++ ) {
+            if( y<0 || y>=h ) continue;
+            const float* frow = img.get_row_f(y);
+            for( int x=x0-hsz; x<=x0+hsz; x++ ) {
+                if( x<0 || x>=w ) continue;
+                // v = std::max( v, img.getf(x,y) );
+                v = std::max( v, frow[x] );
+            }
+        }
+        return v;
+    }
+
 
 }
