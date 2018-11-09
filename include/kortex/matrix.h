@@ -272,9 +272,9 @@ namespace kortex {
     }
 
     template<typename T>
-    void vec_axpb_3( const T& alpha,  const T x[3], const T b[3], T c[3] ) {
+    void vec_axpby_3( const T& alpha,  const T x[3], const T& beta, const T b[3], T c[3] ) {
         for( int i=0; i<3; i++ )
-            c[i] = alpha * x[i] + b[i];
+            c[i] = alpha * x[i] + beta * b[i];
     }
 
     inline void vec_copy_3( const double src[3], double dst[3] ) {
