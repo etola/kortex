@@ -1,4 +1,5 @@
 .gitignore
+build
 debug
 release
 test_in
