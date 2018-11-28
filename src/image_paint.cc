@@ -209,6 +209,8 @@ namespace kortex {
                             const float& invalid_value,
                             Image& gimg ) {
 
+        img.assert_type( IT_F_GRAY );
+
         gimg.create( img.w(), img.h(), IT_U_GRAY );
         gimg.zero();
         float max_out = 220.0;
