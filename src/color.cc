@@ -164,5 +164,11 @@ namespace kortex {
         return "no-such-color";
     }
 
+    float max_color_diff( const Color& a, const Color& b ) {
+        return std::max( std::fabs( float(a.r)-float(b.r) ),
+                         std::max( std::fabs( float(a.g)-float(b.g) ),
+                                   std::fabs( float(a.b)-float(b.b) ) ) );
+    }
+
 
 }

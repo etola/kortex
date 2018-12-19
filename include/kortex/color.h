@@ -82,6 +82,8 @@ namespace kortex {
 
     void hsv_to_rgb( float h, float s, float v, float &r, float &g, float &b );
 
+    float max_color_diff( const Color& a, const Color& b );
+
 
 }
 
