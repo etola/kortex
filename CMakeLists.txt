@@ -9,7 +9,7 @@ endif()
 SET(COTIRE_INTDIR "cotire")
 
 # Define helper functions and macros.
-cmake_policy(SET CMP0011 OLD)
+# cmake_policy(SET CMP0011 OLD)
 INCLUDE(cmake/utils.cmake)
 if(ENABLE_PRECOMPILED_HEADERS)
 	INCLUDE(cmake/cotire.cmake)
