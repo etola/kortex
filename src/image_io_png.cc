@@ -18,16 +18,21 @@
 
 #include <kortex/image.h>
 #include <cstdlib>
+#include <cstring>
 
 extern "C" {
 #include "png.h"
 }
 
-#ifdef _MSC_VER
 #ifndef Z_BEST_COMPRESSION
 #define Z_BEST_COMPRESSION 6
 #endif
+
+#ifndef png_infopp_NULL
 #define png_infopp_NULL NULL
+#endif
+
+#ifndef png_voidp_NULL
 #define png_voidp_NULL NULL
 #endif
 

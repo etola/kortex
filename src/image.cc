@@ -507,7 +507,7 @@ namespace kortex {
     }
 
     void Image::add( const int& x0, const int& y0, const float& r, const float& g, const float& b ) {
-        assert_type( IT_F_PRGB || IT_F_IRGB );
+        assert_type( IT_F_PRGB | IT_F_IRGB );
         assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );
 
         size_t shft = 0;

@@ -89,7 +89,7 @@ namespace kortex {
         ImageType   type()          const { return m_type;                  }
         ChannelType channel_type()  const { return m_channel_type;          }
         DataType    precision()     const { return image_precision(m_type); }
-        bool        is_empty()      const { return !(m_w*m_h);              }
+        bool        is_empty()      const { return !(m_w&m_h);              }
         bool        is_wrapper()    const { return m_wrapper;               }
         int         pixel_count()   const { return m_w*m_h;                 }
         size_t      element_count() const { return size_t(m_w)*size_t(m_h)*size_t(m_ch); }
