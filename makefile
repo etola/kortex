@@ -110,7 +110,7 @@ random_generator.h
 #
 # output info
 #
-main_build_dir := ${HOME}/build/
+main_build_dir :=
 installdir := ${HOME}/usr/local/
 external_sources :=
 external_libraries := libjpeg lapack blas libpng
@@ -129,8 +129,8 @@ custom_cflags := -std=c++0x
 #
 # optimization & parallelization ?
 #
-optimize ?= true
-parallelize ?= true
+optimize ?= false
+parallelize ?= false
 boost-thread ?= false
 f77 ?= false
 sse ?= true

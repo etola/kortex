@@ -33,6 +33,7 @@ namespace kortex {
 
     FileFormat get_file_format( const string& str ) {
         string fext = get_file_extension( str );
+		std::transform( fext.begin(), fext.end(), fext.begin(), ::tolower );
         if     ( !fext.compare("pgm"         ) ) return FF_PGM;
         else if( !fext.compare("ppm"         ) ) return FF_PPM;
         else if( !fext.compare("jpg"         ) ) return FF_JPG;
