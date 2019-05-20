@@ -112,6 +112,18 @@ namespace kortex {
         opt.push_value(v3);
     }
 
+    void OptionParser::log_arguments( LogManager::Verbosity v ) const {
+        switch( v ) {
+        case LogManager::Silent:
+        case LogManager::Cautious:
+        case LogManager::Normal:
+            logman_log_g( "argument string [%s]", m_argument_string.c_str() );
+            break;
+        case LogManager::Informative:
+            logman_info_g( "argument string [%s]", m_argument_string.c_str() );
+            break;
+        }
+    }
     void OptionParser::print_help() const {
         printf("\n");
 
@@ -216,8 +228,10 @@ namespace kortex {
         return counter;
     }
 
-
     void OptionParser::parse( int argc, char** argv ) {
+
+        m_argument_string = print_array_to_string( argc, (const char**)argv );
+        logman_info_g( "argument string [%s]", m_argument_string.c_str() );
 
         int cnt = 1;
         while(  cnt < argc ) {
@@ -230,7 +244,6 @@ namespace kortex {
             cnt++;
 
             OptionItem& opt = get_option(oid);
-
             if( opt.opt_type == OP_NO_INPUT ) {
                 opt.clear();
                 opt.push_value("1");

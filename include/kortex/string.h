@@ -18,6 +18,7 @@
 using std::string;
 
 #include <cfloat>
+#include <vector>
 
 #ifdef DBL_DECIMAL_DIG
 #define OP_DBL_Digs (DBL_DECIMAL_DIG)
@@ -105,6 +106,10 @@ namespace kortex {
     string replace_whitespace( const string& str, const string& white_space, const string& fill_str );
 
     string resolve_full_path( const string& istr );
+
+    string print_array_to_string( std::vector<int>& arr  , bool include_ids, bool horizontal );
+    string print_array_to_string( std::vector<float>& arr, bool include_ids, bool horizontal );
+    string print_array_to_string( const int& argc, const char** argv );
 
 }
 

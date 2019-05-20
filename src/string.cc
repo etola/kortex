@@ -184,5 +184,74 @@ namespace kortex {
         return result;
     }
 
-}
+    string print_array_to_string( std::vector<int>& arr, bool include_ids, bool horizontal ) {
 
+        string out_str = "";
+        static const int n_max_str = 2560;
+        char buf[2560];
+
+        int n_str = 0;
+        for( int i=0; i<(int)arr.size(); i++ ) {
+            if( include_ids )
+                n_str += sprintf( buf+n_str, "[%d: %d]", i, arr[i] );
+            else
+                n_str += sprintf( buf+n_str, " %d", arr[i] );
+            if( !horizontal )
+                n_str += sprintf( buf+n_str, "\n" );
+            if( n_str > n_max_str*0.9 ) {
+                out_str += string(buf);
+                n_str = 0;
+            }
+        }
+        out_str += string(buf);
+
+
+        return out_str;
+    }
+
+    string print_array_to_string( std::vector<float>& arr, bool include_ids, bool horizontal ) {
+
+        string out_str = "";
+        static const int n_max_str = 2560;
+        char buf[2560];
+
+        int n_str = 0;
+        for( int i=0; i<(int)arr.size(); i++ ) {
+            if( include_ids )
+                n_str += sprintf( buf+n_str, "[%d: %f]", i, arr[i] );
+            else
+                n_str += sprintf( buf+n_str, " %f", arr[i] );
+            if( !horizontal )
+                n_str += sprintf( buf+n_str, "\n" );
+            if( n_str > n_max_str*0.9 ) {
+                out_str += string(buf);
+                n_str = 0;
+            }
+        }
+        out_str += string(buf);
+
+
+        return out_str;
+    }
+
+    string print_array_to_string( const int& argc, const char** argv  ) {
+
+        string out_str = "";
+        static const int n_max_str = 2560;
+        char buf[2560];
+
+        int n_str = 0;
+        for( int i=0; i<argc; i++ ) {
+            n_str += sprintf( buf+n_str, "%s ", argv[i] );
+            if( n_str > n_max_str*0.9 ) {
+                out_str += string(buf);
+                n_str = 0;
+            }
+        }
+        out_str += string(buf);
+
+        return out_str;
+    }
+
+
+}

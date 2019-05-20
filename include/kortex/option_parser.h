@@ -18,6 +18,7 @@
 #include <kortex/check.h>
 #include <kortex/types.h>
 #include <kortex/string.h>
+#include <kortex/log_manager.h>
 
 namespace kortex {
 
@@ -71,6 +72,8 @@ namespace kortex {
         void print_options() const;
 
         int  n_options    () const { return (int)m_options.size(); }
+
+        void log_arguments( LogManager::Verbosity v=LogManager::Normal ) const;
 
         int get_option( const string& str ) const;
         const OptionItem& get_option( int i ) const {
@@ -179,6 +182,8 @@ namespace kortex {
 
     private:
         vector<OptionItem> m_options;
+
+        string m_argument_string;
 
         /// returns how many arguments need to be read.
         int  num_option_arguments( int argc, char** argv, int start ) const;
