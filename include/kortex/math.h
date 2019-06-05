@@ -172,6 +172,17 @@ namespace kortex {
 
 
     template<typename T1, typename T2> inline
+    double angle_between_in_dot( const T1* n0, const T2* n1 ) {
+        return std::max( T1(-1.0), std::min( (T1)dot3(n0,n1), T1(1.0) ) );
+    }
+
+    template<typename T1, typename T2> inline
+    double angle_between( const T1* n0, const T2* n1 ) {
+        double dp =  angle_between_in_dot(n0,n1);
+        return acos(dp) * DEGREES;
+    }
+
+    template<typename T1, typename T2> inline
     double sym_angle_between_in_dot( const T1* n0, const T2* n1 ) {
         return std::min( (T1)fabs(dot3(n0,n1)), T1(1.0) );
     }
