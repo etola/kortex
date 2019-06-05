@@ -6,6 +6,6 @@ includedir=${prefix}/include
 Name: kortex
 Description: base components of the kortex vision library developed by Aurvis R&D
 Version: @VERSION@
-Libs: -L${libdir} -lkortex -lpng12 -lz -ljpeg -llapack -lblas
+Libs: -L${libdir} -lkortex -lpng16 -lz -ljpeg -llapack -lblas
 Cflags: -I${includedir} @KORTEX_FLAGS@ -std=c++0x
 Requires: 
