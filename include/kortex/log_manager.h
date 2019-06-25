@@ -112,14 +112,16 @@ namespace kortex {
 #define logman_error(msg)   kortex::log_man()->error  (function_line_str, "%s", msg)
 #define logman_fatal(msg)   kortex::log_man()->fatal  (function_line_str, "%s", msg)
 
-
-#define logman_log_vi( prestr, int_arr, n_arr ) {                               \
+#define logman_log_gvi( prestr, int_arr, n_arr ) {                              \
     static const int buf_sz = 4096;                                             \
     const int* arr = int_arr;                                                   \
     char buffer[buf_sz];                                                        \
     logman_log_g( "%s", prestr );                                               \
+    int it = 0;                                                                 \
     int k = 0;                                                                  \
     while( 1 ) {                                                                \
+        it++;                                                                   \
+        assert_statement( it < 100000, "run-away while loop " )                 \
         int nstr = 0;                                                           \
         for( ; k<n_arr; k++ ) {                                                 \
             nstr += snprintf( buffer+nstr, buf_sz-nstr, "%d ", arr[k] );        \
@@ -131,38 +133,67 @@ namespace kortex {
     }                                                                           \
     }
 
-#define logman_log_gvi(prestr, int_arr, asz) {                                  \
-    static const int bufsz = 2560;                                              \
+#define logman_info_gvi( prestr, int_arr, n_arr ) {                             \
+    static const int buf_sz = 4096;                                             \
     const int* arr = int_arr;                                                   \
-    char buf[bufsz];                                                            \
-    int nstr = sprintf( buf, "%s [", prestr );                                  \
-    for( int i=0; i<asz; i++, arr++ ) nstr += sprintf( buf+nstr, "%d ", *arr ); \
-    nstr += sprintf( buf+nstr, "]" );                                           \
-    assert_statement( nstr <= bufsz, "buffer overflow" );                       \
-    logman_log( buf );                                                          \
+    char buffer[buf_sz];                                                        \
+    logman_info_g( "%s", prestr );                                              \
+    int it = 0;                                                                 \
+    int k = 0;                                                                  \
+    while( 1 ) {                                                                \
+        it++;                                                                   \
+        assert_statement( it < 100000, "run-away while loop " )                 \
+        int nstr = 0;                                                           \
+        for( ; k<n_arr; k++ ) {                                                 \
+            nstr += snprintf( buffer+nstr, buf_sz-nstr, "%d ", arr[k] );        \
+            assert_statement( nstr < buf_sz, "buffer overflow" );               \
+            if( nstr + 8 >= buf_sz ) break;                                     \
+        }                                                                       \
+        logman_info_g( "%s", buffer );                                          \
+        if( k>=n_arr ) break;                                                   \
+    }                                                                           \
     }
 
-#define logman_info_gvi(prestr, int_arr, asz) {                                  \
-    static const int bufsz = 2560;                                              \
-    const int* arr = int_arr;                                                   \
-    char buf[bufsz];                                                            \
-    int nstr = sprintf( buf, "%s [", prestr );                                  \
-    for( int i=0; i<asz; i++, arr++ ) nstr += sprintf( buf+nstr, "%d ", *arr ); \
-    nstr += sprintf( buf+nstr, "]" );                                           \
-    assert_statement( nstr <= bufsz, "buffer overflow" );                       \
-    logman_info( buf );                                                         \
-    }
-
-
-#define logman_log_gvf(prestr, float_arr, asz) {                                \
-    static const int bufsz = 2560;                                              \
+#define logman_log_gvf( prestr, float_arr, n_arr ) {                            \
+    static const int buf_sz = 4096;                                             \
     const float* arr = float_arr;                                               \
-    char buf[bufsz];                                                            \
-    int nstr = sprintf( buf, "%s [", prestr );                                  \
-    for( int i=0; i<asz; i++, arr++ ) nstr += sprintf( buf+nstr, "%f ", *arr ); \
-    nstr += sprintf( buf+nstr, "]" );                                           \
-    assert_statement( nstr <= bufsz, "buffer overflow" );                       \
-    logman_log( buf );                                                          \
+    char buffer[buf_sz];                                                        \
+    logman_log_g( "%s", prestr );                                               \
+    int it = 0;                                                                 \
+    int k = 0;                                                                  \
+    while( 1 ) {                                                                \
+        it++;                                                                   \
+        assert_statement( it < 100000, "run-away while loop " )                 \
+        int nstr = 0;                                                           \
+        for( ; k<n_arr; k++ ) {                                                 \
+            nstr += snprintf( buffer+nstr, buf_sz-nstr, "%f ", arr[k] );        \
+            assert_statement( nstr < buf_sz, "buffer overflow" );               \
+            if( nstr + 64 >= buf_sz ) break;                                    \
+        }                                                                       \
+        logman_log_g( "%s", buffer );                                           \
+        if( k>=n_arr ) break;                                                   \
+    }                                                                           \
+    }
+
+#define logman_info_gvf( prestr, float_arr, n_arr ) {                           \
+    static const int buf_sz = 4096;                                             \
+    const float* arr = float_arr;                                               \
+    char buffer[buf_sz];                                                        \
+    logman_info_g( "%s", prestr );                                              \
+    int it = 0;                                                                 \
+    int k = 0;                                                                  \
+    while( 1 ) {                                                                \
+        it++;                                                                   \
+        assert_statement( it < 100000, "run-away while loop " )                 \
+        int nstr = 0;                                                           \
+        for( ; k<n_arr; k++ ) {                                                 \
+            nstr += snprintf( buffer+nstr, buf_sz-nstr, "%f ", arr[k] );        \
+            assert_statement( nstr < buf_sz, "buffer overflow" );               \
+            if( nstr + 64 >= buf_sz ) break;                                    \
+        }                                                                       \
+        logman_info_g( "%s", buffer );                                          \
+        if( k>=n_arr ) break;                                                   \
+    }                                                                           \
     }
 
 #define logman_log_gvs(prestr, str_array, asz) {                 \
