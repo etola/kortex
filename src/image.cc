@@ -200,37 +200,44 @@ namespace kortex {
     uchar      * Image::get_channel_u( int cid ) {
         assert_type( IT_U_GRAY | IT_U_IRGB );
         assert_boundary( cid, 0, m_ch );
-        return m_data_u + cid*m_h*m_w;
+        size_t sft = size_t(cid) * size_t(m_h) * size_t(m_w);
+        return m_data_u + sft;
     }
     const uchar* Image::get_channel_u( int cid ) const {
         assert_type( IT_U_GRAY | IT_U_IRGB );
         assert_boundary( cid, 0, m_ch );
-        return m_data_u + cid*m_h*m_w;
+        size_t sft = size_t(cid) * size_t(m_h) * size_t(m_w);
+        return m_data_u + sft;
     }
     float      * Image::get_channel_f( int cid ) {
         assert_type( IT_F_GRAY | IT_F_IRGB );
         assert_boundary( cid, 0, m_ch );
-        return m_data_f + cid*m_h*m_w;
+        size_t sft = size_t(cid) * size_t(m_h) * size_t(m_w);
+        return m_data_f + sft;
     }
     const float* Image::get_channel_f( int cid ) const {
         assert_type( IT_F_GRAY | IT_F_IRGB );
         assert_boundary( cid, 0, m_ch );
-        return m_data_f + cid*m_h*m_w;
+        size_t sft = size_t(cid) * size_t(m_h) * size_t(m_w);
+        return m_data_f + sft;
     }
     int        * Image::get_channel_i( int cid ) {
         assert_type( IT_I_GRAY );
         assert_boundary( cid, 0, m_ch );
-        return m_data_i + cid*m_h*m_w;
+        size_t sft = size_t(cid) * size_t(m_h) * size_t(m_w);
+        return m_data_i + sft;
     }
     const int  * Image::get_channel_i( int cid ) const {
         assert_type( IT_I_GRAY );
         assert_boundary( cid, 0, m_ch );
-        return m_data_i + cid*m_h*m_w;
+        size_t sft = size_t(cid) * size_t(m_h) * size_t(m_w);
+        return m_data_i + sft;
     }
     const uint16_t* Image::get_channel_u16( int cid ) const {
         assert_type( IT_J_GRAY );
         assert_boundary( cid, 0, m_ch );
-        return m_data_u16 + cid*m_h*m_w;
+        size_t sft = size_t(cid) * size_t(m_h) * size_t(m_w);
+        return m_data_u16 + sft;
     }
 
     //
@@ -239,98 +246,113 @@ namespace kortex {
     int* Image::get_row_i ( int y0 ) { // use for int gray
         assert_type( IT_I_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_i + y0 * m_w * m_ch;
+        size_t sft = size_t(y0) * size_t(m_w) * size_t(m_ch);
+        return m_data_i + sft;
     }
     uint16_t* Image::get_row_u16( int y0 ) { // use for int gray
         assert_type( IT_J_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_u16 + y0 * m_w * m_ch;
+        size_t sft = size_t(y0) * size_t(m_w) * size_t(m_ch);
+        return m_data_u16 + sft;
     }
     uchar* Image::get_row_u ( int y0 ) { // use for u gray, prgb
         assert_type( IT_U_GRAY | IT_U_PRGB );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_u + y0 * m_w * m_ch;
+        size_t sft = size_t(y0) * size_t(m_w) * size_t(m_ch);
+        return m_data_u + sft;
     }
     float* Image::get_row_f ( int y0 ) { // use for f gray, prgb
         assert_type( IT_F_GRAY | IT_F_PRGB );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_f + y0 * m_w * m_ch;
+        size_t sft = size_t(y0) * size_t(m_w) * size_t(m_ch);
+        return m_data_f + sft;
     }
     uchar* Image::get_row_ui( int y0, int cid ) { // cid'th channel y0'th row
         assert_type( IT_U_IRGB | IT_U_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_u + (cid * m_h + y0) * m_w;
+        size_t sft = ( size_t(cid) * size_t(m_h) + size_t(y0) ) * size_t(m_w);
+        return m_data_u + sft;
     }
     float* Image::get_row_fi( int y0, int cid ) { // cid'th channel y0'th row
         assert_type( IT_F_IRGB | IT_F_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_f + (cid * m_h + y0) * m_w;
+        size_t sft = ( size_t(cid) * size_t(m_h) + size_t(y0) ) * size_t(m_w);
+        return m_data_f + sft;
     }
 
     const int* Image::get_row_i ( int y0 ) const { // use for u gray, prgb
         assert_type( IT_I_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_i + y0 * m_w * m_ch;
+        size_t sft = size_t(y0) * size_t(m_w) * size_t(m_ch);
+        return m_data_i + sft;
     }
     const uint16_t* Image::get_row_u16( int y0 ) const { // use for u gray, prgb
         assert_type( IT_J_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_u16 + y0 * m_w * m_ch;
+        size_t sft = size_t(y0) * size_t(m_w) * size_t(m_ch);
+        return m_data_u16 + sft;
     }
     const uchar* Image::get_row_u ( int y0 ) const { // use for u gray, prgb
         assert_type( IT_U_GRAY | IT_U_PRGB );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_u + y0 * m_w * m_ch;
+        size_t sft = size_t(y0) * size_t(m_w) * size_t(m_ch);
+        return m_data_u + sft;
     }
     const float* Image::get_row_f ( int y0 ) const { // use for f gray, prgb
         assert_type( IT_F_GRAY | IT_F_PRGB );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_f + y0 * m_w * m_ch;
+        size_t sft = size_t(y0) * size_t(m_w) * size_t(m_ch);
+        return m_data_f + sft;
     }
     const uchar* Image::get_row_ui( int y0, int cid ) const { // cid'th channel y0'th row
         assert_type( IT_U_IRGB | IT_U_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_u + (cid * m_h + y0) * m_w;
+        size_t sft = ( size_t(cid) * size_t(m_h) + size_t(y0) ) * size_t(m_w);
+        return m_data_u + sft;
     }
     const float* Image::get_row_fi( int y0, int cid ) const { // cid'th channel y0'th row
         assert_type( IT_F_IRGB | IT_F_GRAY );
         assert_statement_g( kortex::is_inside(y0,0,m_h), "[y0 %d] oob", y0 );
-        return m_data_f + (cid * m_h + y0) * m_w;
+        size_t sft = ( size_t(cid) * size_t(m_h) + size_t(y0) ) * size_t(m_w);
+        return m_data_f + sft;
     }
-
-
 
     // 1-channel get
     float Image::getf( int x0, int y0 ) const {
         assert_type  ( IT_F_GRAY );
         assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
-        return m_data_f[ y0*m_w+x0 ];
+        size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
+        return m_data_f[ p ];
     }
 
     uchar Image::getu( int x0, int y0 ) const {
         assert_type  ( IT_U_GRAY );
         assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
-        return m_data_u[ y0*m_w+x0 ];
+        size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
+        return m_data_u[ p ];
     }
     int   Image::geti( int x0, int y0 ) const {
         assert_type  ( IT_I_GRAY );
         assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
-        return m_data_i[ y0*m_w+x0 ];
+        size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
+        return m_data_i[ p ];
     }
     uint16_t Image::getu16( int x0, int y0 ) const {
         assert_type  ( IT_J_GRAY );
         assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
-        return m_data_u16[ y0*m_w+x0 ];
+        size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
+        return m_data_u16[ p ];
     }
 
 
     float Image::get( int x0, int y0 ) const {
         assert_type( IT_U_GRAY | IT_F_GRAY );
+        size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
         switch( m_type ) {
-        case IT_U_GRAY: return static_cast<float>(m_data_u[ y0*m_w+x0 ]); break;
-        case IT_F_GRAY: return m_data_f[ y0*m_w+x0 ]; break;
-        case IT_I_GRAY: return static_cast<float>(m_data_i[ y0*m_w+x0 ]); break;
-        case IT_J_GRAY: return static_cast<float>(m_data_u16[ y0*m_w+x0 ]); break;
+        case IT_U_GRAY: return static_cast<float>(m_data_u[p]); break;
+        case IT_F_GRAY: return m_data_f[p]; break;
+        case IT_I_GRAY: return static_cast<float>(m_data_i[p]); break;
+        case IT_J_GRAY: return static_cast<float>(m_data_u16[p]); break;
         default       : switch_fatality();
         }
     }
@@ -377,13 +399,13 @@ namespace kortex {
         r = g = b = 0;
         switch( m_channel_type ) {
         case ITC_PIXEL:
-            shft = y0 * m_w * m_ch + x0*m_ch;
+            shft = size_t(y0) * size_t(m_w) * size_t(m_ch) + size_t(x0*m_ch);
             r = m_data_u[ shft   ];
             g = m_data_u[ shft+1 ];
             b = m_data_u[ shft+2 ];
             break;
         case ITC_IMAGE:
-            shft = y0*m_w+x0;
+            shft = size_t(y0)*size_t(m_w)+size_t(x0);
             r = m_data_u[ shft             ];
             g = m_data_u[ shft + m_w*m_h   ];
             b = m_data_u[ shft + m_w*m_h*2 ];
@@ -401,13 +423,13 @@ namespace kortex {
         r = g = b = 0.0f;
         switch( m_channel_type ) {
         case ITC_PIXEL:
-            shft = y0 * m_w * m_ch + x0*m_ch;
+            shft = size_t(y0) * size_t(m_w) * size_t(m_ch) + size_t(x0*m_ch);
             r = m_data_f[ shft   ];
             g = m_data_f[ shft+1 ];
             b = m_data_f[ shft+2 ];
             break;
         case ITC_IMAGE:
-            shft = y0*m_w+x0;
+            shft = size_t(y0)*size_t(m_w)+size_t(x0);
             r = m_data_f[ shft             ];
             g = m_data_f[ shft + m_w*m_h   ];
             b = m_data_f[ shft + m_w*m_h*2 ];
@@ -503,7 +525,8 @@ namespace kortex {
     void Image::add( const int& x0, const int& y0, const float& v ) {
         assert_type( IT_F_GRAY );
         assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );
-        m_data_f[ y0*m_w + x0 ] += v;
+        size_t p = size_t(y0)*size_t(m_w) + size_t(x0);
+        m_data_f[ p ] += v;
     }
 
     void Image::add( const int& x0, const int& y0, const float& r, const float& g, const float& b ) {
@@ -513,16 +536,16 @@ namespace kortex {
         size_t shft = 0;
         switch( m_channel_type ) {
         case ITC_PIXEL:
-            shft = (y0*m_w + x0)*m_ch;
+            shft = ( size_t(y0)*size_t(m_w) + size_t(x0) ) * size_t(m_ch);
             m_data_f[ shft   ] += r;
             m_data_f[ shft+1 ] += g;
             m_data_f[ shft+2 ] += b;
             break;
         case ITC_IMAGE:
-            shft = y0*m_w + x0;
+            shft = size_t(y0)*size_t(m_w) + size_t(x0);
             m_data_f[ shft             ] += r;
-            m_data_f[ shft + m_w*m_h   ] += g;
-            m_data_f[ shft + m_w*m_h*2 ] += b;
+            m_data_f[ shft + size_t(m_w)*size_t(m_h)   ] += g;
+            m_data_f[ shft + size_t(m_w)*size_t(m_h)*2 ] += b;
             break;
         default: switch_fatality();
         }
@@ -534,22 +557,26 @@ namespace kortex {
     void Image::set ( const int& x0, const int& y0, const float& v ) {
         assert_type( IT_F_GRAY );
         assert_statement_g( is_inside(x0,y0), "[x0 %d] [y0 %d] oob", x0, y0 );
-        m_data_f[ y0*m_w + x0 ] = v;
+        size_t p = size_t(y0)*size_t(m_w) + size_t(x0);
+        m_data_f[p] = v;
     }
     void Image::set ( const int& x0, const int& y0, const uchar& v ) {
         assert_type( IT_U_GRAY );
         assert_statement_g( is_inside(x0,y0), "[x0 %d] [y0 %d] oob", x0, y0 );
-        m_data_u[ y0*m_w + x0 ] = v;
+        size_t p = size_t(y0)*size_t(m_w) + size_t(x0);
+        m_data_u[p] = v;
     }
     void Image::set ( const int& x0, const int& y0, const int  & v ) {
         assert_type( IT_I_GRAY );
         assert_statement_g( is_inside(x0,y0), "[x0 %d] [y0 %d] oob", x0, y0 );
-        m_data_i[ y0*m_w + x0 ] = v;
+        size_t p = size_t(y0)*size_t(m_w) + size_t(x0);
+        m_data_i[p] = v;
     }
     void Image::set ( const int& x0, const int& y0, const uint16_t  & v ) {
         assert_type( IT_J_GRAY );
         assert_statement_g( is_inside(x0,y0), "[x0 %d] [y0 %d] oob", x0, y0 );
-        m_data_u16[ y0*m_w + x0 ] = v;
+        size_t p = size_t(y0)*size_t(m_w) + size_t(x0);
+        m_data_u16[p] = v;
     }
 
 
@@ -612,16 +639,16 @@ namespace kortex {
         size_t shft = 0;
         switch( m_channel_type ) {
         case ITC_PIXEL:
-            shft = (y0*m_w + x0)*m_ch;
+            shft = (size_t(y0)*size_t(m_w) + size_t(x0))*size_t(m_ch);
             m_data_u[ shft   ] = r;
             m_data_u[ shft+1 ] = g;
             m_data_u[ shft+2 ] = b;
             break;
         case ITC_IMAGE:
-            shft = y0*m_w + x0;
+            shft = size_t(y0)*size_t(m_w) + size_t(x0);
             m_data_u[ shft             ] = r;
-            m_data_u[ shft + m_w*m_h   ] = g;
-            m_data_u[ shft + m_w*m_h*2 ] = b;
+            m_data_u[ shft + size_t(m_w)*size_t(m_h)   ] = g;
+            m_data_u[ shft + size_t(m_w)*size_t(m_h)*2 ] = b;
             break;
         default: switch_fatality();
         }
@@ -632,16 +659,16 @@ namespace kortex {
         size_t shft = 0;
         switch( m_channel_type ) {
         case ITC_PIXEL:
-            shft = (y0*m_w + x0)*m_ch;
+            shft = (size_t(y0)*size_t(m_w) + size_t(x0))*size_t(m_ch);
             m_data_f[ shft   ] = r;
             m_data_f[ shft+1 ] = g;
             m_data_f[ shft+2 ] = b;
             break;
         case ITC_IMAGE:
-            shft = y0*m_w + x0;
+            shft = size_t(y0)*size_t(m_w) + size_t(x0);
             m_data_f[ shft             ] = r;
-            m_data_f[ shft + m_w*m_h   ] = g;
-            m_data_f[ shft + m_w*m_h*2 ] = b;
+            m_data_f[ shft + size_t(m_w)*size_t(m_h)   ] = g;
+            m_data_f[ shft + size_t(m_w)*size_t(m_h)*2 ] = b;
             break;
         default: switch_fatality();
         }
@@ -726,7 +753,7 @@ namespace kortex {
             for( int y=0; y<rh; y++ ) {
                 const float* sptr =  src->get_row_f(sy0+y) + sx0*m_ch;
                 float*       dptr = this->get_row_f(dy0+y) + dx0*m_ch;
-                memcpy( dptr, sptr, sizeof(*sptr)*rw*m_ch );
+                memcpy( dptr, sptr, sizeof(*sptr)*size_t(rw)*size_t(m_ch) );
             }
             break;
         case IT_U_GRAY:
@@ -734,7 +761,7 @@ namespace kortex {
             for( int y=0; y<rh; y++ ) {
                 const uchar* sptr =  src->get_row_u(sy0+y) + sx0*m_ch;
                 uchar*       dptr = this->get_row_u(dy0+y) + dx0*m_ch;
-                memcpy( dptr, sptr, sizeof(*sptr)*rw*m_ch );
+                memcpy( dptr, sptr, sizeof(*sptr)*size_t(rw)*size_t(m_ch) );
             }
             break;
         case IT_F_IRGB:
@@ -742,7 +769,7 @@ namespace kortex {
                 for( int y=0; y<rh; y++ ) {
                     const float* sptr =  src->get_row_fi(sy0+y, c) + sx0;
                     float*       dptr = this->get_row_fi(dy0+y, c) + dx0;
-                    memcpy( dptr, sptr, sizeof(*sptr)*rw );
+                    memcpy( dptr, sptr, sizeof(*sptr)*size_t(rw) );
                 }
             }
             break;
@@ -751,7 +778,7 @@ namespace kortex {
                 for( int y=0; y<rh; y++ ) {
                     const uchar* sptr =  src->get_row_ui(sy0+y, c) + sx0;
                     uchar*       dptr = this->get_row_ui(dy0+y, c) + dx0;
-                    memcpy( dptr, sptr, sizeof(*sptr)*rw );
+                    memcpy( dptr, sptr, sizeof(*sptr)*size_t(rw) );
                 }
             }
             break;
@@ -759,14 +786,14 @@ namespace kortex {
             for( int y=0; y<rh; y++ ) {
                 const int* sptr =  src->get_row_i(sy0+y) + sx0*m_ch;
                 int*       dptr = this->get_row_i(dy0+y) + dx0*m_ch;
-                memcpy( dptr, sptr, sizeof(*sptr)*rw*m_ch );
+                memcpy( dptr, sptr, sizeof(*sptr)*size_t(rw)*size_t(m_ch) );
             }
             break;
         case IT_J_GRAY:
             for( int y=0; y<rh; y++ ) {
                 const uint16_t* sptr =  src->get_row_u16(sy0+y) + sx0*m_ch;
                 uint16_t*       dptr = this->get_row_u16(dy0+y) + dx0*m_ch;
-                memcpy( dptr, sptr, sizeof(*sptr)*rw*m_ch );
+                memcpy( dptr, sptr, sizeof(*sptr)*size_t(rw)*size_t(m_ch) );
             }
             break;
         default: switch_fatality(); break;
@@ -847,12 +874,12 @@ namespace kortex {
         switch( precision() ) {
         case TYPE_UCHAR:
             img->m_type = IT_U_GRAY;
-            img->m_data_u = m_data_u + cid * m_w * m_h;
+            img->m_data_u = m_data_u + size_t(cid) * size_t(m_w) * size_t(m_h);
             img->m_data_f = NULL;
             break;
         case TYPE_FLOAT:
             img->m_type = IT_F_GRAY;
-            img->m_data_f = m_data_f + cid * m_w * m_h;
+            img->m_data_f = m_data_f + size_t(cid) * size_t(m_w) * size_t(m_h);
             img->m_data_u = NULL;
             break;
         default: switch_fatality();
@@ -870,12 +897,12 @@ namespace kortex {
         switch( precision() ) {
         case TYPE_UCHAR:
             img->m_type = IT_U_GRAY;
-            img->m_data_u = m_data_u + cid * m_w * m_h;
+            img->m_data_u = m_data_u + size_t(cid) * size_t(m_w) * size_t(m_h);
             img->m_data_f = NULL;
             break;
         case TYPE_FLOAT:
             img->m_type = IT_F_GRAY;
-            img->m_data_f = m_data_f + cid * m_w * m_h;
+            img->m_data_f = m_data_f + size_t(cid) * size_t(m_w) * size_t(m_h);
             img->m_data_u = NULL;
             break;
         default: switch_fatality();
@@ -895,9 +922,9 @@ namespace kortex {
         assert_type( IT_F_GRAY );
         passert_boundary( x0, 0, m_w );
         const float* col = m_data_f + x0;
-        if     ( y0 >= m_h-1 ) return 2.0f * ( col[ (m_h-2)*m_w ] - col[ (m_h-1)*m_w ] );
+        if     ( y0 >= m_h-1 ) return 2.0f * ( col[  size_t(m_h-2)*size_t(m_w) ] - col[ size_t(m_h-1)*size_t(m_w) ] );
         else if( y0 <= 0     ) return 2.0f * ( col[           0 ] - col[         m_w ] );
-        else                   return        ( col[  (y0-1)*m_w ] - col[  (y0+1)*m_w ] );
+        else                   return        ( col[  size_t(y0-1)*size_t(m_w) ] - col[  size_t(y0+1)*size_t(m_w) ] );
     }
 
     bool Image::is_non_zero( const int& x0, const int& y0, const int& rsz ) const {
