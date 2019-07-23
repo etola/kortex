@@ -82,12 +82,14 @@ namespace kortex {
         int oid = get_option( name );
         passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
         OptionItem& opt = get_option(oid);
+        opt.clear();
         opt.push_value(v0);
     }
     void OptionParser::set_default( const string& name, const string& v0, const string& v1 ) {
         int oid = get_option( name );
         passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
         OptionItem& opt = get_option(oid);
+        opt.clear();
         opt.push_value(v0);
         opt.push_value(v1);
     }
@@ -96,6 +98,7 @@ namespace kortex {
         int oid = get_option( name );
         passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
         OptionItem& opt = get_option(oid);
+        opt.clear();
         opt.push_value(v0);
         opt.push_value(v1);
         opt.push_value(v2);
@@ -106,6 +109,7 @@ namespace kortex {
         int oid = get_option( name );
         passert_statement_g( oid != -1, "option does not exist [%s]", name.c_str() );
         OptionItem& opt = get_option(oid);
+        opt.clear();
         opt.push_value(v0);
         opt.push_value(v1);
         opt.push_value(v2);
