@@ -99,32 +99,34 @@ namespace kortex {
         c[2] = a[0]*b[1] - a[1]*b[0];
     }
 
-    void cross3_normalized( const double* a, const double* b, double* c ) {
+    bool cross3_normalized( const double* a, const double* b, double* c ) {
         cross3( a, b, c );
         double d = dot3( c, c );
         if( d < 1e-16 ) {
             memset( c, 0, sizeof(*c)* 3 );
-            return;
+            return false;
         }
         double one_over_norm_c = 1.0 / std::sqrt( d );
-        passert_statement_g( is_a_number(one_over_norm_c), "[d %f] 1 / dot product resulted in NaN", d );
+        assert_statement_g( is_a_number(one_over_norm_c), "[d %f] 1 / dot product resulted in NaN", d );
         c[0] *= one_over_norm_c;
         c[1] *= one_over_norm_c;
         c[2] *= one_over_norm_c;
+        return true;
     }
 
-    void cross3_normalized( const float* a, const float* b, float* c ) {
+    bool cross3_normalized( const float* a, const float* b, float* c ) {
         cross3(a, b, c);
         float d = dot3(c, c);
         if( d < 1e-16 ) {
             memset( c, 0, sizeof(*c)* 3 );
-            return;
+            return false;
         }
         float one_over_norm_c = 1.0f / std::sqrt(d); // inv_sqrt( d );
-        passert_statement_g( is_a_number(one_over_norm_c), "[d %f] 1 / dot product resulted in NaN", d );
+        assert_statement_g( is_a_number(one_over_norm_c), "[d %f] 1 / dot product resulted in NaN", d );
         c[0] *= one_over_norm_c;
         c[1] *= one_over_norm_c;
         c[2] *= one_over_norm_c;
+        return true;
     }
 
     float normalize_l2norm3( float* arr ) {
