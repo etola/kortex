@@ -184,7 +184,7 @@ namespace kortex {
 
     template<> inline
     void write_bparam( ofstream& fout, const string& v ) {
-        int nsz = (int)v.size();
+        uint16_t nsz = (uint16_t)v.size();
         write_bparam( fout, nsz );
         fout.write( (const char*)v.c_str(), sizeof(char)*nsz );
         check_file_stream_error(fout);
@@ -220,9 +220,9 @@ namespace kortex {
     }
     template<> inline
     void read_bparam( ifstream& fin, string& v ) {
-        int nsz = 0;
+        uint16_t nsz = 0;
         read_bparam( fin, nsz );
-        char buffer[2049];
+        char buffer[2048];
         passert_statement( nsz < 2048, "buffer overflow" );
         fin.read( buffer, sizeof(*buffer)*nsz );
         buffer[nsz] = '\0';
