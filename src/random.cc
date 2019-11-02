@@ -48,6 +48,14 @@ namespace kortex {
         return random_generator()->normal_sample();
     }
 
+    uint32_t random_sample() {
+        return random_generator()->rv();
+    }
+
+    uint32_t max_random_sample() {
+        return random_generator()->max();
+    }
+
     bool select_random_samples(const int& minval, const int& maxval, const int& no_samples,
                                int *selected_samples) {
 

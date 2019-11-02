@@ -28,6 +28,9 @@ namespace kortex {
     double  uniform_sample();
     double  normal_sample();
 
+    uint32_t random_sample();
+    uint32_t max_random_sample();
+
     /// selects no_samples random in [minval maxval). returns false if samples cannot be selected
     bool select_random_samples(const int& minval, const int& maxval, const int& no_samples, int *selected_samples);
 

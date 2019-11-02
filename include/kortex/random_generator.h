@@ -58,6 +58,13 @@ namespace kortex {
             return seed_value;
         }
 
+        uint32_t rv() {
+            return uint32_t( rv_generator() );
+        }
+        uint32_t max() {
+            return uint32_t( rv_generator.max() );
+        }
+
     };
 
     extern RandomGenerator g_random;
