@@ -183,12 +183,12 @@ namespace kortex {
     }
 
     double point_to_plane_distance( const double X[3], const double plane[4] ) {
-        assert_statement( is_unit_norm_3( plane ), "plane normal is not normalized" );
+        assert_statement_g( is_unit_norm_3( plane ), "plane normal is not normalized [%f]", dot3(plane,plane) );
         return dot3(plane, X) + plane[3];
     }
 
     float  point_to_plane_distance( const float  X[3], const float plane[4] ) {
-        assert_statement( is_unit_norm_3( plane ), "plane normal is not normalized" );
+        assert_statement_g( is_unit_norm_3( plane ), "plane normal is not normalized [%f]", dot3(plane,plane) );
         return dot3(plane, X) + plane[3];
     }
 
