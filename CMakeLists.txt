@@ -21,6 +21,17 @@ ComposePackageLibSuffix()
 ConfigCompilerAndLinker()
 ConfigLibrary()
 
+set(CMAKE_CXX_STANDARD 11)
+if(MSVC)
+  set(CMAKE_INSTALL_PREFIX     "C:/usr")
+  set(CMAKE_INSTALL_INCLUDEDIR "include/" )
+  set(CMAKE_INSTALL_LIBDIR     "lib/" )
+  set(CMAKE_INSTALL_BINDIR     "bin/" )
+else()
+  include(GNUInstallDirs)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-parameter")
+endif()
+
 # List configuration options
 SET(PROJECT_WITH_SSE ON CACHE BOOL "Enable SSE optimizations")
 SET(PROJECT_WITH_PNG ON CACHE BOOL "Enable PNG file support")
@@ -32,6 +43,8 @@ SET(PROJECT_WITH_OPENMP ON CACHE BOOL "Enable OpenMP library")
 SET(PROJECT_CONFIG_INCLUDE_DIR "${CMAKE_BINARY_DIR}/" CACHE PATH "Where to create the build/platform specific header")
 
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}")
+
+
 
 # Find required packages
 set(EXTERNAL_LIBS "")
@@ -108,12 +121,6 @@ if(PROJECT_WITH_LAPACK)
   endif()
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
-if(NOT MSVC)
-  include(GNUInstallDirs)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-parameter")
-endif()
-
 # Set defines
 SET(PROJECT_DEFINITIONS "")
 if(PROJECT_WITH_SSE)
@@ -155,7 +162,9 @@ set(CMAKE_BUILD_TYPE Release)
 add_library( ${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 
 set_target_properties( ${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY lib)
-target_link_libraries( ${PROJECT_NAME} "${EXTERNAL_LIBS}")
+
+# causes issues in windows
+# target_link_libraries( ${PROJECT_NAME} "${EXTERNAL_LIBS}")
 target_include_directories(
     ${PROJECT_NAME} PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
