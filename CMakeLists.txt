@@ -2,26 +2,26 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.1.0)
 
 PROJECT(kortex VERSION 1.2.3 )
 
-# fix CMake IntDir variable
-if(MSVC AND "${MSVC_VERSION}" STRGREATER "1500")
-	SET(CMAKE_CFG_INTDIR "$(Platform)/$(Configuration)")
-endif()
-SET(COTIRE_INTDIR "cotire")
+# # fix CMake IntDir variable
+# if(MSVC AND "${MSVC_VERSION}" STRGREATER "1500")
+	# SET(CMAKE_CFG_INTDIR "$(Platform)/$(Configuration)")
+# endif()
+# # SET(COTIRE_INTDIR "cotire")
 
-# Define helper functions and macros.
-# cmake_policy(SET CMP0011 OLD)
-INCLUDE(cmake/utils.cmake)
-if(ENABLE_PRECOMPILED_HEADERS)
-	INCLUDE(cmake/cotire.cmake)
-endif()
+# # Define helper functions and macros.
+# # cmake_policy(SET CMP0011 OLD)
+# INCLUDE(cmake/utils.cmake)
+# if(ENABLE_PRECOMPILED_HEADERS)
+	# INCLUDE(cmake/cotire.cmake)
+# endif()
 
-# Init session with macros defined in Utils.cmake
-GetOperatingSystemArchitectureBitness(SYSTEM)
-ComposePackageLibSuffix()
-ConfigCompilerAndLinker()
-ConfigLibrary()
+# # Init session with macros defined in Utils.cmake
+# GetOperatingSystemArchitectureBitness(SYSTEM)
+# ComposePackageLibSuffix()
+# ConfigCompilerAndLinker()
+# ConfigLibrary()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 if(MSVC)
   set(CMAKE_INSTALL_PREFIX     "C:/usr")
   set(CMAKE_INSTALL_INCLUDEDIR "include/" )
