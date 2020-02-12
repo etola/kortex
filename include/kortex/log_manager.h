@@ -154,6 +154,49 @@ namespace kortex {
     }                                                                           \
     }
 
+#define logman_log_gvu( prestr, uint_arr, n_arr ) {                             \
+    static const int buf_sz = 4096;                                             \
+    char buffer[buf_sz];                                                        \
+    const uint16_t* arr = uint_arr;                                             \
+    logman_log_g( "%s", prestr );                                               \
+    int it = 0;                                                                 \
+    int k = 0;                                                                  \
+    while( 1 ) {                                                                \
+        it++;                                                                   \
+        assert_statement( it < 100000, "run-away while loop " )                 \
+        int nstr = 0;                                                           \
+        for( ; k<n_arr; k++ ) {                                                 \
+            nstr += snprintf( buffer+nstr, buf_sz-nstr, "%u ", arr[k] );        \
+            assert_statement( nstr < buf_sz, "buffer overflow" );               \
+            if( nstr + 8 >= buf_sz ) break;                                     \
+        }                                                                       \
+        logman_log_g( "%s", buffer );                                           \
+        if( k>=n_arr ) break;                                                   \
+    }                                                                           \
+    }
+
+#define logman_info_gvu( prestr, uint_arr, n_arr ) {                            \
+    static const int buf_sz = 4096;                                             \
+    char buffer[buf_sz];                                                        \
+    const uint16_t* arr = uint_arr;                                             \
+    logman_info_g( "%s", prestr );                                              \
+    int it = 0;                                                                 \
+    int k = 0;                                                                  \
+    while( 1 ) {                                                                \
+        it++;                                                                   \
+        assert_statement( it < 100000, "run-away while loop " )                 \
+        int nstr = 0;                                                           \
+        for( ; k<n_arr; k++ ) {                                                 \
+            nstr += snprintf( buffer+nstr, buf_sz-nstr, "%u ", arr[k] );        \
+            assert_statement( nstr < buf_sz, "buffer overflow" );               \
+            if( nstr + 8 >= buf_sz ) break;                                     \
+        }                                                                       \
+        logman_info_g( "%s", buffer );                                          \
+        if( k>=n_arr ) break;                                                   \
+    }                                                                           \
+    }
+
+
 #define logman_log_gvf( prestr, float_arr, n_arr ) {                            \
     static const int buf_sz = 4096;                                             \
     const float* arr = float_arr;                                               \

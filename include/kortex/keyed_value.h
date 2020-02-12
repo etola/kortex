@@ -51,9 +51,9 @@ namespace kortex {
             arr[i].print();
     }
 
-    template< typename KeyType, typename DataType >
+    template< typename KeyType, typename DataType, typename OutKeyType >
     void export_keys( const vector< KeyedValue<KeyType,DataType> >& arr,
-                      vector< KeyType >& keys ) {
+                      vector< OutKeyType >& keys ) {
         int asz = arr.size();
         keys.resize( asz );
         for( int i=0; i<asz; i++ ) {

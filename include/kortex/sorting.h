@@ -15,6 +15,7 @@
 #define KORTEX_SORTING_H
 
 #include <vector>
+#include <cstdint>
 
 namespace kortex {
 
@@ -26,6 +27,9 @@ namespace kortex {
 
     void sort_ascending ( std::vector<int>& arr);
     void sort_descending( std::vector<int>& arr );
+
+    void sort_ascending ( std::vector<uint16_t>& arr);
+    void sort_descending( std::vector<uint16_t>& arr );
 
 }
 
