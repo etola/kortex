@@ -1028,18 +1028,13 @@ namespace kortex {
         }
     }
 
-    /// q = s * p
-    void image_scale( const Image& p, float s, bool run_parallel, Image& q ) {
+    void image_scale_f( const Image& p, float s, bool run_parallel, Image& q ) {
         assert_statement( check_dimensions(p,q), "dimension mismatch" );
         passert_statement( p.type() == q.type(), "image types do not agree" );
-
         p.passert_type( IT_F_GRAY | IT_F_IRGB | IT_F_PRGB );
-
         size_t psz = p.element_count();
-
         const float* pptr = p.get_fptr();
         float      * qptr = q.get_fptr();
-
         if( run_parallel ) {
 #pragma omp parallel for
             for( omp_size_t i=0; i<(omp_size_t)psz; i++ ) {
@@ -1049,7 +1044,37 @@ namespace kortex {
             for( size_t i=0; i<psz; i++ )
                 qptr[i] = s * pptr[i];
         }
+    }
 
+    /// q = s * p
+    void image_scale_u( const Image& p, float s, bool run_parallel, Image& q ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        passert_statement( p.type() == q.type(), "image types do not agree" );
+        p.passert_type( IT_U_GRAY );
+        size_t psz = p.element_count();
+        const uchar* pptr = p.get_uptr();
+        uchar      * qptr = q.get_uptr();
+        if( run_parallel ) {
+#pragma omp parallel for
+            for( omp_size_t i=0; i<(omp_size_t)psz; i++ ) {
+                qptr[i] = cast_to_gray_range( s * (float)pptr[i] );
+            }
+        } else {
+            for( size_t i=0; i<psz; i++ )
+                qptr[i] = cast_to_gray_range( s * (float)pptr[i] );
+        }
+    }
+
+    /// q = s * p
+    void image_scale( const Image& p, float s, bool run_parallel, Image& q ) {
+        assert_statement( check_dimensions(p,q), "dimension mismatch" );
+        passert_statement( p.type() == q.type(), "image types do not agree" );
+        p.assert_type( IT_F_GRAY | IT_U_GRAY );
+		switch( p.precision() ) {
+			case TYPE_FLOAT: image_scale_f(p, s, run_parallel, q); break;
+			case TYPE_UCHAR: image_scale_u(p, s, run_parallel, q); break;
+			default        : logman_fatal( "invalid data type" );
+		}
     }
 
     /// checks whether p has values of either 0 or 1
