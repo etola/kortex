@@ -292,6 +292,8 @@ namespace kortex {
         bool is_minimum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const;
         bool is_minimum( const int& x0, const int& y0, const int& wnd_rad, const int  & v0 ) const;
 
+		float get_min_neighbour_f( const int& x0, const int& y0, int rsz ) const;
+		float get_max_neighbour_f( const int& x0, const int& y0, int rsz ) const;
 
         /// asserts the image type - disables in RELEASE mode
         void assert_type( int type ) const {

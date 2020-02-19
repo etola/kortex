@@ -522,6 +522,38 @@ namespace kortex {
         channel = get_channel_f(2); b = bicubic_interpolation( channel, m_w, m_h, 1, 0, x0, y0 );
     }
 
+	float Image::get_min_neighbour_f( const int& x0, const int& y0, int rsz ) const {
+		assert_type(IT_F_GRAY);
+		float d = FLT_MAX;
+		for( int y=y0-rsz; y<=y0+rsz; y++ ) {
+			if( y<0 || y>=m_h ) continue;
+			const float* yrow = this->get_row_f(y);
+			for( int x=x0-rsz; x<=x0+rsz; x++ ) {
+				if( x<0 || x>=m_w ) continue;
+				if( y == y0 && x == x0 )
+					continue;
+				d = std::min( d, yrow[x] );
+			}
+		}
+		return d;
+	}
+
+	float Image::get_max_neighbour_f( const int& x0, const int& y0, int rsz ) const {
+		assert_type(IT_F_GRAY);
+		float d = -FLT_MAX;
+		for( int y=y0-rsz; y<=y0+rsz; y++ ) {
+			if( y<0 || y>=m_h ) continue;
+			const float* yrow = this->get_row_f(y);
+			for( int x=x0-rsz; x<=x0+rsz; x++ ) {
+				if( x<0 || x>=m_w ) continue;
+				if( y == y0 && x == x0 )
+					continue;
+				d = std::max( d, yrow[x] );
+			}
+		}
+		return d;
+	}
+
     void Image::add( const int& x0, const int& y0, const float& v ) {
         assert_type( IT_F_GRAY );
         assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );
