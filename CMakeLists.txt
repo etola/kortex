@@ -30,6 +30,7 @@ if(MSVC)
 else()
   include(GNUInstallDirs)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-parameter")
+  set(EXTERNAL_LIBS "-lstdc++fs")
 endif()
 
 # List configuration options
@@ -44,10 +45,8 @@ SET(PROJECT_CONFIG_INCLUDE_DIR "${CMAKE_BINARY_DIR}/" CACHE PATH "Where to creat
 
 INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}")
 
-
-
 # Find required packages
-set(EXTERNAL_LIBS "")
+# experimental/filesystem : remove_all 
 
 if(PROJECT_WITH_OPENMP)
   find_package(OpenMP)

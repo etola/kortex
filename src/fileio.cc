@@ -27,6 +27,10 @@
 #include <iostream>
 #include <iomanip>
 
+#ifdef __GNUC__
+#include <experimental/filesystem>
+#endif
+
 using namespace std;
 
 namespace kortex {
@@ -54,6 +58,12 @@ namespace kortex {
         logman_fatal_g( "folder creation not supported in this OS [%s]", path.c_str() );
 #endif
     }
+
+	bool remove_folder( const string& dir_path ) {
+	#ifdef __GNUC__
+		std::experimental::filesystem::remove_all(dir_path);
+	#endif
+	}
 
     void check_file_stream_error( const ifstream& fin, const char* msg ) {
         if( !fin.fail() ) return;

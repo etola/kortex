@@ -36,7 +36,6 @@ namespace kortex {
 
     FileFormat get_file_format( const string& str );
 
-
     void check_file_stream_error( const ifstream& fin,  const char* msg=NULL );
     void check_file_stream_error( const ofstream& fout, const char* msg=NULL );
 
@@ -51,6 +50,8 @@ namespace kortex {
     bool file_exists(const string& file);
     bool file_exists(const char* file);
     bool file_create( const string& file );
+
+	bool remove_folder( const string& dir_path );
 
 //
 //
