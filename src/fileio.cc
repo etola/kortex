@@ -62,6 +62,9 @@ namespace kortex {
 	bool remove_folder( const string& dir_path ) {
 	#ifdef __GNUC__
 		std::experimental::filesystem::remove_all(dir_path);
+		return true;
+	#else
+		return false;
 	#endif
 	}
 
