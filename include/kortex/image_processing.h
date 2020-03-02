@@ -279,6 +279,9 @@ namespace kortex {
     // get the max value in the patch
     float image_get_max( const Image& img, int x0, int y0, int hsz );
 
+	void dilate_image( Image& img, int hsz );
+	void erode_image ( Image& img, int hsz );
+
 }
 
 #endif

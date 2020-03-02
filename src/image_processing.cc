@@ -1692,5 +1692,55 @@ namespace kortex {
         return v;
     }
 
+	void dilate_image( Image& img, int hsz ) {
+		img.assert_type( IT_U_GRAY );
+		int h = img.h();
+		int w = img.w();
+		Image oimg(w,h,IT_U_GRAY);
+		oimg.zero();
+		for( int y=hsz; y<h-hsz-1; y++ ) {
+			for( int x=hsz; x<w-hsz-1; x++ ) {
+				uchar v = 0;
+				for( int yy=y-hsz; yy<=y+hsz; yy++ ) {
+					for( int xx=x-hsz; xx<=x+hsz; xx++ ) {
+						uchar vv = img.getu(xx,yy);
+						if( vv == 1 ) {
+							v = 1;
+							break;
+						}
+					}
+					if( v == 1 ) break;
+				}
+				oimg.set(x,y,v);
+			}
+		}
+		img = oimg;
+	}
+
+	void erode_image( Image& img, int hsz ) {
+		img.assert_type( IT_U_GRAY );
+		int h = img.h();
+		int w = img.w();
+		Image oimg(w,h,IT_U_GRAY);
+		oimg.zero();
+		for( int y=hsz; y<h-hsz-1; y++ ) {
+			for( int x=hsz; x<w-hsz-1; x++ ) {
+				uchar v = 1;
+				for( int yy=y-hsz; yy<=y+hsz; yy++ ) {
+					for( int xx=x-hsz; xx<=x+hsz; xx++ ) {
+						uchar vv = img.getu(xx,yy);
+						if( vv == 0 ) {
+							v=0;
+							break;
+						}
+					}
+					if( v == 0 ) break;
+				}
+				oimg.set(x,y,v);
+			}
+		}
+		img = oimg;
+	}
+
 
 }
