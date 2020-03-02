@@ -340,6 +340,7 @@ namespace kortex {
 		case IT_F_GRAY  : return 1;
 		case IT_I_GRAY  : return 1;
 		case IT_U_PRGB  : return 3;
+		case IT_U_PRGBA : return 4;
 		case IT_F_PRGB  : return 3;
 		case IT_U_IRGB  : return 3;
 		case IT_F_IRGB  : return 3;

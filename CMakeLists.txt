@@ -156,8 +156,6 @@ export(PACKAGE ${PROJECT_NAME})
 
 include(cmake/sources.cmake)
 
-set(CMAKE_BUILD_TYPE Release)
-
 add_library( ${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 
 set_target_properties( ${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY lib)
