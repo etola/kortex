@@ -88,7 +88,7 @@ namespace kortex {
 	}
 
 	size_t Image::req_mem( int w, int h, ImageType type ) {
-		return size_t(w) * size_t(h) * image_pixel_size(type);
+		return size_t(w) * size_t(h) * image_pixel_size(type) + sizeof(Image);
 	}
 
 	size_t Image::req_mem( const Image* img ) {
