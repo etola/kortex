@@ -193,6 +193,63 @@ namespace kortex {
 	}
 
 
+	// bit operations
+	void Image::set_bit( const int& x0, const int& y0, const uint8_t& bit_n, uint8_t& value ) {
+		assert_type( IT_U_GRAY );
+		assert_boundary( bit_n, 0, 8 );
+		uchar& v = this->getu(x0,y0);
+		switch( value ) {
+			case 0:
+			switch( bit_n ) {
+				case 0: v |= 1UL << 0; break;
+				case 1: v |= 1UL << 1; break;
+				case 2: v |= 1UL << 2; break;
+				case 3: v |= 1UL << 3; break;
+				case 4: v |= 1UL << 4; break;
+				case 5: v |= 1UL << 5; break;
+				case 6: v |= 1UL << 6; break;
+				case 7: v |= 1UL << 7; break;
+				default: switch_fatality();
+			}
+			break;
+
+			case 1:
+			switch( bit_n ) {
+				case 0: v &= ~(1UL << 0); break;
+				case 1: v &= ~(1UL << 1); break;
+				case 2: v &= ~(1UL << 2); break;
+				case 3: v &= ~(1UL << 3); break;
+				case 4: v &= ~(1UL << 4); break;
+				case 5: v &= ~(1UL << 5); break;
+				case 6: v &= ~(1UL << 6); break;
+				case 7: v &= ~(1UL << 7); break;
+				default: switch_fatality();
+			}
+			break;
+			default:
+				logman_fatal_g( "invalid value field [%d]", value );
+		}
+	}
+
+	bool Image::get_bit( const int& x0, const int& y0, const uint8_t& bit_n) const {
+		assert_type( IT_U_GRAY );
+		assert_boundary( bit_n, 0, 8 );
+		const uchar& value = this->getu(x0,y0);
+		uint8_t bit = 0;
+		switch(bit_n) {
+			case 0: bit = (value >> 0) & 1U; break;
+			case 1: bit = (value >> 1) & 1U; break;
+			case 2: bit = (value >> 2) & 1U; break;
+			case 3: bit = (value >> 3) & 1U; break;
+			case 4: bit = (value >> 4) & 1U; break;
+			case 5: bit = (value >> 5) & 1U; break;
+			case 6: bit = (value >> 6) & 1U; break;
+			case 7: bit = (value >> 7) & 1U; break;
+			default: switch_fatality();
+		}
+		return (bool)bit;
+	}
+
 	//
 	// get image channels
 	//
@@ -317,32 +374,56 @@ namespace kortex {
 	}
 
 	// 1-channel get
-	float Image::getf( int x0, int y0 ) const {
+	float& Image::getf( int x0, int y0 ) {
 		assert_type  ( IT_F_GRAY );
 		assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
 		size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
 		return m_data_f[ p ];
 	}
-
-	uchar Image::getu( int x0, int y0 ) const {
+	uchar& Image::getu( int x0, int y0 ) {
 		assert_type  ( IT_U_GRAY );
 		assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
 		size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
 		return m_data_u[ p ];
 	}
-	int   Image::geti( int x0, int y0 ) const {
+	int&  Image::geti( int x0, int y0 ) {
 		assert_type  ( IT_I_GRAY );
 		assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
 		size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
 		return m_data_i[ p ];
 	}
-	uint16_t Image::getu16( int x0, int y0 ) const {
+	uint16_t& Image::getu16( int x0, int y0 ) {
 		assert_type  ( IT_J_GRAY );
 		assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
 		size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
 		return m_data_u16[ p ];
 	}
 
+	// 1-channel get
+	const float& Image::getf( int x0, int y0 ) const {
+		assert_type  ( IT_F_GRAY );
+		assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
+		size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
+		return m_data_f[ p ];
+	}
+	const uchar& Image::getu( int x0, int y0 ) const {
+		assert_type  ( IT_U_GRAY );
+		assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
+		size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
+		return m_data_u[ p ];
+	}
+	const int&  Image::geti( int x0, int y0 ) const {
+		assert_type  ( IT_I_GRAY );
+		assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
+		size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
+		return m_data_i[ p ];
+	}
+	const uint16_t& Image::getu16( int x0, int y0 ) const {
+		assert_type  ( IT_J_GRAY );
+		assert_statement_g(is_inside(x0,y0), "[x %d] [y %d] oob", x0, y0);
+		size_t p = size_t(y0) * size_t(m_w) + size_t(x0);
+		return m_data_u16[ p ];
+	}
 
 	float Image::get( int x0, int y0 ) const {
 		assert_type( IT_U_GRAY | IT_F_GRAY );
@@ -899,8 +980,8 @@ namespace kortex {
 					memcpy( dptr, sptr, sizeof(*sptr)*m_ch );
 				} break;
 				case IT_U_GRAY:
-				case IT_U_PRGB: 
-				case IT_U_PRGBA: { 
+				case IT_U_PRGB:
+				case IT_U_PRGBA: {
 					const uchar* sptr =  src->get_row_u(sy0+y) + (sx0+x)*m_ch;
 					uchar*       dptr = this->get_row_u(dy0+y) + (dx0+x)*m_ch;
 					memcpy( dptr, sptr, sizeof(*sptr)*m_ch );

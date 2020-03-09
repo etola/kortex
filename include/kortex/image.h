@@ -162,14 +162,19 @@ namespace kortex {
 		/// easy access get/set functions - use the row pointers for performance
 		/// critical stuff
 		///
-		int      geti( int x0, int y0 ) const;
-		float    getf( int x0, int y0 ) const;
-		uchar    getu( int x0, int y0 ) const;
-		uint16_t getu16( int x0, int y0 ) const;
+		int&      geti( int x0, int y0 );
+		float&    getf( int x0, int y0 );
+		uchar&    getu( int x0, int y0 );
+		uint16_t& getu16( int x0, int y0 );
+
+		const int&      geti( int x0, int y0 ) const;
+		const float&    getf( int x0, int y0 ) const;
+		const uchar&    getu( int x0, int y0 ) const;
+		const uint16_t& getu16( int x0, int y0 ) const;
 
 		/// accesses the pixel val of whatever type. use for convenience - not
 		/// efficient at all.
-		float get ( int x0, int y0 ) const;
+		float get( int x0, int y0 ) const;
 
 		/// gets bilinearly interpolated values - image needs to be single channel
 		float get_bilinear  (const float& x0, const float& y0) const;
@@ -231,6 +236,10 @@ namespace kortex {
 		/// sets a (2*hsz+1)^2 patch with value [r,g,b]
 		void  set ( const int& x0, const int& y0, const int& hsz, const uchar& r, const uchar& g, const uchar& b );
 		void  set ( const int& x0, const int& y0, const int& hsz, const float& r, const float& g, const float& b );
+
+		// bit operations
+		void set_bit( const int& x0, const int& y, const uint8_t& bit_n, uint8_t& value );
+		bool get_bit( const int& x0, const int& y, const uint8_t& bit_n) const;
 
 		///
 		void add( const int& x0, const int& y0, const float& v );
@@ -415,7 +424,7 @@ namespace kortex {
 					default: switch_fatality();
 				}
 			default: switch_fatality();
-			} 
+			}
 		default: switch_fatality();
 		}
 	}
