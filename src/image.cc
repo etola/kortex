@@ -12,6 +12,7 @@
 //
 // ---------------------------------------------------------------------------
 #include <kortex/image.h>
+#include <kortex/bit_operations.h>
 #include <kortex/image_processing.h>
 #include <kortex/image_conversion.h>
 #include <kortex/image_io.h>
@@ -194,60 +195,16 @@ namespace kortex {
 
 
 	// bit operations
-	void Image::set_bit( const int& x0, const int& y0, const uint8_t& bit_n, uint8_t& value ) {
+	void Image::set_bit( const int& x0, const int& y0, const uint8_t& bit_n, const bool& value ) {
 		assert_type( IT_U_GRAY );
-		assert_boundary( bit_n, 0, 8 );
-		uchar& v = this->getu(x0,y0);
-		switch( value ) {
-			case 0:
-			switch( bit_n ) {
-				case 0: v |= 1UL << 0; break;
-				case 1: v |= 1UL << 1; break;
-				case 2: v |= 1UL << 2; break;
-				case 3: v |= 1UL << 3; break;
-				case 4: v |= 1UL << 4; break;
-				case 5: v |= 1UL << 5; break;
-				case 6: v |= 1UL << 6; break;
-				case 7: v |= 1UL << 7; break;
-				default: switch_fatality();
-			}
-			break;
-
-			case 1:
-			switch( bit_n ) {
-				case 0: v &= ~(1UL << 0); break;
-				case 1: v &= ~(1UL << 1); break;
-				case 2: v &= ~(1UL << 2); break;
-				case 3: v &= ~(1UL << 3); break;
-				case 4: v &= ~(1UL << 4); break;
-				case 5: v &= ~(1UL << 5); break;
-				case 6: v &= ~(1UL << 6); break;
-				case 7: v &= ~(1UL << 7); break;
-				default: switch_fatality();
-			}
-			break;
-			default:
-				logman_fatal_g( "invalid value field [%d]", value );
-		}
+		assert_boundary( bit_n, 0, 9 );
+		kortex::set_bit( getu(x0,y0), bit_n, value);
 	}
 
 	bool Image::get_bit( const int& x0, const int& y0, const uint8_t& bit_n) const {
 		assert_type( IT_U_GRAY );
-		assert_boundary( bit_n, 0, 8 );
-		const uchar& value = this->getu(x0,y0);
-		uint8_t bit = 0;
-		switch(bit_n) {
-			case 0: bit = (value >> 0) & 1U; break;
-			case 1: bit = (value >> 1) & 1U; break;
-			case 2: bit = (value >> 2) & 1U; break;
-			case 3: bit = (value >> 3) & 1U; break;
-			case 4: bit = (value >> 4) & 1U; break;
-			case 5: bit = (value >> 5) & 1U; break;
-			case 6: bit = (value >> 6) & 1U; break;
-			case 7: bit = (value >> 7) & 1U; break;
-			default: switch_fatality();
-		}
-		return (bool)bit;
+		assert_boundary( bit_n, 0, 9 );
+		return kortex::get_bit( getu(x0,y0), bit_n );
 	}
 
 	//
@@ -667,6 +624,22 @@ namespace kortex {
 		assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );
 		size_t p = size_t(y0)*size_t(m_w) + size_t(x0);
 		m_data_f[ p ] += v;
+	}
+
+	void Image::inc( const int& x0, const int& y0 ) {
+		assert_type( IT_U_GRAY );
+		assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );
+		size_t pidx = size_t(y0)*size_t(m_w) + size_t(x0);
+		if( m_data_u[pidx] < UINT8_MAX-1 )
+			m_data_u[pidx]++;
+	}
+
+	void Image::dec( const int& x0, const int& y0 ) {
+		assert_type( IT_U_GRAY );
+		assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );
+		size_t pidx = size_t(y0)*size_t(m_w) + size_t(x0);
+		if( m_data_u[pidx] > 0 )
+			m_data_u[pidx]--;
 	}
 
 	void Image::add( const int& x0, const int& y0, const float& r, const float& g, const float& b ) {

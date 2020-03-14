@@ -24,6 +24,7 @@
 #include <kortex/mem_manager.h>
 #include <kortex/math.h>
 #include <kortex/color.h>
+#include <kortex/bit_operations.h>
 
 #include "image_processing.tcc"
 
@@ -1740,6 +1741,38 @@ namespace kortex {
 			}
 		}
 		img = oimg;
+	}
+
+	void get_bit_layer(const Image& img, const uint8_t& bid, Image& layer ) {
+		img.passert_type(IT_U_GRAY);
+		int h = img.h();
+		int w = img.w();
+		layer.create( w, h, IT_U_GRAY );
+		layer.zero();
+		for( int y=0; y<h; y++ ) {
+			for( int x=0; x<w; x++ ) {
+				if( kortex::get_bit( img.getu(x,y), bid ) ) 
+					layer.set(x,y,(uchar)255);
+			}
+		}
+	}
+
+	void image_or( const Image& A, const Image& B, Image& C ) {
+		A.assert_type( IT_U_GRAY );
+		B.assert_type( IT_U_GRAY );
+		C.assert_type( IT_U_GRAY );
+		assert_statement( A.h() == B.h() && A.w() && B.w(), "size mismatch" );
+		assert_statement( A.h() == C.h() && A.w() && C.w(), "size mismatch" );
+		for( int y=0; y<C.h(); y++ ) {
+			const uchar* arow = A.get_row_u(y);
+			const uchar* brow = B.get_row_u(y);
+			uchar      * crow = C.get_row_u(y);
+			for( int x=0; x<C.w(); x++ ) {
+				if( arow[x] > 0 || brow[x] > 0 ) {
+					crow[x] = 255;
+				}
+			}
+		}
 	}
 
 

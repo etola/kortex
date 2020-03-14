@@ -12,9 +12,6 @@
 // web   : http://www.aurvis.com
 //
 // ---------------------------------------------------------------------------
-#ifndef KORTEX_GEOMETRY_CC
-#define KORTEX_GEOMETRY_CC
-
 #include <kortex/geometry.h>
 #include <kortex/math.h>
 #include <kortex/svd.h>
@@ -202,5 +199,3 @@ namespace kortex {
     }
 
 }
-
-#endif

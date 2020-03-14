@@ -282,6 +282,9 @@ namespace kortex {
 	void dilate_image( Image& img, int hsz );
 	void erode_image ( Image& img, int hsz );
 
+	void get_bit_layer(const Image& img, const uint8_t& bid, Image& layer );
+	void image_or( const Image& A, const Image& B, Image& C );
+
 }
 
 #endif

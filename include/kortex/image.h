@@ -238,13 +238,15 @@ namespace kortex {
 		void  set ( const int& x0, const int& y0, const int& hsz, const float& r, const float& g, const float& b );
 
 		// bit operations
-		void set_bit( const int& x0, const int& y, const uint8_t& bit_n, uint8_t& value );
+		void set_bit( const int& x0, const int& y, const uint8_t& bit_n, const bool& value );
 		bool get_bit( const int& x0, const int& y, const uint8_t& bit_n) const;
 
 		///
 		void add( const int& x0, const int& y0, const float& v );
 		void add( const int& x0, const int& y0, const float& r, const float& g, const float& b );
-
+		
+		void inc( const int& x0, const int& y0 );
+		void dec( const int& x0, const int& y0 );
 
 		/// copies the src region [ (sx0,sy0) -> (sx0+rw, sy0+rh) ] to the
 		/// 'this' region starting from (dx0,dy0)

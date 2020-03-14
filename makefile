@@ -53,7 +53,8 @@ histogram.cc \
 pair_indexed_array.cc \
 sorted_pair_map.cc \
 geometry.cc \
-random_generator.cc
+random_generator.cc \
+bit_operations.cc
 
 headers := \
 log_manager.h \

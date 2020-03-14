@@ -39,7 +39,8 @@ set(PROJECT_SOURCES
   src/string.cc
   src/svd.cc
   src/timer.cc
-  )
+  src/bit_operations.cc
+)
 
 set(PROJECT_HEADERS
   kortex/include/bit_operations.h
