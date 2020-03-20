@@ -58,6 +58,11 @@ namespace kortex {
 		return r;
 	}
 
+	inline void unpack8( const uint8_t& a, uchar ua[8] ) {
+		for( int8_t i=0; i<8; i++ )
+			ua[7-i] = ( 1 & ( a >> i ) );
+	}
+
 	inline uint64_t pack64(const int a[64]) {
 		uint64_t r = (uint64_t)(0);
 		for( int i=0; i<64; i++ )
