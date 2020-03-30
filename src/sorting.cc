@@ -68,4 +68,16 @@ namespace kortex {
         std::sort( arr.begin(), arr.end(), uint16_cmp_l );
     }
 
+    //
+    //
+    //
+    inline bool uint32_cmp_l(const uint32_t& l, const uint32_t& r) { return l > r; }
+    inline bool uint32_cmp_s(const uint32_t& l, const uint32_t& r) { return l < r; }
+    void sort_ascending( vector<uint32_t>& arr) {
+        std::sort( arr.begin(), arr.end(), uint32_cmp_s );
+    }
+    void sort_descending( vector<uint32_t>& arr ) {
+        std::sort( arr.begin(), arr.end(), uint32_cmp_l );
+    }
+
 }

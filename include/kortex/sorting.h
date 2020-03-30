@@ -31,6 +31,9 @@ namespace kortex {
     void sort_ascending ( std::vector<uint16_t>& arr);
     void sort_descending( std::vector<uint16_t>& arr );
 
+    void sort_ascending ( std::vector<uint32_t>& arr);
+    void sort_descending( std::vector<uint32_t>& arr );
+
 }
 
 #endif
