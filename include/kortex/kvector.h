@@ -57,6 +57,7 @@ namespace kortex {
         int dim() const { return N; }
 
         T            dot  ( const KVector<T,N>& rhs ) const;
+	    T            ddot ( const KVector<T,N>& rhs ) const;
         KVector<T,N> cross( const KVector<T,N>& rhs ) const;
 
         T norm() const;
@@ -311,6 +312,15 @@ namespace kortex {
             dp += m_v[i] * rhs.m_v[i];
         return dp;
     }
+
+    template <typename T, int N>
+    T KVector<T,N>::ddot( KVector<T,N> const& rhs ) const {
+        double dp = double(0);
+        for( int i=0; i<N; i++ )
+            dp += double(m_v[i]) * double(rhs.m_v[i]);
+        return (double)dp;
+    }
+
 
 //
 //
