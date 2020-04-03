@@ -626,6 +626,18 @@ namespace kortex {
 		m_data_f[ p ] += v;
 	}
 
+	void Image::add( const int& x0, const int& y0, int hsz, const float& v ) {
+		assert_type( IT_F_GRAY );
+		for(int y=y0-hsz; y<=y0+hsz; y++) {
+			if( y<0 || y>=m_h ) continue;
+			float* row_y = get_row_f(y);
+			for(int x=x0-hsz; x<=x0+hsz; x++) {
+				if( x<0 || x>=m_w ) continue;
+				row_y[x] += v;
+			}
+		}
+	}
+
 	void Image::inc( const int& x0, const int& y0 ) {
 		assert_type( IT_U_GRAY );
 		assert_statement_g( is_inside(x0,y0), "xy %d %d oob", x0, y0 );

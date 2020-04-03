@@ -243,6 +243,7 @@ namespace kortex {
 
 		///
 		void add( const int& x0, const int& y0, const float& v );
+		void add( const int& x0, const int& y0, int hsz, const float& v );
 		void add( const int& x0, const int& y0, const float& r, const float& g, const float& b );
 		
 		void inc( const int& x0, const int& y0 );
