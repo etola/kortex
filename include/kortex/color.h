@@ -19,12 +19,6 @@
 
 namespace kortex {
 
-    struct Color {
-        uchar r, g, b;
-        Color() { r = g = b = 0; }
-        Color( uchar r_, uchar g_, uchar b_ ) : r(r_), g(g_), b(b_) {}
-    };
-
     enum ColorName { COLOR_BLACK=0,
                      COLOR_RED,    COLOR_GREEN,   COLOR_BLUE,
                      COLOR_CYAN,   COLOR_MAGENTA, COLOR_YELLOW,
@@ -48,7 +42,6 @@ namespace kortex {
         return static_cast<uchar>( std::min( 255, std::max(0, i) ) );
     }
 
-
     inline uchar rgb_to_gray_u(const uchar& r, const uchar& g, const uchar& b) {
         return cast_to_gray_range( 0.299f*r + 0.587f*g + 0.114f*b );
     }
@@ -64,9 +57,6 @@ namespace kortex {
     }
 
     void get_color(ColorName color, uchar &cr, uchar &cg, uchar &cb);
-    inline void get_color(ColorName name, Color& col ) {
-        get_color( name, col.r, col.g, col.b );
-    }
 
     inline ColorName get_color( int color ) {
         int mc = color % COLOR_WHITE + 1;
@@ -82,8 +72,24 @@ namespace kortex {
 
     void hsv_to_rgb( float h, float s, float v, float &r, float &g, float &b );
 
+
+    struct Color {
+        uchar r, g, b;
+        Color() { r = g = b = 0; }
+        Color( uchar r_, uchar g_, uchar b_ ) : r(r_), g(g_), b(b_) {}
+		Color( ColorName cname ) {
+			set(cname);
+		}
+		void set( ColorName cname ) {
+			get_color( cname, r, g, b );
+		}
+    };
+
     float max_color_diff( const Color& a, const Color& b );
 
+    inline void get_color(ColorName name, Color& col ) {
+        get_color( name, col.r, col.g, col.b );
+    }
 
 }
 

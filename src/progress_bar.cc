@@ -77,8 +77,7 @@ namespace kortex {
     }
 
     std::ostream& progress_bar::out(std::ostream& os) {
-        if( m_current > (m_progress * (m_end - m_start) / (double)m_divisions) ||
-            m_current == m_end ) {
+        if( m_current > (m_progress * (m_end - m_start) / (double)m_divisions) || m_current == m_end ) {
             m_progress++;
             os << m_message << m_limit;
             for(int c = 1; c <= m_divisions; ++c) {
@@ -116,19 +115,19 @@ namespace kortex {
             if( eta_hour < 0 ) return os;
             if( eta_day  < 0 ) return os;
 
-            os<<" ";
-            if( rem_day != 0 ) { os.width(2); os.fill('0'); os<<rem_day<<":"; }
-            os.width(2); os.fill('0'); os<<rem_hour<<":";
-            os.width(2); os.fill('0'); os<<rem_min <<":";
-            os.width(2); os.fill('0'); os<<rem_sec <<" ";
-            os<<"/";
-            if( eta_day != 0 ) { os.width(2); os.fill('0'); os<<eta_day<<":"; }
-            os.width(2); os.fill('0'); os<<eta_hour<<":";
-            os.width(2); os.fill('0'); os<<eta_min <<":";
-            os.width(2); os.fill('0'); os<<eta_sec <<" ";
-            os << m_end_message;
-            if(m_current == m_end) { os << "\n" << std::flush; }
-            else                   { os << "\r" << std::flush; }
+			os<<" ";
+			if( rem_day != 0 ) { os.width(2); os.fill('0'); os<<rem_day<<":"; }
+			os.width(2); os.fill('0'); os<<rem_hour<<":";
+			os.width(2); os.fill('0'); os<<rem_min <<":";
+			os.width(2); os.fill('0'); os<<rem_sec <<" ";
+			os<<"/";
+			if( eta_day != 0 ) { os.width(2); os.fill('0'); os<<eta_day<<":"; }
+			os.width(2); os.fill('0'); os<<eta_hour<<":";
+			os.width(2); os.fill('0'); os<<eta_min <<":";
+			os.width(2); os.fill('0'); os<<eta_sec <<" ";
+			os << m_end_message;
+			if(m_current == m_end) { os << "\n" << std::flush; }
+			else                   { os << "\r" << std::flush; }
         }
         return os;
     }
