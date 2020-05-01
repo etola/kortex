@@ -56,7 +56,7 @@ namespace kortex {
     }
 }
 
-#ifdef DEBUG
+#ifndef NDEBUG
 #define assert_statement( statement, msg )      { if( !(statement) ) { logman_fatal(msg); } }
 #define assert_statement_g(statement, msg, ...) { if( !(statement) ) { logman_fatal_g(msg, __VA_ARGS__); } }
 #define assert_pointer(statement)               { if( !(statement) ) { logman_fatal("passed null pointer"); } }
@@ -191,7 +191,7 @@ namespace kortex {
 
     template<typename T>
     inline void assert_array(const char* name, const T * arr, int asz) {
-#ifdef DEBUG
+#ifndef NDEBUG
         assert_statement_g( is_valid_array(arr,asz), "[%s] array contains nan/inf", name );
 #endif
     }
