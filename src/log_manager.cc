@@ -94,7 +94,7 @@ namespace kortex {
         }
         va_list argptr;
         va_start(argptr, msg);
-        write_to_log_file(group, msg, argptr);
+        write_to_log_file(nullptr, group, msg, argptr);
         va_end(argptr);
     }
 
@@ -110,7 +110,7 @@ namespace kortex {
         }
         va_list argptr;
         va_start(argptr, msg);
-        write_to_log_file(group, msg, argptr);
+        write_to_log_file(nullptr, group, msg, argptr);
         va_end(argptr);
     }
 
@@ -125,7 +125,7 @@ namespace kortex {
         }
         va_list argptr;
         va_start(argptr, msg);
-        write_to_log_file(group, msg, argptr);
+        write_to_log_file("warning:", group, msg, argptr);
         va_end(argptr);
     }
 
@@ -139,14 +139,14 @@ namespace kortex {
 
         va_list argptr;
         va_start(argptr, msg);
-        write_to_log_file(group, msg, argptr);
+        write_to_log_file("error:", group, msg, argptr);
         va_end(argptr);
     }
 
     void LogManager::fatal(const char* group, const char* msg, ...) {
         va_list argptr;
         va_start(argptr, msg);
-        write_to_log_file(group, msg, argptr);
+        write_to_log_file("error:", group, msg, argptr);
         va_end(argptr);
 
         va_list prm;
@@ -157,7 +157,7 @@ namespace kortex {
         exit(99);
     }
 
-    void LogManager::write_to_log_file(const char* group, const char* msg, va_list argptr) {
+    void LogManager::write_to_log_file(const char* tag, const char* group, const char* msg, va_list argptr) {
         if( !log_file ) return;
 
         time_t rawtime;
@@ -168,6 +168,8 @@ namespace kortex {
                 timeinfo->tm_mon+1, timeinfo->tm_mday,
                 timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
         fprintf(log_file, "[%s] ", group);
+        if( tag != nullptr )
+            fprintf(log_file, "%s ", tag);
         vfprintf(log_file, msg, argptr);
         fprintf(log_file, "\n");
         fflush(log_file);

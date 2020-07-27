@@ -60,7 +60,7 @@ namespace kortex {
 
         void start_recording(const char* log_file_name);
         void stop_recording();
-        void write_to_log_file(const char* group, const char* msg, va_list argptr);
+        void write_to_log_file(const char* tag, const char* group, const char* msg, va_list argptr);
 
         void brief( bool bval=true ) { brief_message = bval; }
 
