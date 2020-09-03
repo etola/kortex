@@ -164,7 +164,7 @@ namespace kortex {
         struct tm * timeinfo;
         time ( &rawtime );
         timeinfo = localtime ( &rawtime );
-        fprintf(log_file, "[%02d%02d %02d:%02d:%02d] ",
+        fprintf(log_file, "%02d:%02d:%02d ",
                 timeinfo->tm_mon+1, timeinfo->tm_mday,
                 timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
         fprintf(log_file, "[%s] ", group);
