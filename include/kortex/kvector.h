@@ -103,6 +103,8 @@ namespace kortex {
         void operator+=( const KVector<T,N>& rhs );
         void operator-=( const KVector<T,N>& rhs );
 
+        bool operator==( const KVector<T,N>& rhs ) const;
+
         KVector<T,N>& operator=( const KVector<T,N>& rhs );
 
         T&       x()       { assert_statement( 0<N, "dimension does not exist" ); return m_v[0]; }
@@ -283,6 +285,15 @@ namespace kortex {
         for( int i=0; i<N; i++ )
             m_v[i] -= rhs.m_v[i];
     }
+
+    template <typename T, int N>
+    bool KVector<T,N>::operator==( const KVector<T,N>& rhs ) const {
+        for( int i=0; i<N; i++ )
+            if( m_v[i] != rhs.m_v[i] )
+                return false;
+        return true;
+    }
+
 
 //
 //
