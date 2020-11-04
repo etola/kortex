@@ -14,6 +14,7 @@
 #define KORTEX_ROTATION_H
 
 #include <kortex/defs.h>
+#include <cmath>
 
 namespace kortex {
 
@@ -89,6 +90,11 @@ namespace kortex {
     void angle_to_normal( const float& a_in_rad, const float& b_in_rad, double normal[3] );
     void normal_to_angle( const double n[3], float& a_in_rad, float& b_in_rad );
     void normal_to_angle( const float  n[3], float& a_in_rad, float& b_in_rad );
+
+    template<typename T1, typename T2>
+    double angle_between_normals( const T1 n0[3], const T2 n1[3] ) {
+        return std::acos( std::max( std::min( (double)dot3(n0,n1), (double)1.0 ), -1.0 ) ) * DEGREES;
+    }
 
     const float table_sin_degree[360] BYTE_ALIGNED_16 = {
         0.00000000, 0.01745241, 0.03489950, 0.05233596, 0.06975647, 0.08715574,

@@ -372,6 +372,5 @@ namespace kortex {
         return uncertainty;
     }
 
-
 }
 

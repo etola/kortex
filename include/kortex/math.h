@@ -46,19 +46,10 @@ namespace kortex {
     double dot ( const double * a, const double* b, int asz );
     float  dot ( const float  * a, const float * b, int asz );
 
-    inline float  dot3( const float * a, const float * b ) {
-        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+    template<typename T1, typename T2>
+    inline double dot3( const T1* a, const T2* b ) {
+        return (double)(a[0]*b[0] + a[1]*b[1] + a[2]*b[2]);
     }
-    inline double dot3( const double* a, const double* b ) {
-        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-    }
-    inline double dot3( const float * a, const double* b ) {
-        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-    }
-    inline double dot3( const double* a, const float * b ) {
-        return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-    }
-
 
     inline bool is_unit_norm_3( const double a[3], double eps = 1e-5 ) {
         if( fabs( dot3(a,a) - 1.0 ) < eps )
