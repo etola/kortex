@@ -423,4 +423,26 @@ namespace kortex {
         return idx;
     }
 
+    void fit_gaussian( const vector<float>& arr, float& mean, float& sigma ) {
+        mean  = 0.0f;
+        sigma = 0.0f;
+
+        int asz = arr.size();
+        if( asz == 0 )
+            return;
+        if( asz == 1 ) {
+            mean  = arr[0];
+            sigma = 0.0;
+            return;
+        }
+
+        for( int i=0; i<asz; i++ ) mean += arr[i];
+        mean /= asz;
+
+        for( int i=0; i<asz; i++ ) sigma += sq( arr[i] - mean );
+
+        sigma = std::sqrt( sigma/(asz-1) );
+    }
+
+
 }

@@ -193,6 +193,8 @@ namespace kortex {
 
     int get_closest_sample_index( const vector<float>& samples, const float& val );
 
+    void fit_gaussian( const vector<float>& arr, float& mean, float& sigma );
+
 }
 
 #endif

@@ -14,6 +14,7 @@
 #define KORTEX_ROTATION_H
 
 #include <kortex/defs.h>
+#include <kortex/math.h>
 #include <cmath>
 
 namespace kortex {
