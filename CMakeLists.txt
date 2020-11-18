@@ -30,7 +30,9 @@ if(MSVC)
 else()
   include(GNUInstallDirs)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable -Wno-unused-parameter")
-  set(EXTERNAL_LIBS "-lstdc++fs")
+  if (NOT APPLE)
+    set(EXTERNAL_LIBS "-lstdc++fs")
+  endif()
 endif()
 
 # List configuration options
