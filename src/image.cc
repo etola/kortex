@@ -1097,8 +1097,36 @@ namespace kortex {
 		return false;
 	}
 
+	// get single channel uchar max/min
+	uchar Image::get_max_u( const int& x0, const int& y0, const int& rad ) const {
+		assert_type( IT_U_GRAY );
+		assert_statement( rad > 0, "window should be nonnegative" );
+		uchar max_val = 0;
+		for( int y=y0-rad; y<=y0+rad; y++ ) {
+			if( y<0 || y>=m_h ) continue;
+			const uchar* row = get_row_u(y);
+			for( int x=x0-rad; x<=x0+rad; x++ ) {
+				if( x<0 || x>=m_w ) continue;
+				max_val = std::max(max_val, row[x]);
+			}
+		}
+		return max_val;
+	}
 
-
+	uchar Image::get_min_u( const int& x0, const int& y0, const int& rad ) const {
+		assert_type( IT_U_GRAY );
+		assert_statement( rad > 0, "window should be nonnegative" );
+		uchar min_val = 255;
+		for( int y=y0-rad; y<=y0+rad; y++ ) {
+			if( y<0 || y>=m_h ) continue;
+			const uchar* row = get_row_u(y);
+			for( int x=x0-rad; x<=x0+rad; x++ ) {
+				if( x<0 || x>=m_w ) continue;
+				min_val = std::min(min_val, row[x]);
+			}
+		}
+		return min_val;
+	}
 
 	bool Image::is_maximum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const {
 		assert_type( IT_F_GRAY );

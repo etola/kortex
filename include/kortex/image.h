@@ -211,7 +211,6 @@ namespace kortex {
 		float get_grad_x( const int& x0, const int &y0 ) const;
 		float get_grad_y( const int& x0, const int &y0 ) const;
 
-
 		// 1-channel set
 
 		/// single channel set functions - not access efficient - use for convenience
@@ -303,6 +302,10 @@ namespace kortex {
 		void load( const string& file );
 		void save( ofstream& fout ) const;
 		void load( ifstream& fin  );
+
+		// get single channel uchar max/min
+		uchar get_max_u( const int& x0, const int& y0, const int& rad ) const;
+		uchar get_min_u( const int& x0, const int& y0, const int& rad ) const;
 
 		/// is the v0 value the maximum within a square patch - wnd_rad is the half-width.
 		bool is_maximum( const int& x0, const int& y0, const int& wnd_rad, const float& v0 ) const;
