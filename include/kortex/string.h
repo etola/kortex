@@ -32,50 +32,34 @@ using std::string;
 
 namespace kortex {
 
-    inline void in_value( const char* str, float  & v ) { v = (float)atof(str);       }
-    inline void in_value( const char* str, double & v ) { v =        atof(str);       }
-    inline void in_value( const char* str, int    & v ) { v =        atoi(str);       }
-    inline void in_value( const char* str, size_t & v ) { v =        atoi(str);       }
-    inline void in_value( const char* str, bool   & v ) { v =   bool(atoi(str)!=0);   }
-    inline void in_value( const char* str, char   & v ) { v = str[0];                 }
-    inline void in_value( const char* str, string & v ) { v = string(str);            }
+	inline void in_value( const char* str, int8_t&   v ) { v = (int8_t  )atoi(str);    }
+	inline void in_value( const char* str, int16_t&  v ) { v = (int16_t )atoi(str);    }
+	inline void in_value( const char* str, int32_t&  v ) { v = (int32_t )atoi(str);    }
+	inline void in_value( const char* str, int64_t&  v ) { v = (int64_t )atoi(str);    }
+	inline void in_value( const char* str, uint8_t&  v ) { v = (uint8_t )atoi(str);    }
+	inline void in_value( const char* str, uint16_t& v ) { v = (uint16_t)atoi(str);    }
+	inline void in_value( const char* str, uint32_t& v ) { v = (uint32_t)atoi(str);    }
+	inline void in_value( const char* str, uint64_t& v ) { v = (uint64_t)atoi(str);    }
+	inline void in_value( const char* str, float  &  v ) { v = (float)   atof(str);    }
+	inline void in_value( const char* str, double &  v ) { v =           atof(str);    }
+	inline void in_value( const char* str, bool   &  v ) { v =   bool(atoi(str)!=0);   }
+	inline void in_value( const char* str, char   &  v ) { v = str[0];                 }
+	inline void in_value( const char* str, string &  v ) { v = string(str);            }
 
-    inline string in_str( const int   & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%d", v );
-        return string(buffer);
-    }
-    inline string in_str( const float & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%.*e", OP_DBL_Digs-1, v );
-        return string(buffer);
-    }
-    inline string in_str( const double& v ) {
-        char buffer[1024];
-        sprintf( buffer, "%.*e", OP_DBL_Digs-1, v );
-        return string(buffer);
-    }
-    inline string in_str( const size_t& v ) {
-        char buffer[1024];
-        sprintf( buffer, "%zd", v );
-        return string(buffer);
-    }
-    inline string in_str( const bool  & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%d", v );
-        return string(buffer);
-    }
-    inline string in_str( const char  & v ) {
-        char buffer[1024];
-        sprintf( buffer, "%c", v );
-        return string(buffer);
-    }
-    inline string in_str( const string& v ) {
-        return v;
-    }
-    inline string in_str( const char* v ) {
-        return string(v);
-    }
+	inline string in_str( const int8_t   & v ) { char _b[64]; sprintf(_b, "%d", v ); return string(_b); }
+	inline string in_str( const int16_t  & v ) { char _b[64]; sprintf(_b, "%d", v ); return string(_b); }
+	inline string in_str( const int32_t  & v ) { char _b[64]; sprintf(_b, "%d", v ); return string(_b); }
+	inline string in_str( const int64_t  & v ) { char _b[64]; sprintf(_b, "%ld", v ); return string(_b); }
+	inline string in_str( const uint8_t  & v ) { char _b[64]; sprintf(_b, "%d", v ); return string(_b); }
+	inline string in_str( const uint16_t & v ) { char _b[64]; sprintf(_b, "%d", v ); return string(_b); }
+	inline string in_str( const uint32_t & v ) { char _b[64]; sprintf(_b, "%d", v ); return string(_b); }
+	inline string in_str( const uint64_t & v ) { char _b[64]; sprintf(_b, "%ld", v ); return string(_b); }
+	inline string in_str( const float    & v ) { char _b[64]; sprintf(_b, "%.*e", OP_DBL_Digs-1, v ); return string(_b); }
+	inline string in_str( const double   & v ) { char _b[64]; sprintf(_b, "%.*e", OP_DBL_Digs-1, v ); return string(_b); }
+	inline string in_str( const bool     & v ) { char _b[64]; sprintf(_b, "%d", v ); return string(_b); }
+	inline string in_str( const char     & v ) { char _b[64]; sprintf(_b, "%c", v ); return string(_b); }
+	inline string in_str( const char     * v ) { return string(v); }
+    inline string in_str( const string   & v ) { return v; }
 
     /// returns 0 if strings are identical disregarding case
     int compare_string_nc( const string& str1, const string& str2 );

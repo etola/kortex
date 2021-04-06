@@ -262,6 +262,87 @@ namespace kortex {
         check_file_stream_error(fin);
     }
 
+    void write_string(std::ofstream& fout, string label, string str);
+    bool read_string(std::ifstream& fin, string& label, string& str);
+
+    void write_separator(std::ofstream& fout, string label);
+    bool read_separator(std::ifstream& fin, string& label);
+
+    template<typename T>
+    void write_number(std::ofstream& fout, string label, T v) {
+        fout << label << ":" << in_str(v) << std::endl;
+    }
+    template<typename T0, typename T1>
+    void write_number(std::ofstream& fout, string label, T0 v0, T1 v1) {
+        fout << label << ":" << in_str(v0) << ":" << in_str(v1) << std::endl;
+    }
+    template<typename T0, typename T1, typename T2>
+    void write_number(std::ofstream& fout, string label, T0 v0, T1 v1, T2 v2) {
+        fout << label << ":" << in_str(v0) << ":" << in_str(v1) << ":" << in_str(v2) << std::endl;
+    }
+
+    template<typename T>
+    bool read_number(std::ifstream& fin, string& label, T& v) {
+        string str;
+        read_string(fin,label,str);
+        in_value(str.c_str(), v);
+        return !fin.fail();
+    }
+    template<typename T0, typename T1>
+    bool read_number(std::ifstream& fin, string& label, T0& v0, T1& v1) {
+        string str;
+        std::getline(fin, label, ':');
+        std::string s0;
+        std::getline(fin, s0, ':');
+        std::string s1;
+        std::getline(fin, s1, '\n');
+        in_value(s0.c_str(), v0);
+        in_value(s1.c_str(), v1);
+        return !fin.fail();
+    }
+
+    template<typename T0, typename T1, typename T2>
+    bool read_number(std::ifstream& fin, string& label, T0& v0, T1& v1, T2& v2) {
+        string str;
+        std::getline(fin, label, ':');
+        std::string s0; std::getline(fin, s0, ':');
+        std::string s1; std::getline(fin, s1, ':');
+        std::string s2; std::getline(fin, s2, '\n');
+        in_value(s0.c_str(), v0);
+        in_value(s1.c_str(), v1);
+        in_value(s2.c_str(), v2);
+        return !fin.fail();
+    }
+
+    template<typename T>
+    void write_number_array(std::ofstream& fout, string label, T* arr, int32_t asz) {
+        fout << label << ":" << in_str(asz) << ":";
+        for( int32_t i=0; i<asz-1; i++ ) {
+            fout<< in_str(arr[i]) << " ";
+        }
+        if( asz > 0 )
+            fout<< in_str(arr[asz-1]);
+        fout << std::endl;
+    }
+
+    template<typename T>
+    bool read_number_array(std::ifstream& fin, string& label, T* arr, int32_t& asz) {
+        std::getline(fin,label,':');
+        string szstr;
+        std::getline(fin,szstr,':');
+        in_value(szstr.c_str(), asz);
+        string vstr;
+        for( int32_t i=0; i<asz-1; i++) {
+            std::getline(fin,vstr,' ');
+            in_value(vstr.c_str(), arr[i]);
+        }
+        std::getline(fin,vstr,'\n');
+        if( asz > 0 ) {
+            in_value(vstr.c_str(), arr[asz-1]);
+        }
+        return !fin.fail();
+    }
+
 //
 
     void save_ascii( const string& file, const vector<bool>& array );
@@ -281,8 +362,6 @@ namespace kortex {
         read_array( fin, NULL, arr );
         fin.close();
     }
-
-    void read_string(ifstream& fin, string& param, const char* check_against);
 
 
 }

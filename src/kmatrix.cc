@@ -436,8 +436,12 @@ namespace kortex {
 
     void KMatrix::load( ifstream& fin, const string& mat_name ) {
         passert_statement( !is_const(), "cannot modify const matrix" );
-        string stmp;
-        read_string( fin, stmp, mat_name.c_str() );
+
+        char buffer[64];
+        fin.getline(buffer,64);
+        check_file_stream_error(fin);
+        if( !is_exact_match( buffer, mat_name.c_str() ) )
+            logman_fatal_g("read param error. read[%s], expecting[%s]", buffer, mat_name.c_str() );
         int th, tw;
         fin >> th >> tw;
 
