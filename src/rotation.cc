@@ -103,26 +103,83 @@ namespace kortex {
         R[6] = 0.0;            R[7] =  0.0;           R[8] = 1.0;
     }
 
-    void euler_to_rotation( double theta, double phi, double psi, double R[9] ) {
-        theta *= RADIANS;
-        phi   *= RADIANS;
-        psi   *= RADIANS;
+    void rotation_x(double phi, double R[9]) {
+        mat_identity(R,3,3);
+        double c = cos(phi);
+        double s = sin(phi);
+        R[4] =  c;
+        R[8] =  c;
+        R[5] = -s;
+        R[7] =  s;
+	}
 
-        double c,s;
-        c = cos(theta); s = sin(theta);
-        double Rx [] = { 1, 0, 0, 0, c, -s, 0, s, c };
+    // @brief Set rotation around Y axis from angle (in rad)
+    //    | cos(x)  0  sin(x) |
+    //    | 0       1  0      |
+    //    |-sin(x)  0  cos(x) |
+    void rotation_y(double phi, double R[9]) {
+        mat_identity(R,3,3);
+        double c = cos(phi);
+        double s = sin(phi);
+        R[0] =  c;
+        R[8] =  c;
+        R[2] =  s;
+        R[6] = -s;
+    }
 
-        c = cos(phi); s = sin(phi);
-        double Ry [] = { c, 0, s, 0, 1, 0, -s, 0, c };
+    // @brief Set rotation around Z axis from angle (in rad)
+    //    | cos(x) -sin(x)  0 |
+    //    | sin(x)  cos(x)  0 |
+    //    | 0       0       1 |
+    void rotation_z(double phi, double R[9]) {
+        mat_identity(R,3,3);
+        double c = cos(phi);
+        double s = sin(phi);
+        R[0] =  c;
+        R[3] =  c;
+        R[1] = -s;
+        R[3] =  s;
+    }
 
-        c = cos(psi); s = sin(psi);
-        double Rz[] = { c, -s, 0, s, c, 0, 0, 0, 1 };
-
+    // @brief Set Euler angles (in rad) in order XYZ
+    //    Set angles either in order 1. z, 2. y, 3. x and fixed axes
+    //    or in order 1. x, 2. y, 3. z and moving axes.
+    //
+    //    R = Rx*Ry*Rz =
+    //    |  c(y)c(z)               -c(y)s(z)                s(y)     |
+    //    |  c(z)s(x)s(y)+c(x)s(z)   c(x)c(z)-s(x)s(y)s(z)  -c(y)s(x) |
+    //    | -c(x)c(z)s(y)+s(x)s(z)   c(z)s(x)+c(x)s(y)s(z)   c(x)c(y) |
+    //
+    //    with s(g) = sin(g), c(g) = cos(g), x = phi_x, y = phi_y and z = phi_z
+    //
+    //    roll, pitch, yaw
+    void rotation_from_xyz(double phi_x, double phi_y, double phi_z, double* R) {
+        double Rx[9]; rotation_x(phi_x,Rx);
+        double Ry[9]; rotation_y(phi_y,Ry);
+        double Rz[9]; rotation_z(phi_z,Rz);
         mat_mat_mat_3( Rx, Ry, Rz, R );
+    }
+
+    // theta: roll
+    // pitch: phi
+    // yaw  : psi
+    void euler_to_rotation( double theta, double phi, double psi, double R[9] ) {
+        rotation_from_xyz(theta*RADIANS, phi*RADIANS, psi*RADIANS, R);
+        // double c,s;
+        // c = cos(theta); s = sin(theta);
+        // double Rx [] = { 1, 0, 0, 0, c, -s, 0, s, c };
+        // c = cos(phi); s = sin(phi);
+        // double Ry [] = { c, 0, s, 0, 1, 0, -s, 0, c };
+        // c = cos(psi); s = sin(psi);
+        // double Rz[] = { c, -s, 0, s, c, 0, 0, 0, 1 };
+        // mat_mat_mat_3( Rx, Ry, Rz, R );
     }
 
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     // Mike Day, Insomniac Games
+    // theta: roll
+    // pitch: phi
+    // yaw  : psi
     void rotation_to_euler( const double R[9], double& theta, double& phi, double& psi ) {
         theta = atan2( R[5], R[8] );
         double c2 = sqrt( sq( R[0] ) + sq( R[1] ) );

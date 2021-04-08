@@ -45,8 +45,47 @@ namespace kortex {
     void rotation_matrix_around_z( const float & angle_in_degrees, float  R[9] );
     void rotation_matrix_around_z( const double& angle_in_degrees, double R[9] );
 
-    void euler_to_rotation( double theta, double phi, double psi, double * R );
+    // @brief Set rotation around X axis from angle (in rad)
+    //    Angles are measured as in mathematics (counter-clockwise):
+    //    | 1  0       0      |
+    //    | 0  cos(x) -sin(x) |
+    //    | 0  sin(x)  cos(x) |
+    void rotation_x(double phi, double R[9]);
 
+    // @brief Set rotation around Y axis from angle (in rad)
+    //    | cos(x)  0  sin(x) |
+    //    | 0       1  0      |
+    //    |-sin(x)  0  cos(x) |
+    void rotation_y(double phi, double R[9]);
+
+    // @brief Set rotation around Z axis from angle (in rad)
+    //    | cos(x) -sin(x)  0 |
+    //    | sin(x)  cos(x)  0 |
+    //    | 0       0       1 |
+    void rotation_z(double phi, double R[9]);
+
+    // @brief Set Euler angles (in rad) in order XYZ
+    //    Set angles either in order 1. z, 2. y, 3. x and fixed axes
+    //    or in order 1. x, 2. y, 3. z and moving axes.
+    //
+    //    R = Rx*Ry*Rz =
+    //    |  c(y)c(z)               -c(y)s(z)                s(y)     |
+    //    |  c(z)s(x)s(y)+c(x)s(z)   c(x)c(z)-s(x)s(y)s(z)  -c(y)s(x) |
+    //    | -c(x)c(z)s(y)+s(x)s(z)   c(z)s(x)+c(x)s(y)s(z)   c(x)c(y) |
+    //
+    //    with s(g) = sin(g), c(g) = cos(g), x = phi_x, y = phi_y and z = phi_z
+    //
+    //    roll, pitch, yaw
+    void rotation_from_xyz(double phi_x, double phi_y, double phi_z, double* R);
+
+    // roll : theta : phi_x
+    // pitch: phi   : phi_y
+    // yaw  : psi   : phi_z
+    void euler_to_rotation( double theta, double phi, double psi, double* R );
+
+    // theta: roll
+    // pitch: phi
+    // yaw  : psi
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     void rotation_to_euler( const  double* R, double& theta, double &phi, double& psi );
 
