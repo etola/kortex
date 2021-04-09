@@ -140,6 +140,16 @@ namespace kortex {
         std::getline(fin, str, '\n');
         return !fin.fail();
     }
+    bool read_string(std::ifstream& fin, const string& check_label, string& label, string& str) {
+        if( !read_string(fin,label,str) )
+            return false;
+        if( !is_exact_match(check_label,label) ) {
+            logman_warning_g("labels do not match [%s] [%s]", check_label.c_str(), label.c_str() );
+            return false;
+        }
+        return true;
+    }
+
     void write_separator(std::ofstream& fout, string label) {
         fout << "--------------------:" << label << ":--------------------" << std::endl;
     }
@@ -149,6 +159,15 @@ namespace kortex {
         std::getline(fin, label, ':');
         std::getline(fin, dashes, '\n');
         return !fin.fail();
+    }
+    bool read_separator(std::ifstream& fin, const string& check_label, string& label) {
+        if( !read_separator(fin,label) )
+            return false;
+        if( !is_exact_match(check_label,label) ) {
+            logman_warning_g("labels do not match [%s] [%s]", check_label.c_str(), label.c_str() );
+            return false;
+        }
+        return true;
     }
 
 //

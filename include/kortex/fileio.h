@@ -264,9 +264,11 @@ namespace kortex {
 
     void write_string(std::ofstream& fout, string label, string str);
     bool read_string(std::ifstream& fin, string& label, string& str);
+    bool read_string(std::ifstream& fin, const string& check_label, string& label, string& str);
 
     void write_separator(std::ofstream& fout, string label);
     bool read_separator(std::ifstream& fin, string& label);
+    bool read_separator(std::ifstream& fin, const string& check_label, string& label);
 
     template<typename T>
     void write_number(std::ofstream& fout, string label, T v) {
@@ -288,6 +290,16 @@ namespace kortex {
         in_value(str.c_str(), v);
         return !fin.fail();
     }
+    template<typename T>
+    bool read_number(std::ifstream& fin, const string& check_label, string& label, T& v) {
+        if( !read_number(fin, label, v) )
+            return false;
+        if( !is_exact_match(check_label,label) ) {
+            logman_warning_g("labels do not match [%s] [%s]", check_label.c_str(), label.c_str() );
+            return false;
+        }
+        return true;
+    }
     template<typename T0, typename T1>
     bool read_number(std::ifstream& fin, string& label, T0& v0, T1& v1) {
         string str;
@@ -299,6 +311,16 @@ namespace kortex {
         in_value(s0.c_str(), v0);
         in_value(s1.c_str(), v1);
         return !fin.fail();
+    }
+    template<typename T0, typename T1>
+    bool read_number(std::ifstream& fin, const string& check_label, string& label, T0& v0, T1& v1) {
+        if( !read_number(fin, label, v0, v1) )
+            return false;
+        if( !is_exact_match(check_label,label) ) {
+            logman_warning_g("labels do not match [%s] [%s]", check_label.c_str(), label.c_str() );
+            return false;
+        }
+        return true;
     }
 
     template<typename T0, typename T1, typename T2>
@@ -312,6 +334,16 @@ namespace kortex {
         in_value(s1.c_str(), v1);
         in_value(s2.c_str(), v2);
         return !fin.fail();
+    }
+    template<typename T0, typename T1, typename T2>
+    bool read_number(std::ifstream& fin, const string& check_label, string& label, T0& v0, T1& v1, T2& v2) {
+        if( !read_number(fin, label, v0, v1, v2) )
+            return false;
+        if( !is_exact_match(check_label,label) ) {
+            logman_warning_g("labels do not match [%s] [%s]", check_label.c_str(), label.c_str() );
+            return false;
+        }
+        return true;
     }
 
     template<typename T>
@@ -341,6 +373,17 @@ namespace kortex {
             in_value(vstr.c_str(), arr[asz-1]);
         }
         return !fin.fail();
+    }
+
+    template<typename T>
+    bool read_number_array(std::ifstream& fin, const string& check_label, string& label, T* arr, int32_t& asz) {
+        if( !read_number_array(fin, label, arr, asz) )
+            return false;
+        if( !is_exact_match(check_label,label) ) {
+            logman_warning_g("labels do not match [%s] [%s]", check_label.c_str(), label.c_str() );
+            return false;
+        }
+        return true;
     }
 
 //
