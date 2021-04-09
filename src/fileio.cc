@@ -132,16 +132,24 @@ namespace kortex {
         }
     }
 
-    void read_string(ifstream& fin, string& param, const char* check_against) {
-        char buffer[1024];
-        fin.getline( buffer, 1024 );
-        param = buffer;
-        check_file_stream_error(fin);
-        if( check_against == NULL ) return;
-        if( !is_exact_match( param.c_str(), check_against ) )
-            logman_fatal_g("read param error. read[%s], expecting[%s]", param.c_str(), check_against);
+    void write_string(std::ofstream& fout, string label, string str) {
+        fout << label << ":" << str << std::endl;
     }
-
+    bool read_string(std::ifstream& fin, string& label, string& str) {
+        std::getline(fin, label, ':');
+        std::getline(fin, str, '\n');
+        return !fin.fail();
+    }
+    void write_separator(std::ofstream& fout, string label) {
+        fout << "--------------------:" << label << ":--------------------" << std::endl;
+    }
+    bool read_separator(std::ifstream& fin, string& label) {
+        string dashes;
+        std::getline(fin, dashes, ':');
+        std::getline(fin, label, ':');
+        std::getline(fin, dashes, '\n');
+        return !fin.fail();
+    }
 
 //
 //  binary
