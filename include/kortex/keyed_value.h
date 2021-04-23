@@ -164,6 +164,7 @@ namespace kortex {
                     in_str(val).c_str() );
         }
     };
+    typedef DoubleKeyedValue<int,float> iifloat;
 
     template< typename KeyType, typename DataType >
     inline bool dkeyed_type_cmp_l(const DoubleKeyedValue<KeyType,DataType>& l,
