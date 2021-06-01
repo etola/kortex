@@ -34,6 +34,7 @@ namespace kortex {
 #else
         bool success( realpath( istr.c_str(), resolve_path ) != NULL );
 #endif
+        if( !success ) return istr;
         passert_statement_g( success, "realpath cannot resolve path [%s]", istr.c_str() );
         return string(resolve_path);
     }
