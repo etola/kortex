@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <kortex/check.h>
+#include <kortex/sorting.h>
 
 namespace kortex {
 
@@ -354,6 +355,20 @@ namespace kortex {
         for( int i=0; i<psz; i++ )
             mean_val += pnts[i];
         mean_val.scale( 1.0/psz );
+    }
+
+    template <typename T, int N>
+    void compute_median( const vector< KVector<T,N> >& pnts, KVector<T,N>& med_val ) {
+        med_val.zero();
+        int psz = pnts.size();
+        if( psz == 0 ) return;
+        for( int i=0; i<N; i++ ) {
+            std::vector<T> vals;
+            for( size_t k=0; k<pnts.size(); ++k )
+                vals.push_back( pnts[k][i] );
+            sort_ascending(vals);
+            med_val[i] = vals[ vals.size()/2 ];
+        }
     }
 
 }
