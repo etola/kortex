@@ -121,6 +121,27 @@ namespace kortex {
         mat_mat_mat_3( Rx, Ry, Rz, R );
     }
 
+    // roll : around x (angles in degree)
+    // pitch: around y
+    // yaw  : around z
+    void roll_pitch_yaw_to_rotation( double roll, double pitch, double yaw, double R[9] ) {
+        roll  *= RADIANS;
+        pitch *= RADIANS;
+        yaw   *= RADIANS;
+
+        double c,s;
+        c = cos(roll); s = sin(roll);
+        double Rx [] = { 1, 0, 0, 0, c, -s, 0, s, c };
+
+        c = cos(pitch); s = sin(pitch);
+        double Ry [] = { c, 0, s, 0, 1, 0, -s, 0, c };
+
+        c = cos(yaw); s = sin(yaw);
+        double Rz[] = { c, -s, 0, s, c, 0, 0, 0, 1 };
+
+        mat_mat_mat_3( Rz, Ry, Rx, R );
+    }
+
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     // Mike Day, Insomniac Games
     void rotation_to_euler( const double R[9], double& theta, double& phi, double& psi ) {
