@@ -18,6 +18,10 @@
 #include <limits.h>
 #include <stdlib.h>
 
+#include <string>
+#include <sstream>
+#include <vector>
+
 #ifdef _MSC_VER
 #include <windows.h>
 #ifndef PATH_MAX
@@ -130,6 +134,14 @@ namespace kortex {
         const size_t end_str = str.find_last_not_of(remove_str);
         const size_t range   = end_str - begin_str + 1;
         return str.substr(begin_str, range);
+    }
+
+    void split_string(const std::string &s, char delim, std::vector<string>& result) {
+        std::istringstream iss(s);
+        std::string item;
+        while( std::getline(iss, item, delim) ) {
+            result.push_back(item);
+        }
     }
 
     string pad_zeros4( int num ) {
