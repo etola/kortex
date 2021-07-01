@@ -45,6 +45,7 @@ namespace kortex {
 
     /// returns 0 if strings are identical disregarding case
     int compare_string_nc( const string& str1, const string& str2 ) {
+        if( str1.size() != str2.size() ) return 1;
         return strncasecmp( str1.c_str(), str2.c_str(), str2.size() );
     }
 
