@@ -18,10 +18,11 @@
 #include <kortex/types.h>
 #include <kortex/defs.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #ifdef _MSC_VER
 #include <Windows.h> // mkdir
-#else
-#include <sys/stat.h> // mkdir
 #endif
 #include <cstdlib>
 #include <iostream>
@@ -37,7 +38,7 @@ namespace kortex {
 
     FileFormat get_file_format( const string& str ) {
         string fext = get_file_extension( str );
-		std::transform( fext.begin(), fext.end(), fext.begin(), ::tolower );
+        std::transform( fext.begin(), fext.end(), fext.begin(), ::tolower );
         if     ( !fext.compare("pgm"         ) ) return FF_PGM;
         else if( !fext.compare("ppm"         ) ) return FF_PPM;
         else if( !fext.compare("jpg"         ) ) return FF_JPG;
@@ -59,14 +60,14 @@ namespace kortex {
 #endif
     }
 
-	bool remove_folder( const string& dir_path ) {
-	#ifdef __GNUC__
-		std::experimental::filesystem::remove_all(dir_path);
-		return true;
-	#else
-		return false;
-	#endif
-	}
+    bool remove_folder( const string& dir_path ) {
+    #ifdef __GNUC__
+        std::experimental::filesystem::remove_all(dir_path);
+        return true;
+    #else
+        return false;
+    #endif
+    }
 
     void check_file_stream_error( const ifstream& fin, const char* msg ) {
         if( !fin.fail() ) return;
@@ -130,6 +131,15 @@ namespace kortex {
             fclose(fp);
             return true;
         }
+    }
+
+    bool folder_exists(const char* folder) {
+        struct stat info;
+        if( stat(folder, &info) != 0 )
+            return false;
+        else if( info.st_mode & S_IFDIR )  // S_ISDIR() doesn't exist on my windows
+            return true;
+        return false;
     }
 
     void read_string(ifstream& fin, string& param, const char* check_against) {

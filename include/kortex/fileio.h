@@ -51,7 +51,9 @@ namespace kortex {
     bool file_exists(const char* file);
     bool file_create( const string& file );
 
-	bool remove_folder( const string& dir_path );
+    bool folder_exists(const char* folder);
+
+    bool remove_folder( const string& dir_path );
 
 //
 //
