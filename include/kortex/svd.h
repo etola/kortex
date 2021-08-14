@@ -49,7 +49,13 @@ namespace kortex {
 
         void print() const;
 
-        double condition_number() const { return Sd()[0]/Sd()[m_d-1]; }
+        double condition_number() const {
+            static const double tolerance = 1e-10;
+            double sd_max = m_Sd[    0];
+            double sd_min = m_Sd[m_d-1];
+            double cond = ( sd_min<tolerance ) ? sd_max/tolerance : sd_max/sd_min;
+            return cond;
+        }
 
     private:
         void init();
