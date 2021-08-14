@@ -49,6 +49,8 @@ namespace kortex {
 
         void print() const;
 
+        double condition_number() const { return Sd()[0]/Sd()[m_d-1]; }
+
     private:
         void init();
 
