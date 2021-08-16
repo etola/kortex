@@ -31,9 +31,24 @@
 #include <experimental/filesystem>
 #endif
 
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
 using namespace std;
 
 namespace kortex {
+
+    void get_files(const string& input_folder, vector<string>& ifiles, const char* file_extension ) {
+        for( const auto & entry : fs::directory_iterator(input_folder) ) {
+            string fpath = entry.path();
+            if( file_extension != nullptr ) {
+                string fext = get_file_extension(fpath);
+                if( compare_string_nc(fext.c_str(), file_extension ) )
+                    continue;
+            }
+            ifiles.push_back(fpath);
+        }
+    }
 
     FileFormat get_file_format( const string& str ) {
         string fext = get_file_extension( str );
