@@ -96,6 +96,7 @@ namespace kortex {
     /// removes leading and trailing spaces (remove_str)
     string trim_string(const string& str, const string& remove_str=" \t");
     void split_string(const std::string &s, char delim, std::vector<string>& result);
+    void sort_strings_by_name(std::vector<string>& strs);
 
     string pad_zeros4( int num );
     string pad_zeros8( int num );

@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
+#include <string.h>
 
 #ifdef __GNUC__
 #include <experimental/filesystem>
@@ -48,6 +49,15 @@ namespace kortex {
             }
             ifiles.push_back(fpath);
         }
+    }
+
+    inline bool string_comparison_s(const string& l, const string& r ) {
+        return bool(strcmp(l.c_str(),r.c_str()) < 0);
+    }
+
+    void sort_strings_by_name(std::vector<string>& strs) {
+        if( strs.size() <= 1 ) return;
+        std::sort(strs.begin(), strs.end(), string_comparison_s);
     }
 
     FileFormat get_file_format( const string& str ) {
