@@ -47,6 +47,12 @@ namespace kortex {
 
     void euler_to_rotation( double theta, double phi, double psi, double * R );
 
+    // roll : around x (angles in degree)
+    // pitch: around y
+    // yaw  : around z
+    void roll_pitch_yaw_to_rotation( double roll, double pitch, double yaw, double R[9] );
+    bool rotation_to_roll_pitch_yaw(const double R[9], double& roll, double& pitch, double& yaw );
+
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     void rotation_to_euler( const  double* R, double& theta, double &phi, double& psi );
 

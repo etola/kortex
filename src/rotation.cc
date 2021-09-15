@@ -121,6 +121,41 @@ namespace kortex {
         mat_mat_mat_3( Rx, Ry, Rz, R );
     }
 
+    // roll : around x (angles in degree)
+    // pitch: around y
+    // yaw  : around z
+    void roll_pitch_yaw_to_rotation( double roll, double pitch, double yaw, double R[9] ) {
+        roll  *= RADIANS;
+        pitch *= RADIANS;
+        yaw   *= RADIANS;
+
+        double c,s;
+        c = cos(roll); s = sin(roll);
+        double Rx [] = { 1, 0, 0, 0, c, -s, 0, s, c };
+
+        c = cos(pitch); s = sin(pitch);
+        double Ry [] = { c, 0, s, 0, 1, 0, -s, 0, c };
+
+        c = cos(yaw); s = sin(yaw);
+        double Rz[] = { c, -s, 0, s, c, 0, 0, 0, 1 };
+
+        mat_mat_mat_3( Rz, Ry, Rx, R );
+    }
+
+    bool rotation_to_roll_pitch_yaw(const double R[9], double& roll, double& pitch, double& yaw ) {
+        if( R[2] == 1.0 || R[2] == -1 ) {
+            logman_warning("rotation for y-axis is +-PI/2, cannot decompose x/z-component");
+            return false;
+        }
+        pitch = asin( -R[6] );     if( !is_valid_number(pitch) ) return false;
+        roll  = atan2(R[7], R[8]); if( !is_valid_number(roll)  ) return false;
+        yaw   = atan2(R[3], R[0]); if( !is_valid_number(yaw)   ) return false;
+        pitch *= DEGREES;
+        roll  *= DEGREES;
+        yaw   *= DEGREES;
+        return true;
+    }
+
     // Extracting Euler Angles from a Rotation Matrix - returns in degrees
     // Mike Day, Insomniac Games
     void rotation_to_euler( const double R[9], double& theta, double& phi, double& psi ) {

@@ -27,14 +27,39 @@
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
+#include <string.h>
 
 #ifdef __GNUC__
 #include <experimental/filesystem>
 #endif
 
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+
 using namespace std;
 
 namespace kortex {
+
+    void get_files(const string& input_folder, vector<string>& ifiles, const char* file_extension ) {
+        for( const auto & entry : fs::directory_iterator(input_folder) ) {
+            string fpath = entry.path();
+            if( file_extension != nullptr ) {
+                string fext = get_file_extension(fpath);
+                if( compare_string_nc(fext.c_str(), file_extension ) )
+                    continue;
+            }
+            ifiles.push_back(fpath);
+        }
+    }
+
+    inline bool string_comparison_s(const string& l, const string& r ) {
+        return bool(strcmp(l.c_str(),r.c_str()) < 0);
+    }
+
+    void sort_strings_by_name(std::vector<string>& strs) {
+        if( strs.size() <= 1 ) return;
+        std::sort(strs.begin(), strs.end(), string_comparison_s);
+    }
 
     FileFormat get_file_format( const string& str ) {
         string fext = get_file_extension( str );
