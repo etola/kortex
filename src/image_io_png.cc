@@ -374,13 +374,32 @@ namespace kortex {
 
         int rb = (int)png_get_rowbytes(png_ptr, info_ptr);
 
-        if     ( ch == 1 ) img->create( w, h, IT_U_GRAY );
-        else if( ch == 3 ) img->create( w, h, IT_U_PRGB );
-        else  logman_fatal_g("[%s] something fishy here",file.c_str());
+        bool u16 = false;
+        if( ch == 1 ) {
+            if( rb == w )
+                img->create( w, h, IT_U_GRAY );
+            else if( rb == 2*w ) {
+                u16 = true;
+                img->create( w, h, IT_J_GRAY );
+            }
+        } else if( ch == 3 ) {
+            img->create( w, h, IT_U_PRGB );
+        } else {
+            logman_fatal_g("[%s] something fishy here",file.c_str());
+        }
 
         for( int y=0; y<h; y++ ) {
-            uchar* row = img->get_row_u(y);
-            memcpy( row, row_pointers[y], rb);
+            if( u16 ) {
+                uint16_t* row = img->get_row_u16(y);
+                for( int x=0; x<w; x++ ) {
+                    row[x] = row_pointers[y][x];
+                }
+            } else {
+                uchar* row = img->get_row_u(y);
+                for( int x=0; x<w; x++ ) {
+                    row[x] = row_pointers[y][x];
+                }
+            }
         }
 
         // clean up after the read, and free any memory allocated - REQUIRED
