@@ -14,6 +14,7 @@
 #ifndef KORTEX_RECT2_H
 #define KORTEX_RECT2_H
 
+#include <cmath>
 namespace kortex {
 
     struct Rect2f {
