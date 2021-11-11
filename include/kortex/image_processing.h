@@ -285,6 +285,8 @@ namespace kortex {
 	void get_bit_layer(const Image& img, const uint8_t& bid, Image& layer );
 	void image_or( const Image& A, const Image& B, Image& C );
 
+    void get_image_patch(const Image& img, int u, int v, int hsz, Image& patch );
+
 }
 
 #endif

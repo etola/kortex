@@ -1751,7 +1751,7 @@ namespace kortex {
 		layer.zero();
 		for( int y=0; y<h; y++ ) {
 			for( int x=0; x<w; x++ ) {
-				if( kortex::get_bit( img.getu(x,y), bid ) ) 
+				if( kortex::get_bit( img.getu(x,y), bid ) )
 					layer.set(x,y,(uchar)255);
 			}
 		}
@@ -1775,5 +1775,13 @@ namespace kortex {
 		}
 	}
 
+    void get_image_patch(const Image& img, int u, int v, int hsz, Image& patch ) {
+        int psz = 2*hsz+1;
+        int sx = u - hsz;
+        int sy = v - hsz;
+        patch.create(psz,psz,img.type());
+        patch.zero();
+        patch.copy_from_region_safe(&img, sx, sy, psz, psz, 0, 0);
+    }
 
 }
