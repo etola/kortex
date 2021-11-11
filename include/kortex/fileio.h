@@ -51,7 +51,9 @@ namespace kortex {
     bool file_exists(const char* file);
     bool file_create( const string& file );
 
-	bool remove_folder( const string& dir_path );
+    bool folder_exists(const char* folder);
+
+    bool remove_folder( const string& dir_path );
 
     // return the files in a folder. if file_extension is specified, only files with that extension is returned. it is case insensitive.
     void get_files(const string& input_folder, vector<string>& ifiles, const char* file_extension=nullptr );
