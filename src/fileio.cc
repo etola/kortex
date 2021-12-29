@@ -94,6 +94,10 @@ namespace kortex {
     #endif
     }
 
+    bool is_directory( const string& path_string ) {
+        return fs::is_directory( path_string );
+    }
+
     void check_file_stream_error( const ifstream& fin, const char* msg ) {
         if( !fin.fail() ) return;
         if( msg == NULL ) logman_fatal  ("error while reading file stream");
