@@ -626,19 +626,24 @@ namespace kortex {
         }
     }
     void image_resize_coarse( const Image& img, int max_img_dim, bool run_parallel, Image& rimg ) {
-        int nw = img.w();
-        int nh = img.h();
-        if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
-            double scr = 1.0;
-            if( nw >= nh ) scr = img.w() / double(max_img_dim);
-            else           scr = img.h() / double(max_img_dim);
-            nw  = int(img.w() / scr);
-            nh  = int(img.h() / scr);
+        int max_res = std::max(img.w(),img.h());
+        double iw = img.w();
+        double ih = img.h();
+        if( max_img_dim != 0 && ( max_res != max_img_dim ) ) {
+            double sc = double(max_img_dim) / double( max_res );
+            int new_w, new_h;
+            if( iw > ih ) {
+                new_w = std::round( iw * sc );
+                new_h = std::round( ih * new_w / iw );
+            } else {
+                new_h = std::round( ih * sc );
+                new_w = std::round( iw * new_h / ih );
+            }
+            image_resize_coarse( img, new_w, new_h, run_parallel, rimg );
+        } else {
+            rimg.copy(&img);
         }
-        image_resize_coarse( img, nw, nh, run_parallel, rimg );
     }
-
-
 
     void image_resize_fine_g( const Image& src, const int& nw, const int& nh, Image& dst ) {
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
@@ -793,16 +798,23 @@ namespace kortex {
     }
 
     void image_resize_fine  ( const Image& img, int max_img_dim, bool run_parallel, Image& rimg ) {
-        int nw = img.w();
-        int nh = img.h();
-        if( max_img_dim != 0 && ( std::max(nh,nw) != max_img_dim ) ) {
-            double scr = 1.0;
-            if( nw >= nh ) scr = img.w() / double(max_img_dim);
-            else           scr = img.h() / double(max_img_dim);
-            nw  = int(img.w() / scr);
-            nh  = int(img.h() / scr);
+        int max_res = std::max(img.w(),img.h());
+        double iw = img.w();
+        double ih = img.h();
+        if( max_img_dim != 0 && ( max_res != max_img_dim ) ) {
+            double sc = double(max_img_dim) / double( max_res );
+            int new_w, new_h;
+            if( iw > ih ) {
+                new_w = std::round( iw * sc );
+                new_h = std::round( ih * new_w / iw );
+            } else {
+                new_h = std::round( ih * sc );
+                new_w = std::round( iw * new_h / ih );
+            }
+            image_resize_fine( img, new_w, new_h, run_parallel, rimg );
+        } else {
+            rimg.copy(&img);
         }
-        image_resize_fine( img, nw, nh, run_parallel, rimg );
     }
 
     void image_subtract( const Image& im0, const Image& im1, Image& out ) {
@@ -1751,7 +1763,7 @@ namespace kortex {
 		layer.zero();
 		for( int y=0; y<h; y++ ) {
 			for( int x=0; x<w; x++ ) {
-				if( kortex::get_bit( img.getu(x,y), bid ) ) 
+				if( kortex::get_bit( img.getu(x,y), bid ) )
 					layer.set(x,y,(uchar)255);
 			}
 		}
@@ -1775,5 +1787,13 @@ namespace kortex {
 		}
 	}
 
+    void get_image_patch(const Image& img, int u, int v, int hsz, Image& patch ) {
+        int psz = 2*hsz+1;
+        int sx = u - hsz;
+        int sy = v - hsz;
+        patch.create(psz,psz,img.type());
+        patch.zero();
+        patch.copy_from_region_safe(&img, sx, sy, psz, psz, 0, 0);
+    }
 
 }
