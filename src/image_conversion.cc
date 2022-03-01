@@ -321,23 +321,6 @@ namespace kortex {
         }
     }
 
-    void gray_to_gray_u16f(const Image* src, Image* dst) {
-        assert_pointer( src && dst );
-        src->passert_type( IT_J_GRAY );
-        dst->passert_type( IT_F_GRAY );
-        passert_statement( src-> w() == dst-> w(), "image dimensions do not agree" );
-        passert_statement( src-> h() == dst-> h(), "image dimensions do not agree" );
-        int h = src->h();
-        int w = src->w();
-#pragma omp parallel for
-        for( int y=0; y<h; y++ ) {
-            const uint16_t* srow = src->get_row_u16(y);
-            float*          drow = dst->get_row_f(y);
-            for( int x=0; x<w; x++ ) {
-                drow[x] = static_cast<float>(srow[x]);
-            }
-        }
-    }
 
     void gray_to_gray_fi( const Image* src, Image* dst ) {
         assert_pointer( src && dst );
@@ -598,11 +581,6 @@ namespace kortex {
             default       : switch_fatality();
             } break;
 
-        case IT_J_GRAY:
-            switch( dtype ) {
-            case IT_F_GRAY: gray_to_gray_u16f(src, dst); break;
-            default       : switch_fatality();
-            } break;
 
         default: switch_fatality();
         }

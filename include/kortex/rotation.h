@@ -41,6 +41,7 @@ namespace kortex {
     void  axisangle_to_quaternion( const double* aa, double* q );
     void quaternion_to_rotation  ( const double* q,  double* R );
     void  axisangle_to_rotation  ( const double* aa, double* R );
+    void rotation_to_quaternion(const double R[9], double q[4]);
 
     void rotation_matrix_around_z( const float & angle_in_degrees, float  R[9] );
     void rotation_matrix_around_z( const double& angle_in_degrees, double R[9] );

@@ -103,9 +103,6 @@ namespace kortex {
     void image_resize_coarse( const Image& src, const int& nw, const int& nh, bool run_parallel, Image& dst );
     void image_resize_fine  ( const Image& src, const int& nw, const int& nh, bool run_parallel, Image& dst );
 
-    void image_resize_coarse( const Image& img, int max_img_dim, bool run_parallel, Image& rimg );
-    void image_resize_fine  ( const Image& src, int max_img_dim, bool run_parallel, Image& dst  );
-
     void image_subtract    ( const Image& im0, const Image& im1, Image& out );
     void image_subtract_par( const Image& im0, const Image& im1, Image& out );
     inline void image_subtract( const Image& im0, const Image& im1, bool run_parallel, Image& out ) {
@@ -279,13 +276,11 @@ namespace kortex {
     // get the max value in the patch
     float image_get_max( const Image& img, int x0, int y0, int hsz );
 
-	void dilate_image( Image& img, int hsz );
-	void erode_image ( Image& img, int hsz );
+    void dilate_image( Image& img, int hsz );
+    void erode_image ( Image& img, int hsz );
 
-	void get_bit_layer(const Image& img, const uint8_t& bid, Image& layer );
-	void image_or( const Image& A, const Image& B, Image& C );
-
-    void get_image_patch(const Image& img, int u, int v, int hsz, Image& patch );
+    void get_bit_layer(const Image& img, const uint8_t& bid, Image& layer );
+    void image_or( const Image& A, const Image& B, Image& C );
 
 }
 

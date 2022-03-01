@@ -83,6 +83,34 @@ namespace kortex {
         R[8] = 1-2*(q1_2+q2_2);
     }
 
+    void rotation_to_quaternion(const double R[9], double q[4]) {
+        double s = R[0] + R[4] + R[8];
+        if( s > 0.0 ) {
+            // Use default formula if trace is large enough
+            s = sqrt(s + 1.0);
+            q[3] = 0.5 * s;
+            s = 0.5 / s;
+            q[0] = (R[7] - R[5]) * s;
+            q[1] = (R[2] - R[6]) * s;
+            q[2] = (R[3] - R[1]) * s;
+        } else {
+            // Use alternate formula using largest trace element
+            // find largest trace element i and its successors j, k
+            int i = R[4] > R[0] ? 1 : 0;
+            if( R[8] > R[3*i+i] ) i = 2;
+            int j = (i + 1) % 3;
+            int k = (j + 1) % 3;
+            // compute discriminator using largest trace element
+            s = sqrt(R[3*i+i] - R[3*j+j] - R[3*k+k] + 1.0);
+            // compute quaternion entries
+            q[i] = 0.5 * s;
+            s = 0.5 / s;
+            q[j] = (R[3*i+j] + R[3*j+i]) * s;
+            q[k] = (R[3*i+k] + R[3*k+i]) * s;
+            q[3] = (R[3*k+j] - R[3*j+k]) * s;
+        }
+    }
+
     void axisangle_to_rotation( const double* aa, double* R ) {
         double q[4];
         axisangle_to_quaternion(aa, q);

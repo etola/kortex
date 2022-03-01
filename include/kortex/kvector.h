@@ -15,9 +15,11 @@
 #ifndef KORTEX_KVECTOR_H
 #define KORTEX_KVECTOR_H
 
+#include <algorithm>
 #include <cstring>
 #include <kortex/check.h>
 #include <kortex/sorting.h>
+#include <kortex/math.h>
 
 namespace kortex {
 
@@ -37,6 +39,7 @@ namespace kortex {
 
     template<typename T, int N>
     class KVector {
+        static_assert( N > 0, "invalid parameter N");
     public:
         KVector() {};
         explicit KVector( const T* vals );
@@ -58,7 +61,7 @@ namespace kortex {
         int dim() const { return N; }
 
         T            dot  ( const KVector<T,N>& rhs ) const;
-	    T            ddot ( const KVector<T,N>& rhs ) const;
+        T            ddot ( const KVector<T,N>& rhs ) const;
         KVector<T,N> cross( const KVector<T,N>& rhs ) const;
 
         T norm() const;
@@ -86,6 +89,25 @@ namespace kortex {
                 printf( "%s ", str );
             printf( "%f %f %f\n", m_v[0], m_v[1], m_v[2] );
         }
+
+        T max() const {
+            return *std::max_element(m_v, m_v+N);
+        }
+        T min() const {
+            return *std::min_element(m_v, m_v+N);
+        }
+        void min_clamp(const T& vmin) {
+            kortex::clamp_min(m_v, N, vmin);
+        }
+        void max_clamp(const T& vmax) {
+            kortex::clamp_max(m_v, N, vmax);
+        }
+        void clamp(const T& vmin, const T& vmax) {
+            clamp_array(m_v, N, vmin, vmax);
+        }
+        float average() const {
+            return static_cast<float>( std::accumulate(m_v, m_v+N, 0) ) / N;
+       }
 
     public:
         T&          operator[]( int i )       { assert_boundary(i,0,N); return m_v[i]; }
@@ -303,8 +325,8 @@ namespace kortex {
     template <typename T>
     KVector<T,3> cross_product( KVector<T,3> const& v1, KVector<T,3> const& v2 ) {
         return KVector<T,3>(v1[1] * v2[2] - v1[2] * v2[1],
-                           v1[2] * v2[0] - v1[0] * v2[2],
-                           v1[0] * v2[1] - v1[1] * v2[0]);
+                        v1[2] * v2[0] - v1[0] * v2[2],
+                        v1[0] * v2[1] - v1[1] * v2[0]);
     }
 
 //
