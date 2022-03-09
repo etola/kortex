@@ -31,7 +31,7 @@ sources := log_manager.cc check.cc filter.cc mem_manager.cc mem_unit.cc image.cc
 
 define_flags := -DWITH_LIBPNG -DWITH_LIBJPEG -DWITH_LAPACK -DWITH_LAPACK -DWITH_SSE
 custom_ld_flags := -lstdc++fs
-custom_cflags := -std=c++0x
+custom_cflags := -std=c++17
 #........................................
 ################################################################################
 ################# - MAKEFILE STATIC VARIABLES - ################################
@@ -654,4 +654,3 @@ ${outdir}%.o : ${srcdir}%.cc
 ifneq "$(MAKECMDGOALS)" "clean"
   include $(dependencies)
 endif
-

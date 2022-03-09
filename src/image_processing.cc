@@ -281,7 +281,7 @@ namespace kortex {
         passert_statement( out.type() == img.type(), "image types not agree" );
         passert_statement( check_dimensions(img, out), "dimension mismatch" );
         img.passert_type( IT_F_GRAY | IT_F_IRGB ); // supporting these types
-                                                   // for now
+                                                // for now
         switch( img.type() ) {
         case IT_F_GRAY:
             filter_hv_par( img.get_row_f(0), img.w(), img.h(), kernel, ksz, out.get_row_f(0) );
@@ -625,25 +625,6 @@ namespace kortex {
             }
         }
     }
-    void image_resize_coarse( const Image& img, int max_img_dim, bool run_parallel, Image& rimg ) {
-        int max_res = std::max(img.w(),img.h());
-        double iw = img.w();
-        double ih = img.h();
-        if( max_img_dim != 0 && ( max_res != max_img_dim ) ) {
-            double sc = double(max_img_dim) / double( max_res );
-            int new_w, new_h;
-            if( iw > ih ) {
-                new_w = std::round( iw * sc );
-                new_h = std::round( ih * new_w / iw );
-            } else {
-                new_h = std::round( ih * sc );
-                new_w = std::round( iw * new_h / ih );
-            }
-            image_resize_coarse( img, new_w, new_h, run_parallel, rimg );
-        } else {
-            rimg.copy(&img);
-        }
-    }
 
     void image_resize_fine_g( const Image& src, const int& nw, const int& nh, Image& dst ) {
         passert_statement( nw > 0 && nh > 0, "invalid new image size" );
@@ -794,26 +775,6 @@ namespace kortex {
             case 3: image_resize_fine_rgb( src, nw, nh, dst ); break;
             default: switch_fatality();
             }
-        }
-    }
-
-    void image_resize_fine  ( const Image& img, int max_img_dim, bool run_parallel, Image& rimg ) {
-        int max_res = std::max(img.w(),img.h());
-        double iw = img.w();
-        double ih = img.h();
-        if( max_img_dim != 0 && ( max_res != max_img_dim ) ) {
-            double sc = double(max_img_dim) / double( max_res );
-            int new_w, new_h;
-            if( iw > ih ) {
-                new_w = std::round( iw * sc );
-                new_h = std::round( ih * new_w / iw );
-            } else {
-                new_h = std::round( ih * sc );
-                new_w = std::round( iw * new_h / ih );
-            }
-            image_resize_fine( img, new_w, new_h, run_parallel, rimg );
-        } else {
-            rimg.copy(&img);
         }
     }
 
@@ -1083,11 +1044,11 @@ namespace kortex {
         assert_statement( check_dimensions(p,q), "dimension mismatch" );
         passert_statement( p.type() == q.type(), "image types do not agree" );
         p.assert_type( IT_F_GRAY | IT_U_GRAY );
-		switch( p.precision() ) {
-			case TYPE_FLOAT: image_scale_f(p, s, run_parallel, q); break;
-			case TYPE_UCHAR: image_scale_u(p, s, run_parallel, q); break;
-			default        : logman_fatal( "invalid data type" );
-		}
+        switch( p.precision() ) {
+            case TYPE_FLOAT: image_scale_f(p, s, run_parallel, q); break;
+            case TYPE_UCHAR: image_scale_u(p, s, run_parallel, q); break;
+            default        : logman_fatal( "invalid data type" );
+        }
     }
 
     /// checks whether p has values of either 0 or 1
@@ -1705,95 +1666,87 @@ namespace kortex {
         return v;
     }
 
-	void dilate_image( Image& img, int hsz ) {
-		img.assert_type( IT_U_GRAY );
-		int h = img.h();
-		int w = img.w();
-		Image oimg(w,h,IT_U_GRAY);
-		oimg.zero();
-		for( int y=hsz; y<h-hsz-1; y++ ) {
-			for( int x=hsz; x<w-hsz-1; x++ ) {
-				uchar v = 0;
-				for( int yy=y-hsz; yy<=y+hsz; yy++ ) {
-					for( int xx=x-hsz; xx<=x+hsz; xx++ ) {
-						uchar vv = img.getu(xx,yy);
-						if( vv == 1 ) {
-							v = 1;
-							break;
-						}
-					}
-					if( v == 1 ) break;
-				}
-				oimg.set(x,y,v);
-			}
-		}
-		img = oimg;
-	}
-
-	void erode_image( Image& img, int hsz ) {
-		img.assert_type( IT_U_GRAY );
-		int h = img.h();
-		int w = img.w();
-		Image oimg(w,h,IT_U_GRAY);
-		oimg.zero();
-		for( int y=hsz; y<h-hsz-1; y++ ) {
-			for( int x=hsz; x<w-hsz-1; x++ ) {
-				uchar v = 1;
-				for( int yy=y-hsz; yy<=y+hsz; yy++ ) {
-					for( int xx=x-hsz; xx<=x+hsz; xx++ ) {
-						uchar vv = img.getu(xx,yy);
-						if( vv == 0 ) {
-							v=0;
-							break;
-						}
-					}
-					if( v == 0 ) break;
-				}
-				oimg.set(x,y,v);
-			}
-		}
-		img = oimg;
-	}
-
-	void get_bit_layer(const Image& img, const uint8_t& bid, Image& layer ) {
-		img.passert_type(IT_U_GRAY);
-		int h = img.h();
-		int w = img.w();
-		layer.create( w, h, IT_U_GRAY );
-		layer.zero();
-		for( int y=0; y<h; y++ ) {
-			for( int x=0; x<w; x++ ) {
-				if( kortex::get_bit( img.getu(x,y), bid ) )
-					layer.set(x,y,(uchar)255);
-			}
-		}
-	}
-
-	void image_or( const Image& A, const Image& B, Image& C ) {
-		A.assert_type( IT_U_GRAY );
-		B.assert_type( IT_U_GRAY );
-		C.assert_type( IT_U_GRAY );
-		assert_statement( A.h() == B.h() && A.w() && B.w(), "size mismatch" );
-		assert_statement( A.h() == C.h() && A.w() && C.w(), "size mismatch" );
-		for( int y=0; y<C.h(); y++ ) {
-			const uchar* arow = A.get_row_u(y);
-			const uchar* brow = B.get_row_u(y);
-			uchar      * crow = C.get_row_u(y);
-			for( int x=0; x<C.w(); x++ ) {
-				if( arow[x] > 0 || brow[x] > 0 ) {
-					crow[x] = 255;
-				}
-			}
-		}
-	}
-
-    void get_image_patch(const Image& img, int u, int v, int hsz, Image& patch ) {
-        int psz = 2*hsz+1;
-        int sx = u - hsz;
-        int sy = v - hsz;
-        patch.create(psz,psz,img.type());
-        patch.zero();
-        patch.copy_from_region_safe(&img, sx, sy, psz, psz, 0, 0);
+    void dilate_image( Image& img, int hsz ) {
+        img.assert_type( IT_U_GRAY );
+        int h = img.h();
+        int w = img.w();
+        Image oimg(w,h,IT_U_GRAY);
+        oimg.zero();
+        for( int y=hsz; y<h-hsz-1; y++ ) {
+            for( int x=hsz; x<w-hsz-1; x++ ) {
+                uchar v = 0;
+                for( int yy=y-hsz; yy<=y+hsz; yy++ ) {
+                    for( int xx=x-hsz; xx<=x+hsz; xx++ ) {
+                        uchar vv = img.getu(xx,yy);
+                        if( vv == 1 ) {
+                            v = 1;
+                            break;
+                        }
+                    }
+                    if( v == 1 ) break;
+                }
+                oimg.set(x,y,v);
+            }
+        }
+        img = oimg;
     }
+
+    void erode_image( Image& img, int hsz ) {
+        img.assert_type( IT_U_GRAY );
+        int h = img.h();
+        int w = img.w();
+        Image oimg(w,h,IT_U_GRAY);
+        oimg.zero();
+        for( int y=hsz; y<h-hsz-1; y++ ) {
+            for( int x=hsz; x<w-hsz-1; x++ ) {
+                uchar v = 1;
+                for( int yy=y-hsz; yy<=y+hsz; yy++ ) {
+                    for( int xx=x-hsz; xx<=x+hsz; xx++ ) {
+                        uchar vv = img.getu(xx,yy);
+                        if( vv == 0 ) {
+                            v=0;
+                            break;
+                        }
+                    }
+                    if( v == 0 ) break;
+                }
+                oimg.set(x,y,v);
+            }
+        }
+        img = oimg;
+    }
+
+    void get_bit_layer(const Image& img, const uint8_t& bid, Image& layer ) {
+        img.passert_type(IT_U_GRAY);
+        int h = img.h();
+        int w = img.w();
+        layer.create( w, h, IT_U_GRAY );
+        layer.zero();
+        for( int y=0; y<h; y++ ) {
+            for( int x=0; x<w; x++ ) {
+                if( kortex::get_bit( img.getu(x,y), bid ) )
+                    layer.set(x,y,(uchar)255);
+            }
+        }
+    }
+
+    void image_or( const Image& A, const Image& B, Image& C ) {
+        A.assert_type( IT_U_GRAY );
+        B.assert_type( IT_U_GRAY );
+        C.assert_type( IT_U_GRAY );
+        assert_statement( A.h() == B.h() && A.w() && B.w(), "size mismatch" );
+        assert_statement( A.h() == C.h() && A.w() && C.w(), "size mismatch" );
+        for( int y=0; y<C.h(); y++ ) {
+            const uchar* arow = A.get_row_u(y);
+            const uchar* brow = B.get_row_u(y);
+            uchar      * crow = C.get_row_u(y);
+            for( int x=0; x<C.w(); x++ ) {
+                if( arow[x] > 0 || brow[x] > 0 ) {
+                    crow[x] = 255;
+                }
+            }
+        }
+    }
+
 
 }

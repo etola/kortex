@@ -51,6 +51,16 @@ namespace kortex {
         }
     }
 
+    void draw_polygon( Image& im, const vector<Vec2f>& coords, ColorName color, int thickness ) {
+        int nc = coords.size();
+        for( int i=0; i<nc; i++ ) {
+            const Vec2f& v0 = coords[i];
+            const Vec2f& v1 = coords[(i+1)%nc];
+            draw_line(im, rint(v0.x()), rint(v0.y()), rint(v1.x()), rint(v1.y()), color, thickness );
+        }
+    }
+
+
     void draw_plus( Image& im, int x, int y, int ps, ColorName color, int thickness ) {
         draw_line(im, x-ps, y, x+ps, y, color, thickness );
         draw_line(im, x, y-ps, x, y+ps, color, thickness );

@@ -21,11 +21,30 @@ using std::vector;
 using std::set;
 
 #include <algorithm>
+#include <numeric>
 
 #include <kortex/defs.h>
 #include <kortex/types.h>
 
 namespace kortex {
+
+	template<typename T1, typename T2>
+	void convert_array(const std::vector<T1>& sarray, std::vector<T2>& darray) {
+		darray = std::vector<T2>(sarray.begin(), sarray.end());
+	}
+
+    template<typename T> inline
+    void clamp_array( T* array, int asz, const T& vmin, const T& vmax ) {
+        std::transform( array, array+asz, array, [=](auto v) { return std::clamp(v,vmin,vmax); } );
+    }
+    template<typename T> inline
+    void clamp_min( T* array, int asz, const T& vmin ) {
+        std::transform( array, array+asz, array, [=](auto v) { return (v<vmin) ? vmin : v; } );
+    }
+    template<typename T> inline
+    void clamp_max( T* array, int asz, const T& vmax ) {
+        std::transform( array, array+asz, array, [=](auto v) { return (v>vmax) ? vmax : v; } );
+    }
 
     int nearest_int( const float & f );
     int nearest_int( const double& f );
@@ -189,6 +208,13 @@ namespace kortex {
         std::sort(arr.begin(), arr.end());
         auto last = std::unique( arr.begin(), arr.end() );
         arr.erase(last, arr.end());
+    }
+
+    template<typename T> inline
+    bool is_unique( const vector<T>& arr ) {
+        vector<T> tarr = arr;
+        kortex::make_unique(tarr);
+        return bool(tarr.size() == arr.size());
     }
 
     int get_closest_sample_index( const vector<float>& samples, const float& val );

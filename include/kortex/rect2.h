@@ -14,7 +14,6 @@
 #ifndef KORTEX_RECT2_H
 #define KORTEX_RECT2_H
 
-#include <cmath>
 namespace kortex {
 
     struct Rect2f {
@@ -112,17 +111,6 @@ namespace kortex {
             if( x>ux ) ux = x;
             if( y<ly ) ly = y;
             if( y>uy ) uy = y;
-        }
-
-        void insert(float x0, float y0) {
-            float lx0 = static_cast<int>(std::floor(x0));
-            float ux0 = static_cast<int>(std::ceil(x0));
-            float ly0 = static_cast<int>(std::floor(y0));
-            float uy0 = static_cast<int>(std::ceil(y0));
-            if( lx0<lx ) lx = lx0;
-            if( ux0>ux ) ux = ux0;
-            if( ly0<ly ) ly = ly0;
-            if( uy0>uy ) uy = uy0;
         }
 
         bool is_inside(int x, int y) const;
