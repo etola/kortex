@@ -87,7 +87,10 @@ namespace kortex {
         void print( const char* str ) const {
             if( str )
                 printf( "%s ", str );
-            printf( "%f %f %f\n", m_v[0], m_v[1], m_v[2] );
+            for( int i=0; i<N; i++ ) {
+                printf("%f ", m_v[i]);
+            }
+            printf("\n");
         }
 
         T max() const {
